@@ -42,10 +42,9 @@ DAMAGE.
 <!--{{{-->
 <link rel='alternate' type='application/rss+xml' title='RSS' href='index.xml' />
 <!--}}}-->
-<!--PRE-HEAD-END-->
-<title>
 
-</title>
+<!--PRE-HEAD-END-->
+<title> Abundant Development - Documentation for developers </title>
 <style id="styleArea" type="text/css">
 #saveTest {display:none;}
 #messageArea {display:none;}
@@ -56,10 +55,12 @@ DAMAGE.
 #javascriptWarning {width:100%; text-align:center; font-weight:bold; background-color:#dd1100; color:#fff; padding:1em 0em;}
 </style>
 <!--POST-HEAD-START-->
+
 <!--POST-HEAD-END-->
 </head>
 <body onload="main();" onunload="if(window.unload) unload();">
 <!--PRE-BODY-START-->
+
 <!--PRE-BODY-END-->
 <div id="copyright">
 Welcome to TiddlyWiki created by Jeremy Ruston; Copyright &copy; 2004-2007 Jeremy Ruston, Copyright &copy; 2007-2011 UnaMesa Association
@@ -512,6 +513,167 @@ Also see [[AdvancedOptions]]</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
+<div title="DefaultTiddlers" creator="Abundant" modifier="Abundant" created="201102021037" changecount="1">
+<pre>[[Welcome]]
+[[Resources]]</pre>
+</div>
+<div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102021050" changecount="2">
+<pre>[[Timeline]]
+[[Features]]
+[[Issues|issue]]</pre>
+</div>
+<div title="Markup" creator="Abundant" modifier="Abundant" created="201102021048" tags="meta" changecount="1">
+<pre>!Inline Formatting
+|!Option|!Syntax|!Output|
+|bold font|{{{''bold''}}}|''bold''|
+|italic type|{{{//italic//}}}|//italic//|
+|underlined text|{{{__underlined__}}}|__underlined__|
+|strikethrough text|{{{--strikethrough--}}}|--strikethrough--|
+|superscript text|{{{^^super^^script}}}|^^super^^script|
+|subscript text|{{{~~sub~~script}}}|~~sub~~script|
+|highlighted text|{{{@@highlighted@@}}}|@@highlighted@@|
+|preformatted text|&lt;html&gt;&lt;code&gt;{{{preformatted}}}&lt;/code&gt;&lt;/html&gt;|{{{preformatted}}}|
+!Block Elements
+!!Headings
+{{{
+!Heading 1
+!!Heading 2
+!!!Heading 3
+!!!!Heading 4
+!!!!!Heading 5
+}}}
+&lt;&lt;&lt;
+!Heading 1
+!!Heading 2
+!!!Heading 3
+!!!!Heading 4
+!!!!!Heading 5
+&lt;&lt;&lt;
+!!Lists
+{{{
+* unordered list, level 1
+** unordered list, level 2
+*** unordered list, level 3
+
+# ordered list, level 1
+## ordered list, level 2
+### ordered list, level 3
+
+; definition list, term
+: definition list, description
+}}}
+&lt;&lt;&lt;
+* unordered list, level 1
+** unordered list, level 2
+*** unordered list, level 3
+
+# ordered list, level 1
+## ordered list, level 2
+### ordered list, level 3
+
+; definition list, term
+: definition list, description
+&lt;&lt;&lt;
+!!Blockquotes
+{{{
+&gt; blockquote, level 1
+&gt;&gt; blockquote, level 2
+&gt;&gt;&gt; blockquote, level 3
+
+&lt;&lt;&lt;
+blockquote
+&lt;&lt;&lt;
+}}}
+&lt;&lt;&lt;
+&gt; blockquote, level 1
+&gt;&gt; blockquote, level 2
+&gt;&gt;&gt; blockquote, level 3
+
+&gt; blockquote
+&lt;&lt;&lt;
+!!Preformatted Text
+&lt;html&gt;&lt;pre&gt;
+{{{
+preformatted (e.g. code)
+}}}
+&lt;/pre&gt;&lt;/html&gt;
+&lt;&lt;&lt;
+{{{
+preformatted (e.g. code)
+}}}
+&lt;&lt;&lt;
+!!Tables
+{{{
+|CssClass|k
+|!heading column 1|!heading column 2|
+|row 1, column 1|row 1, column 2|
+|row 2, column 1|row 2, column 2|
+|&gt;|COLSPAN|
+|ROWSPAN| … |
+|~| … |
+|CssProperty:value;…| … |
+|caption|c
+}}}
+''Annotation:''
+* The {{{&gt;}}} marker creates a &quot;colspan&quot;, causing the current cell to merge with the one to the right.
+* The {{{~}}} marker creates a &quot;rowspan&quot;, causing the current cell to merge with the one above.
+&lt;&lt;&lt;
+|CssClass|k
+|!heading column 1|!heading column 2|
+|row 1, column 1|row 1, column 2|
+|row 2, column 1|row 2, column 2|
+|&gt;|COLSPAN|
+|ROWSPAN| … |
+|~| … |
+|CssProperty:value;…| … |
+|caption|c
+&lt;&lt;&lt;
+!!Images /% TODO %/
+cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
+!Hyperlinks
+* [[WikiWords|WikiWord]] are automatically transformed to hyperlinks to the respective tiddler
+** the automatic transformation can be suppressed by preceding the respective WikiWord with a tilde ({{{~}}}): {{{~WikiWord}}}
+* [[PrettyLinks]] are enclosed in square brackets and contain the desired tiddler name: {{{[[tiddler name]]}}}
+** optionally, a custom title or description can be added, separated by a pipe character ({{{|}}}): {{{[[title|target]]}}}&lt;br&gt;''N.B.:'' In this case, the target can also be any website (i.e. URL).
+!Custom Styling
+* {{{@@CssProperty:value;CssProperty:value;…@@}}}&lt;br&gt;''N.B.:'' CSS color definitions should use lowercase letters to prevent the inadvertent creation of WikiWords.
+* &lt;html&gt;&lt;code&gt;{{customCssClass{…}}}&lt;/code&gt;&lt;/html&gt;
+* raw HTML can be inserted by enclosing the respective code in HTML tags: {{{&lt;html&gt; … &lt;/html&gt;}}}
+!Special Markers
+* {{{&lt;br&gt;}}} forces a manual line break
+* {{{----}}} creates a horizontal ruler
+* [[HTML entities|http://www.tiddlywiki.com/#HtmlEntities]]
+* {{{&lt;&lt;macroName&gt;&gt;}}} calls the respective [[macro|Macros]]
+* To hide text within a tiddler so that it is not displayed, it can be wrapped in {{{/%}}} and {{{%/}}}.&lt;br/&gt;This can be a useful trick for hiding drafts or annotating complex markup.
+* To prevent wiki markup from taking effect for a particular section, that section can be enclosed in three double quotes: e.g. {{{&quot;&quot;&quot;WikiWord&quot;&quot;&quot;}}}.</pre>
+</div>
+<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102021103" tags="resource" changecount="2">
+<pre>Helpful Reference Documents:
+
+[[Configure Eclipse]]
+[[Build Abundant]]
+[[Wiki Markup|Markup]]
+</pre>
+</div>
+<div title="SiteSubtitle" creator="Abundant" modifier="Abundant" created="201102021036" modified="201102021036" changecount="2">
+<pre>Documentation for developers</pre>
+</div>
+<div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
+<pre>Abundant Development</pre>
+</div>
+<div title="Welcome" creator="Abundant" modifier="Abundant" created="201102021040" modified="201102021043" tags="meta" changecount="3">
+<pre>This wiki will serve as the internal documentation for developing Abundant.  It will be used to keep track at a high level the work being done developing Abundant, and be a resource for current and future developers.  Additionally, until such time as Abundant can hold its own, this wiki will be used as the issue tracker for Abundant.</pre>
+</div>
+<div title="issue" creator="Abundant" modifier="Abundant" created="201102021055" tags="resource" changecount="1">
+<pre>To track issues before Abundant is powerful enough to do so, create a new tiddler and tag it with &quot;issue&quot;.  It will show up in this list.  Once an issue is resolved, tag it with &quot;[[resolved]]&quot; instead.</pre>
+</div>
+<div title="zzConfig" creator="YourName" modifier="Abundant" created="201102021034" modified="201102021035" tags="systemConfig" changecount="2">
+<pre>//{{{
+config.options.txtUserName = &quot;Abundant&quot;;  // instead of &quot;YourName&quot;
+config.options.chkSaveBackups = false;   // don't do backups
+config.options.chkAutoSave = true;       // AutoSave whenever I edit
+//}}}</pre>
+</div>
 </div>
 <!--POST-STOREAREA-->
 <!--POST-BODY-START-->
@@ -9974,6 +10136,7 @@ if(useJavaSaver)
 //]]>
 </script>
 <!--POST-SCRIPT-START-->
+
 <!--POST-SCRIPT-END-->
 </body>
 </html>
