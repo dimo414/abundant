@@ -517,6 +517,14 @@ Also see [[AdvancedOptions]]</pre>
 <pre>[[Welcome]]
 [[Resources]]</pre>
 </div>
+<div title="Development Environment" creator="Abundant" modifier="Abundant" created="201102022247" modified="201102022255" tags="setup" changecount="2">
+<pre>Development for Abundant is currently done in Eclipse, and therefore if you wish to use a different editor, you may run into some degree of trouble.  Ultimately development needs to be IDE agnostic, but for now this is not a priority.
+
+# Ensure [[Python 3|http://www.python.org/download/releases/3.1.3/]] is installed on your computer.
+# Install [[Eclipse|http://www.eclipse.org/]].
+# Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
+# Clone the repository to the root of the project directory.</pre>
+</div>
 <div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" changecount="1">
 <pre>!Easy to Start, Scales With Use
 Abundant must be very easy to initialize (nothing more complicated than {{{ab init}}} preferably) and more importantly it must behave differently depending on the user, and scale to different behaviors as necessary.  For example, a one man project has no need for issue assignment, and it should be hidden from view.  However if a second person joins the team, Abundant needs to immediately provide this new functionality without the user having to explicitly change anything.
@@ -529,10 +537,11 @@ This needs to include security controls to limit access as necessary.
 !Eclipse Plugin (Potentially)
 If time permits, an Eclipse plugin providing functionality like line highlighting and inline reporting would be very nice.</pre>
 </div>
-<div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102021050" changecount="2">
+<div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102022239" changecount="3">
 <pre>[[Timeline]]
 [[Features]]
-[[Issues|issue]]</pre>
+[[Issues|issue]]
+[[Resources]]</pre>
 </div>
 <div title="Markup" creator="Abundant" modifier="Abundant" created="201102021048" tags="meta" changecount="1">
 <pre>!Inline Formatting
@@ -659,10 +668,10 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 * To hide text within a tiddler so that it is not displayed, it can be wrapped in {{{/%}}} and {{{%/}}}.&lt;br/&gt;This can be a useful trick for hiding drafts or annotating complex markup.
 * To prevent wiki markup from taking effect for a particular section, that section can be enclosed in three double quotes: e.g. {{{&quot;&quot;&quot;WikiWord&quot;&quot;&quot;}}}.</pre>
 </div>
-<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102021103" tags="resource" changecount="2">
+<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102022255" tags="resource" changecount="4">
 <pre>Helpful Reference Documents:
 
-[[Configure Eclipse]]
+[[Development Environment]]
 [[Build Abundant]]
 [[Wiki Markup|Markup]]
 </pre>
