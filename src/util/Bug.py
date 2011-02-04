@@ -18,27 +18,47 @@ class Bug:
     classdocs
     '''
 
-    def __init__(self,s,hello="Hello world!"):
+    def __init__(self, id=None, parent=None, children=[],
+                 duplicates=None, creator=None,assigned_to=None,
+                 listeners=[],target=None,severity=None,status=None,
+                 category=None,paths=[],description="",reproduction=
+                 None,expected=None,comments=[]):
         '''
         Constructor
         '''
-        self.s = s
-        self.hello = hello
+        self.id=id
+        self.parent=parent
+        self.children=children
+        self.duplicates=duplicates
+        self.creator=creator
+        self.assigned_to=assigned_to
+        self.listeners=listeners
+        self.target=target
+        self.severity=severity
+        self.status=status
+        self.category=category
+        self.paths=paths
+        self.description=description
+        self.reproduction=reproduction
+        self.expected=expected
+        self.comments=comments
+        
     def __repr__(self):
-        return '<Bug(%s,%s)>' % (self.s, self.hello)
-
-def bugToJSON(bug):
-    return bug.__dict__
-
-def jSONToBug(json):
-    print(json)
-    args = dict( (key.encode('ascii'), value) for key, value in json.items())
-    print(args)
-    return Bug(**args)
+        return '<Bug(%s,%s)>' % (self.id, self.description)
     
+    def to_JSON(self, path, file=None):
+        if file == None:
+            file = self.id+".bug"
+        json.dump(self.__dict__,open(path+file,'w'),
+                  indent=1,sort_keys=True)
+    
+def JSON_to_Bug(file):
+    return Bug(**json.load(open(file)))
+
 if __name__ == '__main__':
-    str = json.dumps(Bug("Text",{"a":"aaaa","b":"BBBBB","C":"ccccc"}), default=bugToJSON, sort_keys=True)
-    print(str)
-    print(json.loads(str,object_hook=jSONToBug))
+    #bug = JSON_to_Bug("s.bug")
+    #print(bug)
+    bug = Bug("s")
+    bug.to_JSON("./")
     
     

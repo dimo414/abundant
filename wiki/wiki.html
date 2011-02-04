@@ -544,6 +544,12 @@ Also see [[AdvancedOptions]]</pre>
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
 </div>
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" tags="feature" changecount="1">
+<pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
+
+|!Command|!Signature|!Description|
+|{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|</pre>
+</div>
 <div title="DefaultTiddlers" creator="Abundant" modifier="Abundant" created="201102021037" changecount="1">
 <pre>[[Welcome]]
 [[Resources]]</pre>
@@ -556,7 +562,7 @@ The central idea behind Abundant is that as many of these data-points as possibl
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102030930" changecount="4">
+<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102040925" changecount="5">
 <pre>!Easy to Start, Scales With Use
 Abundant must be very easy to initialize (nothing more complicated than {{{ab init}}} preferably) and more importantly it must behave differently depending on the user, and scale to different behaviors as necessary.  For example, a one man project has no need for issue assignment, and it should be hidden from view.  However if a second person joins the team, Abundant needs to immediately provide this new functionality without the user having to explicitly change anything.
 
@@ -573,7 +579,8 @@ If time permits, an Eclipse plugin providing functionality like line highlightin
 &lt;hr&gt;
 
 !!Feature Details
-[[Bug Structure]]</pre>
+[[Bug Structure]]
+[[Command Interface]]</pre>
 </div>
 <div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102022239" changecount="3">
 <pre>[[Timeline]]
