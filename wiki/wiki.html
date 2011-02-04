@@ -544,11 +544,19 @@ Also see [[AdvancedOptions]]</pre>
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
 </div>
-<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" tags="feature" changecount="1">
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102042100" tags="feature" changecount="2">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
 |!Command|!Signature|!Description|
-|{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|</pre>
+|&gt;|&gt;|!Global|
+|{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|
+|&gt;|&gt;|!Issue|
+|{{{new}}}|{{{new title [-a assigned_to]}}}|Creates a new bug, launches an editor to populate additional fields|
+|{{{details}}}|{{{details prefix}}}|Outputs the full details of the current issue|
+|{{{assign}}}|{{{assign prefix user}}}|Assigns the issue to the specified user, group, or meta-user|
+|{{{name}}}|{{{name prefix name}}}|Lets the local user assign a useful name to the given issue - anywhere a prefix is used, a name can be used instead.|
+|&gt;|&gt;|!Meta|
+|{{{alias}}}|{{{alias alias command...}}}|Low priority, make if it's easy / there's time, will allow for custom command definitions.|</pre>
 </div>
 <div title="DefaultTiddlers" creator="Abundant" modifier="Abundant" created="201102021037" changecount="1">
 <pre>[[Welcome]]
