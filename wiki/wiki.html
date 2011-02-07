@@ -513,6 +513,23 @@ Also see [[AdvancedOptions]]</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
+<div title="ColorPalette" creator="Abundant" modifier="Abundant" created="201102060223" changecount="1">
+<pre>Background: #fff
+Foreground: #000
+PrimaryPale: #fc8
+PrimaryLight: #f81
+PrimaryMid: #b40
+PrimaryDark: #410
+SecondaryPale: #ffc
+SecondaryLight: #fe8
+SecondaryMid: #db4
+SecondaryDark: #841
+TertiaryPale: #eee
+TertiaryLight: #ccc
+TertiaryMid: #999
+TertiaryDark: #666
+Error: #f88</pre>
+</div>
 <div title="Bug Structure" creator="Abundant" modifier="Abundant" created="201102030933" modified="201102031020" tags="feature" changecount="9">
 <pre>The bug datatype has the following features / data.  Note that throughout this document and others the terms bug and issue are used interchangeably.
 
@@ -570,7 +587,7 @@ The central idea behind Abundant is that as many of these data-points as possibl
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102040925" changecount="5">
+<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102050259" changecount="7">
 <pre>!Easy to Start, Scales With Use
 Abundant must be very easy to initialize (nothing more complicated than {{{ab init}}} preferably) and more importantly it must behave differently depending on the user, and scale to different behaviors as necessary.  For example, a one man project has no need for issue assignment, and it should be hidden from view.  However if a second person joins the team, Abundant needs to immediately provide this new functionality without the user having to explicitly change anything.
 
@@ -587,8 +604,55 @@ If time permits, an Eclipse plugin providing functionality like line highlightin
 &lt;hr&gt;
 
 !!Feature Details
-[[Bug Structure]]
+[[Issue Structure]]
 [[Command Interface]]</pre>
+</div>
+<div title="Issue Module needs a unit test on the Issue class" creator="Abundant" modifier="Abundant" created="201102070936" modified="201102071137" tags="resolved" changecount="2">
+<pre>Test reading and writing of bugs
+
+!Resolved
+Basic reading and writing testing implemented</pre>
+</div>
+<div title="Issue Structure" creator="Abundant" modifier="Abundant" created="201102030933" modified="201102070253" tags="feature" changecount="15">
+<pre>The issue datatype has the following features / data.  Note that throughout this document and others the terms bug and issue are used interchangeably.  However issue is more global than bug, as there are other types of issues such as feature requests.  As such, though bug is used colloquially, issue is the technically correct term, and should be used in code structure and user-facing components.
+
+None of these datapoints are required for a user to submit a &quot;complete&quot; issue.  Even the title is optional.  To quote Joel Spolsky regarding FogBugz: &quot;We'd rather have you submit an incomplete report than decide that it's too hard to fill out some big, complicated form.  If you're in a rush, FogBugz even lets you leave out the title - you can always add one later, and it's better to get something into the system before you forget.&quot;
+
+|!Data|!Details|
+|ID|A unique, non-linear identifier for each issue.  A SHA1 hash of some unique datapoints|
+|&gt;|!Relations|
+|Parent|A larger scale parent issue|
+|Children|Child issues that are subtasks of this one|
+|Duplicates|A previous or more detailed bug that this issue duplicates|
+|&gt;|!Users|
+|Creator|The user who first filed the bug.  Cannot be changed|
+|Assigned To|The user or group who the issue is assigned to currently|
+|Listeners|Set of users following updates to this issue|
+|&gt;|!Status|
+|Type|The type of issue, current choices are Bug or Feature Request|
+|Target|A date or milestone (like a version number) by which time the issue should be resolved.  Should be able to parse basic English like &quot;tomorrow&quot;|
+|Severity|The severity of the bug (blocking, major, cosmetic, etc.)|
+|Status|The status of the bug (new, in progress, resolved, closed (Anyone can resolve an issue, but only the creator can close a bug for good), etc.)|
+|Resolution|How an issue was resolved|
+|Category|The category or conceptual location of issue (UI, database, etc.)|
+|&gt;|!Times|
+|Creation Date|Date the issue is filed|
+|Resolved Date|Date the issue is marked resolved|
+|Resolution Projection|Date the issue is projected to be resolved|
+|Work Estimate|An estimate of the work this will take or took|
+|&gt;|!Data|
+|Title|A brief description of the issue|
+|Paths|List of files and line numbers related to the issue|
+|Description|Detailed description of the issue|
+|Reproduction Steps|Instructions for reproducing the bug|
+|Expected Result|Description of what the user expected to happen|
+|Stack Trace|If the bug caused a stack trace, it goes here|
+|Comments|List of comments, which each consist of a user, date, and text|
+
+The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
+</div>
+<div title="Look For Domain Name" creator="Abundant" modifier="Abundant" created="201102060057" tags="issue" changecount="1">
+<pre>Should look for a domain name for Abundant sooner than later.</pre>
 </div>
 <div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102022239" changecount="3">
 <pre>[[Timeline]]
@@ -721,6 +785,13 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 * To hide text within a tiddler so that it is not displayed, it can be wrapped in {{{/%}}} and {{{%/}}}.&lt;br/&gt;This can be a useful trick for hiding drafts or annotating complex markup.
 * To prevent wiki markup from taking effect for a particular section, that section can be enclosed in three double quotes: e.g. {{{&quot;&quot;&quot;WikiWord&quot;&quot;&quot;}}}.</pre>
 </div>
+<div title="Need guaranteed unique IDs" creator="Abundant" modifier="Abundant" created="201102071031" modified="201102071136" tags="resolved" changecount="2">
+<pre>The Issue object currently creates very unique IDs, however to attempt to fight collisions it should check new IDs against all currently existing IDs.  The code to do this is in place in util/issue.py, however the lookup functionality does not yet exist.  When it does, make it work.
+
+!Resolved
+Decided against this plan.  Between the time, title, and username, it seems highly unlikely there will be conflicts.  Can always implement later if we decide to go a different direction.
+</pre>
+</div>
 <div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102022255" tags="resource" changecount="4">
 <pre>Helpful Reference Documents:
 
@@ -734,6 +805,202 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 </div>
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
+</div>
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
+<pre>/***
+|''Name:''|TiddlersBarPlugin|
+|''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|
+|''Version:''|1.2.5|
+|''Date:''|Jan 18,2008|
+|''Source:''|http://visualtw.ouvaton.org/VisualTW.html|
+|''Author:''|Pascal Collin|
+|''License:''|[[BSD open source license|License]]|
+|''~CoreVersion:''|2.1.0|
+|''Browser:''|Firefox 2.0; InternetExplorer 6.0, others|
+!Demos
+On [[homepage|http://visualtw.ouvaton.org/VisualTW.html]], open several tiddlers to use the tabs bar.
+!Installation
+#import this tiddler from [[homepage|http://visualtw.ouvaton.org/VisualTW.html]] (tagged as systemConfig)
+#save and reload
+#''if you're using a custom [[PageTemplate]]'', add {{{&lt;div id='tiddlersBar' refresh='none' ondblclick='config.macros.tiddlersBar.onTiddlersBarAction(event)'&gt;&lt;/div&gt;}}} before {{{&lt;div id='tiddlerDisplay'&gt;&lt;/div&gt;}}}
+#optionally, adjust StyleSheetTiddlersBar
+!Tips
+*Doubleclick on the tiddlers bar (where there is no tab) create a new tiddler.
+*Tabs include a button to close {{{x}}} or save {{{!}}} their tiddler.
+*By default, click on the current tab close all others tiddlers.
+!Configuration options 
+&lt;&lt;option chkDisableTabsBar&gt;&gt; Disable the tabs bar (to print, by example).
+&lt;&lt;option chkHideTabsBarWhenSingleTab &gt;&gt; Automatically hide the tabs bar when only one tiddler is displayed. 
+&lt;&lt;option txtSelectedTiddlerTabButton&gt;&gt; ''selected'' tab command button.
+&lt;&lt;option txtPreviousTabKey&gt;&gt; previous tab access key.
+&lt;&lt;option txtNextTabKey&gt;&gt; next tab access key.
+!Code
+***/
+//{{{
+config.options.chkDisableTabsBar = config.options.chkDisableTabsBar ? config.options.chkDisableTabsBar : false;
+config.options.chkHideTabsBarWhenSingleTab  = config.options.chkHideTabsBarWhenSingleTab  ? config.options.chkHideTabsBarWhenSingleTab  : true;
+config.options.txtSelectedTiddlerTabButton = config.options.txtSelectedTiddlerTabButton ? config.options.txtSelectedTiddlerTabButton : &quot;&quot;;
+config.options.txtPreviousTabKey = config.options.txtPreviousTabKey ? config.options.txtPreviousTabKey : &quot;&quot;;
+config.options.txtNextTabKey = config.options.txtNextTabKey ? config.options.txtNextTabKey : &quot;&quot;;
+config.macros.tiddlersBar = {
+	tooltip : &quot;see &quot;,
+	tooltipClose : &quot;click here to close this tab&quot;,
+	tooltipSave : &quot;click here to save this tab&quot;,
+	promptRename : &quot;Enter tiddler new name&quot;,
+	currentTiddler : &quot;&quot;,
+	previousState : false,
+	previousKey : config.options.txtPreviousTabKey,
+	nextKey : config.options.txtNextTabKey,	
+	tabsAnimationSource : null, //use document.getElementById(&quot;tiddlerDisplay&quot;) if you need animation on tab switching.
+	handler: function(place,macroName,params) {
+		var previous = null;
+		if (config.macros.tiddlersBar.isShown())
+			story.forEachTiddler(function(title,e){
+				if (title==config.macros.tiddlersBar.currentTiddler){
+					var d = createTiddlyElement(null,&quot;span&quot;,null,&quot;tab tabSelected&quot;);
+					config.macros.tiddlersBar.createActiveTabButton(d,title);
+					if (previous &amp;&amp; config.macros.tiddlersBar.previousKey) previous.setAttribute(&quot;accessKey&quot;,config.macros.tiddlersBar.nextKey);
+					previous = &quot;active&quot;;
+				}
+				else {
+					var d = createTiddlyElement(place,&quot;span&quot;,null,&quot;tab tabUnselected&quot;);
+					var btn = createTiddlyButton(d,title,config.macros.tiddlersBar.tooltip + title,config.macros.tiddlersBar.onSelectTab);
+					btn.setAttribute(&quot;tiddler&quot;, title);
+					if (previous==&quot;active&quot; &amp;&amp; config.macros.tiddlersBar.nextKey) btn.setAttribute(&quot;accessKey&quot;,config.macros.tiddlersBar.previousKey);
+					previous=btn;
+				}
+				var isDirty =story.isDirty(title);
+				var c = createTiddlyButton(d,isDirty ?&quot;!&quot;:&quot;x&quot;,isDirty?config.macros.tiddlersBar.tooltipSave:config.macros.tiddlersBar.tooltipClose, isDirty ? config.macros.tiddlersBar.onTabSave : config.macros.tiddlersBar.onTabClose,&quot;tabButton&quot;);
+				c.setAttribute(&quot;tiddler&quot;, title);
+				if (place.childNodes) {
+					place.insertBefore(document.createTextNode(&quot; &quot;),place.firstChild); // to allow break line here when many tiddlers are open
+					place.insertBefore(d,place.firstChild); 
+				}
+				else place.appendChild(d);
+			})
+	}, 
+	refresh: function(place,params){
+		removeChildren(place);
+		config.macros.tiddlersBar.handler(place,&quot;tiddlersBar&quot;,params);
+		if (config.macros.tiddlersBar.previousState!=config.macros.tiddlersBar.isShown()) {
+			story.refreshAllTiddlers();
+			if (config.macros.tiddlersBar.previousState) story.forEachTiddler(function(t,e){e.style.display=&quot;&quot;;});
+			config.macros.tiddlersBar.previousState = !config.macros.tiddlersBar.previousState;
+		}
+	},
+	isShown : function(){
+		if (config.options.chkDisableTabsBar) return false;
+		if (!config.options.chkHideTabsBarWhenSingleTab) return true;
+		var cpt=0;
+		story.forEachTiddler(function(){cpt++});
+		return (cpt&gt;1);
+	},
+	selectNextTab : function(){  //used when the current tab is closed (to select another tab)
+		var previous=&quot;&quot;;
+		story.forEachTiddler(function(title){
+			if (!config.macros.tiddlersBar.currentTiddler) {
+				story.displayTiddler(null,title);
+				return;
+			}
+			if (title==config.macros.tiddlersBar.currentTiddler) {
+				if (previous) {
+					story.displayTiddler(null,previous);
+					return;
+				}
+				else config.macros.tiddlersBar.currentTiddler=&quot;&quot;; 	// so next tab will be selected
+			}
+			else previous=title;
+			});		
+	},
+	onSelectTab : function(e){
+		var t = this.getAttribute(&quot;tiddler&quot;);
+		if (t) story.displayTiddler(null,t);
+		return false;
+	},
+	onTabClose : function(e){
+		var t = this.getAttribute(&quot;tiddler&quot;);
+		if (t) {
+			if(story.hasChanges(t) &amp;&amp; !readOnly) {
+				if(!confirm(config.commands.cancelTiddler.warning.format([t])))
+				return false;
+			}
+			story.closeTiddler(t);
+		}
+		return false;
+	},
+	onTabSave : function(e) {
+		var t = this.getAttribute(&quot;tiddler&quot;);
+		if (!e) e=window.event;
+		if (t) config.commands.saveTiddler.handler(e,null,t);
+		return false;
+	},
+	onSelectedTabButtonClick : function(event,src,title) {
+		var t = this.getAttribute(&quot;tiddler&quot;);
+		if (!event) event=window.event;
+		if (t &amp;&amp; config.options.txtSelectedTiddlerTabButton &amp;&amp; config.commands[config.options.txtSelectedTiddlerTabButton])
+			config.commands[config.options.txtSelectedTiddlerTabButton].handler(event, src, t);
+		return false;
+	},
+	onTiddlersBarAction: function(event) {
+		var source = event.target ? event.target.id : event.srcElement.id; // FF uses target and IE uses srcElement;
+		if (source==&quot;tiddlersBar&quot;) story.displayTiddler(null,'New Tiddler',DEFAULT_EDIT_TEMPLATE,false,null,null);
+	},
+	createActiveTabButton : function(place,title) {
+		if (config.options.txtSelectedTiddlerTabButton &amp;&amp; config.commands[config.options.txtSelectedTiddlerTabButton]) {
+			var btn = createTiddlyButton(place, title, config.commands[config.options.txtSelectedTiddlerTabButton].tooltip ,config.macros.tiddlersBar.onSelectedTabButtonClick);
+			btn.setAttribute(&quot;tiddler&quot;, title);
+		}
+		else
+			createTiddlyText(place,title);
+	}
+}
+
+story.coreCloseTiddler = story.coreCloseTiddler? story.coreCloseTiddler : story.closeTiddler;
+story.coreDisplayTiddler = story.coreDisplayTiddler ? story.coreDisplayTiddler : story.displayTiddler;
+
+story.closeTiddler = function(title,animate,unused) {
+	if (title==config.macros.tiddlersBar.currentTiddler)
+		config.macros.tiddlersBar.selectNextTab();
+	story.coreCloseTiddler(title,false,unused); //disable animation to get it closed before calling tiddlersBar.refresh
+	var e=document.getElementById(&quot;tiddlersBar&quot;);
+	if (e) config.macros.tiddlersBar.refresh(e,null);
+}
+
+story.displayTiddler = function(srcElement,tiddler,template,animate,unused,customFields,toggle){
+	story.coreDisplayTiddler(config.macros.tiddlersBar.tabsAnimationSource,tiddler,template,animate,unused,customFields,toggle);
+	var title = (tiddler instanceof Tiddler)? tiddler.title : tiddler;  
+	if (config.macros.tiddlersBar.isShown()) {
+		story.forEachTiddler(function(t,e){
+			if (t!=title) e.style.display=&quot;none&quot;;
+			else e.style.display=&quot;&quot;;
+		})
+		config.macros.tiddlersBar.currentTiddler=title;
+	}
+	var e=document.getElementById(&quot;tiddlersBar&quot;);
+	if (e) config.macros.tiddlersBar.refresh(e,null);
+}
+
+var coreRefreshPageTemplate = coreRefreshPageTemplate ? coreRefreshPageTemplate : refreshPageTemplate;
+refreshPageTemplate = function(title) {
+	coreRefreshPageTemplate(title);
+	if (config.macros.tiddlersBar) config.macros.tiddlersBar.refresh(document.getElementById(&quot;tiddlersBar&quot;));
+}
+
+ensureVisible=function (e) {return 0} //disable bottom scrolling (not useful now)
+
+config.shadowTiddlers.StyleSheetTiddlersBar = &quot;/*{{{*/\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar += &quot;#tiddlersBar .button {border:0}\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar += &quot;#tiddlersBar .tab {white-space:nowrap}\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar += &quot;#tiddlersBar {padding : 1em 0.5em 2px 0.5em}\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar += &quot;.tabUnselected .tabButton, .tabSelected .tabButton {padding : 0 2px 0 2px; margin: 0 0 0 4px;}\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar += &quot;.tiddler, .tabContents {border:1px [[ColorPalette::TertiaryPale]] solid;}\n&quot;;
+config.shadowTiddlers.StyleSheetTiddlersBar +=&quot;/*}}}*/&quot;;
+store.addNotification(&quot;StyleSheetTiddlersBar&quot;, refreshStyles);
+
+config.refreshers.none = function(){return true;}
+config.shadowTiddlers.PageTemplate=config.shadowTiddlers.PageTemplate.replace(/&lt;div id='tiddlerDisplay'&gt;&lt;\/div&gt;/m,&quot;&lt;div id='tiddlersBar' refresh='none' ondblclick='config.macros.tiddlersBar.onTiddlersBarAction(event)'&gt;&lt;/div&gt;\n&lt;div id='tiddlerDisplay'&gt;&lt;/div&gt;&quot;);
+
+//}}}</pre>
 </div>
 <div title="Timeline" creator="Abundant" modifier="Abundant" created="201102021148" tags="resource" changecount="1">
 <pre>!February 1st

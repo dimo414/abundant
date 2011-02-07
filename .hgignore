@@ -1,2 +1,3 @@
 glob:.pydevproject
 glob:.project
+glob:*.pyc
