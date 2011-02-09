@@ -102,12 +102,13 @@ def JSON_to_Issue(file):
 
 # unit test on bug reading and writing
 if __name__ == '__main__':
+    import os
+    dir = os.curdir+os.sep
     issue = Issue(title="This is a test")
-    issue.to_JSON('./')
-    issue2 = JSON_to_Issue('./'+issue.filename())
+    issue.to_JSON(dir)
+    issue2 = JSON_to_Issue(dir+issue.filename())
     if issue.id == issue2.id:
         print("Looks good")
     else:
         print("Something's wrong, different IDs")
-    import os
     os.remove(issue.filename())

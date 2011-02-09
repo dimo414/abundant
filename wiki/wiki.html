@@ -513,23 +513,6 @@ Also see [[AdvancedOptions]]</pre>
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="ColorPalette" creator="Abundant" modifier="Abundant" created="201102060223" changecount="1">
-<pre>Background: #fff
-Foreground: #000
-PrimaryPale: #fc8
-PrimaryLight: #f81
-PrimaryMid: #b40
-PrimaryDark: #410
-SecondaryPale: #ffc
-SecondaryLight: #fe8
-SecondaryMid: #db4
-SecondaryDark: #841
-TertiaryPale: #eee
-TertiaryLight: #ccc
-TertiaryMid: #999
-TertiaryDark: #666
-Error: #f88</pre>
-</div>
 <div title="Bug Structure" creator="Abundant" modifier="Abundant" created="201102030933" modified="201102031020" tags="feature" changecount="9">
 <pre>The bug datatype has the following features / data.  Note that throughout this document and others the terms bug and issue are used interchangeably.
 
@@ -561,6 +544,23 @@ Error: #f88</pre>
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
 </div>
+<div title="ColorPalette" creator="Abundant" modifier="Abundant" created="201102060223" changecount="1">
+<pre>Background: #fff
+Foreground: #000
+PrimaryPale: #fc8
+PrimaryLight: #f81
+PrimaryMid: #b40
+PrimaryDark: #410
+SecondaryPale: #ffc
+SecondaryLight: #fe8
+SecondaryMid: #db4
+SecondaryDark: #841
+TertiaryPale: #eee
+TertiaryLight: #ccc
+TertiaryMid: #999
+TertiaryDark: #666
+Error: #f88</pre>
+</div>
 <div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102042100" tags="feature" changecount="2">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
@@ -587,7 +587,7 @@ The central idea behind Abundant is that as many of these data-points as possibl
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102050259" changecount="7">
+<div title="Features" creator="Abundant" modifier="Abundant" created="201102021147" modified="201102091000" changecount="8">
 <pre>!Easy to Start, Scales With Use
 Abundant must be very easy to initialize (nothing more complicated than {{{ab init}}} preferably) and more importantly it must behave differently depending on the user, and scale to different behaviors as necessary.  For example, a one man project has no need for issue assignment, and it should be hidden from view.  However if a second person joins the team, Abundant needs to immediately provide this new functionality without the user having to explicitly change anything.
 
@@ -599,13 +599,7 @@ There needs to be a powerful web interface, however, in order to ensure users re
 This needs to include security controls to limit access as necessary.
 
 !Eclipse Plugin (Potentially)
-If time permits, an Eclipse plugin providing functionality like line highlighting and inline reporting would be very nice.
-
-&lt;hr&gt;
-
-!!Feature Details
-[[Issue Structure]]
-[[Command Interface]]</pre>
+If time permits, an Eclipse plugin providing functionality like line highlighting and inline reporting would be very nice.</pre>
 </div>
 <div title="Issue Module needs a unit test on the Issue class" creator="Abundant" modifier="Abundant" created="201102070936" modified="201102071137" tags="resolved" changecount="2">
 <pre>Test reading and writing of bugs
@@ -654,9 +648,10 @@ The central idea behind Abundant is that as many of these data-points as possibl
 <div title="Look For Domain Name" creator="Abundant" modifier="Abundant" created="201102060057" tags="issue" changecount="1">
 <pre>Should look for a domain name for Abundant sooner than later.</pre>
 </div>
-<div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102022239" changecount="3">
+<div title="MainMenu" creator="Abundant" modifier="Abundant" created="201102021049" modified="201102090959" changecount="4">
 <pre>[[Timeline]]
 [[Features]]
+[[Notes]]
 [[Issues|issue]]
 [[Resources]]</pre>
 </div>
@@ -792,13 +787,17 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 Decided against this plan.  Between the time, title, and username, it seems highly unlikely there will be conflicts.  Can always implement later if we decide to go a different direction.
 </pre>
 </div>
-<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102022255" tags="resource" changecount="4">
+<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" changecount="1">
+<pre>[[Issue Structure]]
+[[Command Interface]]
+[[Useful Mercurial Code]]</pre>
+</div>
+<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102090959" tags="resource" changecount="6">
 <pre>Helpful Reference Documents:
 
 [[Development Environment]]
 [[Build Abundant]]
-[[Wiki Markup|Markup]]
-</pre>
+[[Wiki Markup|Markup]]</pre>
 </div>
 <div title="SiteSubtitle" creator="Abundant" modifier="Abundant" created="201102021036" modified="201102021036" changecount="2">
 <pre>Documentation for developers</pre>
@@ -806,7 +805,7 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|
@@ -1014,6 +1013,32 @@ Dogfooding Abundant
 !April 1st
 Major coding complete
 Documentation well structured</pre>
+</div>
+<div title="Useful Mercurial Code" creator="Abundant" modifier="Abundant" created="201102090957" changecount="1">
+<pre>References to any code that would be useful to copy, replicate, or study
+
+![[util.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/util.py]]
+376: {{{def system}}}: execute a shell call
+822: {{{class atomictempfile}}}: handles saving data to a file atomically
+856: {{{def makedirs}}}: recursively makes directories, and applies the same permissions to all
+1033: {{{def makedate}}}: and following date functions - could be better than python's built in date tools
+1318: {{{def os_rcpath}}} and {{{def rcpath}}}: identify config files
+1550: {{{def parsebool}}}: converts strings into booleans - might be better to try to avoid if possible
+
+![[error.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/error.py]]
+How to handle exception structure
+
+![[hg|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/hg]]
+Follow from here to see how commands actually get executed
+
+![[commands.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/commands.py]]
+One file contains functions representing the actual work being done by each command, after any necessary configuration is done
+
+![[cmdutil.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/cmdutil.py]]
+TODO skim through
+
+![[mail.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/mail.py]]
+How mercurial handle's sending email.  (I didn't even realize it sent email :P)</pre>
 </div>
 <div title="Welcome" creator="Abundant" modifier="Abundant" created="201102021040" modified="201102021043" tags="meta" changecount="3">
 <pre>This wiki will serve as the internal documentation for developing Abundant.  It will be used to keep track at a high level the work being done developing Abundant, and be a resource for current and future developers.  Additionally, until such time as Abundant can hold its own, this wiki will be used as the issue tracker for Abundant.</pre>
