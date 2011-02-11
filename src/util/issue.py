@@ -85,9 +85,13 @@ class Issue:
                 self.id = util.hash(repr(self.creation_date)+self.title+(self.creator if self.creator != None else ''))
     
     def filename(self):
+        ''' Returns the suggested filename for this issue '''
         return self.id+".issue"
     
     def to_JSON(self, path, file=None):
+        ''' Converts the issue to a JSON datastructure and writes it
+        to the specified path and file.
+        '''
         if file == None:
             file = self.filename()
         dict = {}
@@ -98,6 +102,8 @@ class Issue:
                   indent=1,sort_keys=True)
     
 def JSON_to_Issue(file):
+    ''' Constructs a new issue from JSON data in the
+    specified file '''
     return Issue(**json.load(open(file)))
 
 # unit test on bug reading and writing
