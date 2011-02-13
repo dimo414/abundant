@@ -13,8 +13,14 @@ data, and passing work off to commands
 @author: Michael Diamond
 Created on Feb 10, 2011
 '''
-
+import sys
 import commands
 
+def handleError(err):
+    print(err, file=sys.stderr)
+    
 if __name__ == '__main__':
-    commands.init({})
+    try:
+        commands.init({})
+    except Exception as err:
+        handleError(err)

@@ -22,21 +22,3 @@ def hash(text):
     
     """
     return hashlib.sha1(text.encode('utf-8')).hexdigest()
-
-def makedirs(name, mode=None):
-    """recursive directory creation with parent mode inheritance
-    
-    From Mercurial's util.py"""
-    parent = os.path.abspath(os.path.dirname(name))
-    try:
-        os.mkdir(name)
-        if mode is not None:
-            os.chmod(name, mode)
-        return
-    except OSError as err:
-        if err.errno == errno.EEXIST:
-            return
-        if not name or parent == name or err.errno != errno.ENOENT:
-            raise
-    makedirs(parent, mode)
-    makedirs(name, mode)
