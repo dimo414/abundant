@@ -14,5 +14,14 @@ config settings, cli parameters, and any other work
 Created on Feb 10, 2011
 '''
 
-if __name__ == '__main__':
-    pass
+import os
+import util
+
+def init(ui, path='.'):
+    """Initialize an Abundant database by creating a
+    '.ab' directory in the specified directory, or the
+    cwd if not otherwise set."""
+    path = os.path.abspath(path)
+    print(path)
+    util.makedirs(path+os.sep+".ab")
+    

@@ -13,7 +13,7 @@ A set of utility operations used throughout Abundant.
 Created on Feb 7, 2011
 '''
 
-import hashlib
+import hashlib, os, errno
 
 def hash(text):
     """Return a hash of the given text for use as an id.
@@ -22,4 +22,21 @@ def hash(text):
     
     """
     return hashlib.sha1(text.encode('utf-8')).hexdigest()
-        
+
+def makedirs(name, mode=None):
+    """recursive directory creation with parent mode inheritance
+    
+    From Mercurial's util.py"""
+    parent = os.path.abspath(os.path.dirname(name))
+    try:
+        os.mkdir(name)
+        if mode is not None:
+            os.chmod(name, mode)
+        return
+    except OSError as err:
+        if err.errno == errno.EEXIST:
+            return
+        if not name or parent == name or err.errno != errno.ENOENT:
+            raise
+    makedirs(parent, mode)
+    makedirs(name, mode)

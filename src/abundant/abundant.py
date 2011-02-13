@@ -14,5 +14,7 @@ data, and passing work off to commands
 Created on Feb 10, 2011
 '''
 
+import commands
+
 if __name__ == '__main__':
-    pass
+    commands.init({})
