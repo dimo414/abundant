@@ -793,9 +793,10 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 Decided against this plan.  Between the time, title, and username, it seems highly unlikely there will be conflicts.  Can always implement later if we decide to go a different direction.
 </pre>
 </div>
-<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" changecount="1">
+<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" modified="201102132330" changecount="2">
 <pre>[[Issue Structure]]
 [[Command Interface]]
+[[Return Codes]]
 [[Useful Mercurial Code]]</pre>
 </div>
 <div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102090959" tags="resource" changecount="6">
@@ -804,6 +805,16 @@ Decided against this plan.  Between the time, title, and username, it seems high
 [[Development Environment]]
 [[Build Abundant]]
 [[Wiki Markup|Markup]]</pre>
+</div>
+<div title="Return Codes" creator="Abundant" modifier="Abundant" created="201102132343" changecount="1">
+<pre>We will try to keep consistent error codes for Abundant, organized into categories representing the type of error:
+
+|!Exit Code|!Meaning|!Description|
+|0|Success|The operation completed as expected|
+|1|Reasonable Failure|The operation completed, but did not succeed - this is similar to Grep's handling of no results|
+|2|Abort|Anything raising the Abort exception, this indicates the program realized it should not continue|
+|3|Invalid Command|The command was missing parameters or otherwise did not make sense|
+|10|Uncaught Exception|This indicates an exception was thrown which was not properly handled|</pre>
 </div>
 <div title="SiteSubtitle" creator="Abundant" modifier="Abundant" created="201102021036" modified="201102021036" changecount="2">
 <pre>Documentation for developers</pre>

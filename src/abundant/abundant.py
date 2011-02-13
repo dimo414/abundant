@@ -14,10 +14,13 @@ data, and passing work off to commands
 Created on Feb 10, 2011
 '''
 import sys
-import commands
+import commands,error
 
 def handleError(err):
     print(err, file=sys.stderr)
+    
+    if isinstance(err,error.Abort):
+        sys.exit(2)
     
 if __name__ == '__main__':
     try:
