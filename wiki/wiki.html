@@ -825,7 +825,7 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|
@@ -1034,7 +1034,7 @@ Dogfooding Abundant
 Major coding complete
 Documentation well structured</pre>
 </div>
-<div title="Useful Mercurial Code" creator="Abundant" modifier="Abundant" created="201102090957" changecount="1">
+<div title="Useful Mercurial Code" creator="Abundant" modifier="Abundant" created="201102090957" modified="201102141035" changecount="2">
 <pre>References to any code that would be useful to copy, replicate, or study
 
 ![[util.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/util.py]]
@@ -1044,6 +1044,9 @@ Documentation well structured</pre>
 1033: {{{def makedate}}}: and following date functions - could be better than python's built in date tools
 1318: {{{def os_rcpath}}} and {{{def rcpath}}}: identify config files
 1550: {{{def parsebool}}}: converts strings into booleans - might be better to try to avoid if possible
+
+![[dispatch.py|
+313: {{{def _parse}}}: parses the command line, using fancyopts
 
 ![[error.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/error.py]]
 How to handle exception structure

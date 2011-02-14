@@ -97,7 +97,7 @@ class Prefix(dict):
             if len(exactMatch) == 1:
                 return exactMatch[0]
             else:
-                raise error.AmbiguousPrefix(matched,prefix)
+                raise error.AmbiguousPrefix(prefix,matched)
     
     def prefix(self,item):
         if self._prefixes == None:

@@ -13,5 +13,25 @@ Contains all our system exceptions in one place
 Created on Feb 12, 2011
 '''
 
+# Global exceptions
+
 class Abort(Exception):
-    """Raised if a command cannot continue."""
+    '''Raised if a command cannot continue.'''
+
+class CommandError(Exception):
+    '''Raised if input to the command is invalid, wrong, or missing required fields'''
+
+# Prefix Exceptions
+
+class UnknownPrefix(Exception):
+    '''Raised if a given prefix does not map to any items'''
+    def __init__(self,prefix,*args):
+        Exception.__init__(self,*args)
+        self.prefix = prefix
+
+class AmbiguousPrefix(Exception):
+    '''Raised if a given prefix maps to multiple items'''
+    def __init__(self,prefix,choices,*args):
+        Exception.__init__(self,*args)
+        self.prefix
+        self.choices = choices
