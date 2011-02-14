@@ -1034,7 +1034,7 @@ Dogfooding Abundant
 Major coding complete
 Documentation well structured</pre>
 </div>
-<div title="Useful Mercurial Code" creator="Abundant" modifier="Abundant" created="201102090957" modified="201102141035" changecount="2">
+<div title="Useful Mercurial Code" creator="Abundant" modifier="Abundant" created="201102090957" modified="201102141149" changecount="4">
 <pre>References to any code that would be useful to copy, replicate, or study
 
 ![[util.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/util.py]]
@@ -1045,8 +1045,9 @@ Documentation well structured</pre>
 1318: {{{def os_rcpath}}} and {{{def rcpath}}}: identify config files
 1550: {{{def parsebool}}}: converts strings into booleans - might be better to try to avoid if possible
 
-![[dispatch.py|
+![[dispatch.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/dispatch.py]]
 313: {{{def _parse}}}: parses the command line, using fancyopts
+472: {{{def _dispatch}}}: the backbone of Mercurial, handles figuring out which command to run, and passing parameters
 
 ![[error.py|http://mercurial.selenic.com/hg/hg/file/8f5c865b7b4a/mercurial/error.py]]
 How to handle exception structure

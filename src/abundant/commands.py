@@ -20,11 +20,11 @@ import db as database
 
 # commands ordered alphabetically
 
-def init(ui, path='.'):
+def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
     '.ab' directory in the specified directory, or the
     cwd if not otherwise set."""
-    db = database.DB(path,False)
+    db = database.DB(dir,False)
     if db.exists():
         raise error.Abort("Abundant database already exists.")
     # don't need to make db.db because makedirs handles that
@@ -34,9 +34,24 @@ def init(ui, path='.'):
     # write any initial configuration to config file
     conf.close()
 
-def new(ui, db, title, assigned_to=None):
-    iss = issue.Issue(title=title, assigned_to=assigned_to)
+def new(ui, db, title, assign_to=None):
+    iss = issue.Issue(title=title, assigned_to=assign_to)
     iss.to_JSON(db.issues)
     print("Created new issue with ID %s" % iss.id)
-    if assigned_to != None:
-        print("  Assigned to %s" % assigned_to)
+    if assign_to != None:
+        print("  Assigned to %s" % assign_to)
+
+# commands listed in order of display
+table = {'init':
+            (init,
+             [('','dir', None, "directory to place database")],
+             "[--dir DIR]"),
+         'new':
+            (new,
+             [('a','assign_to', None, "assign the issue to the specified user")],
+             "title [-a USER]"),
+         'commands':
+            (None,[],"")}
+
+# commands that do not need a db object
+no_db = ['init']
