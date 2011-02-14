@@ -13,17 +13,23 @@ data, and passing work off to commands
 @author: Michael Diamond
 Created on Feb 10, 2011
 '''
-import sys
+import sys,traceback
 import commands,error
-
-def handleError(err):
-    print(err, file=sys.stderr)
-    
-    if isinstance(err,error.Abort):
-        sys.exit(2)
     
 if __name__ == '__main__':
     try:
         commands.init({})
+        
+        # Global error handling starts here
+    except error.Abort as err:
+        print("Abort:",err,file=sys.stderr)
+        
     except Exception as err:
-        handleError(err)
+        '''Exceptions we were not expecting.'''
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print("Unexpected exception was raised.  This should not happen.",file=sys.stderr)
+        print("Please report the entire output to Michael",file=sys.stderr)
+        print("\nCommand line arguments:\n",sys.argv,file=sys.stderr)
+        print(file=sys.stderr)
+        traceback.print_exception(exc_type,exc_value,exc_traceback)
+        
