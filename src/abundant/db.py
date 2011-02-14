@@ -15,23 +15,29 @@ Created on Feb 13, 2011
 '''
 
 import os
-import util,error
+import util
 
 class DB(object):
     '''
     A representation of the current database
     '''
 
-    def __init__(self,path):
+    def __init__(self,path,recurse=True):
         '''
         Tries to find an Abundant database in the current or
-        parent directory of path.  If it cannot, raises an Abort
+        parent directory of path.  If it cannot, constructs what
+        database should look like, use exists() to check for existence
         '''
-        self.path = util.find_db(path)
+        self.search = path
+        self.path = None
+        if recurse:
+            self.path = util.find_db(path)
         if self.path == None:
-            raise error.Abort(
-                "No Abundant database found\nLooked for '.ab' directory in all parent directories of %s" % path)
+            self.path = path
         self.db = os.path.join(self.path,'.ab')
         self.issues = os.path.join(self.db,'issues')
         self.cache = os.path.join(self.db,'.cache')
+        self.conf = os.path.join(self.db,"ab.conf")
         
+    def exists(self):
+        return os.path.exists(self.db)

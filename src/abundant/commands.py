@@ -16,6 +16,7 @@ Created on Feb 10, 2011
 
 import os
 import issue,error
+import db as database
 
 # commands ordered alphabetically
 
@@ -23,14 +24,14 @@ def init(ui, path='.'):
     """Initialize an Abundant database by creating a
     '.ab' directory in the specified directory, or the
     cwd if not otherwise set."""
-    path = os.path.join(os.path.abspath(path),".ab")
-    if os.path.exists(path):
+    db = database.DB(path,False)
+    if db.exists():
         raise error.Abort("Abundant database already exists.")
-    os.makedirs(path)
-    os.mkdir(os.path.join(path,"issues"))
-    os.mkdir(os.path.join(path,".cache"))
-    conf = open(os.path.join(path,"ab.conf"),"w")
-    # write any initial configuration to ab.conf
+    # don't need to make db.db because makedirs handles that
+    os.makedirs(db.issues)
+    os.mkdir(db.cache)
+    conf = open(db.conf,"w")
+    # write any initial configuration to config file
     conf.close()
 
 def new(ui, db, title, assigned_to=None):
