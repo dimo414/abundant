@@ -13,12 +13,22 @@ data, and passing work off to commands
 @author: Michael Diamond
 Created on Feb 10, 2011
 '''
-import sys,traceback
-import commands,error
+import os,sys,traceback
+import commands,error,db
     
-if __name__ == '__main__':
+def exec(cmds,cwd):
     try:
-        commands.init({})
+        task = cmds[1]
+        params = cmds[2:]
+        
+        if task == "init":
+            commands.init({},cwd)
+            sys.exit(0)
+        else:
+            d = db.DB(cwd)
+                
+        if task == "new":
+            commands.new({},d,params[0])
         
         # Global error handling starts here
     except error.Abort as err:
@@ -33,3 +43,7 @@ if __name__ == '__main__':
         print(file=sys.stderr)
         traceback.print_exception(exc_type,exc_value,exc_traceback)
         
+if __name__ == '__main__':
+    args = "new HELLOOOO".split()
+    sys.argv.extend(args)
+    exec(sys.argv,os.getcwd())

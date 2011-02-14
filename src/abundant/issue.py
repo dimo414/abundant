@@ -11,8 +11,7 @@
 Created on Feb 2, 2011
 '''
 
-import json
-import time
+import json,os,time
 
 import util
 
@@ -98,7 +97,7 @@ class Issue:
         for k, v in self.__dict__.items():
             if(v != None and v != []):
                 dict[k] = v
-        json.dump(dict,open(path+file,'w'),
+        json.dump(dict,open(os.path.join(path,file),'w'),
                   indent=1,sort_keys=True)
     
 def JSON_to_Issue(file):
@@ -108,11 +107,9 @@ def JSON_to_Issue(file):
 
 # unit test on bug reading and writing
 if __name__ == '__main__':
-    import os
-    dir = os.curdir+os.sep
     issue = Issue(title="This is a test")
     issue.to_JSON(dir)
-    issue2 = JSON_to_Issue(dir+issue.filename())
+    issue2 = JSON_to_Issue(os.path.join(dir,issue.filename()))
     if issue.id == issue2.id:
         print("Looks good")
     else:
