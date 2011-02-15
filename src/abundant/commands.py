@@ -20,6 +20,9 @@ import db as database
 
 # commands ordered alphabetically
 
+def help(ui):
+    print("Oh.  Hello.")
+
 def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
     '.ab' directory in the specified directory, or the
@@ -50,8 +53,11 @@ table = {'init':
             (new,
              [('a','assign_to', None, "assign the issue to the specified user")],
              "title [-a USER]"),
-         'commands':
-            (None,[],"")}
+         'help':
+            (help,[],"TODO")}
+
+#command to run on command lookup failure
+fallback_cmd = 'help'
 
 # commands that do not need a db object
-no_db = ['init']
+no_db = ['init','help']

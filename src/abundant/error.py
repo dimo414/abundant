@@ -18,6 +18,10 @@ Created on Feb 12, 2011
 class Abort(Exception):
     '''Raised if a command cannot continue.'''
 
+class SeriousAbort(Abort):
+    '''Raised when the issue should have been previously prevented
+    in the code.''' 
+
 class CommandError(Exception):
     '''Raised if input to the command is invalid, wrong, or missing required fields'''
 

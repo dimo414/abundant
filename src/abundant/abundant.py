@@ -22,23 +22,27 @@ cmdPfx = prefix.Prefix(commands.table.keys())
 def exec(cmds,cwd):
     try:
         if len(cmds) < 1:
-            prefix = 'commands'
+            prefix = commands.fallback_cmd
             args = []
         else:
-            prefix = cmds[1]
-            args = cmds[2:]
+            prefix = cmds[0]
+            args = cmds[1:]
         
         # load config settings
         
         try:
             task = cmdPfx[prefix]
+            
+            
         except error.UnknownPrefix as err:
             print("Unknown Command: %s\n" % err.prefix)
-            task = 'commands'
+            task = commands.fallback_cmd
+            args = []
         except error.AmbiguousPrefix as err:
             print("Ambiguous Command: %s" % err.prefix)
             print("Did you mean: %s\n" % str(err.choices)[1:-1])
-            task = 'commands'
+            task = commands.fallback_cmd
+            args = []
         
         ui = {}
         
@@ -71,6 +75,9 @@ def exec(cmds,cwd):
 def _parse(task,args):
     options = {}
     entry = commands.table[task]
+    if entry == None:
+        raise error.SeriousAbort("_parse should only be passed actual "
+                                 "commands that are known to exist.")
     try:
         args = fancyopts.fancyopts(args, entry[1], options)
     except fancyopts.getopt.GetoptError as err:
@@ -79,6 +86,6 @@ def _parse(task,args):
     return (entry[0], args, options)
         
 if __name__ == '__main__':
-    args = "new BADABOOOOP".split()
-    sys.argv.extend(args)
-    exec(sys.argv,os.getcwd())
+    #args = "new BADABOOOOP".split()
+    #sys.argv.extend(args)
+    exec(sys.argv[1:],os.getcwd())
