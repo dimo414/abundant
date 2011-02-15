@@ -50,9 +50,11 @@ def exec(cmds,cwd):
         
         if task not in commands.no_db:
             db = database.DB(cwd)
-            func(ui,db,*args,**options)
+            if not db.exists():
+                raise error.Abort("No Abundant database found.")
+            return func(ui,db,*args,**options)
         else:
-            func(ui,*args,**options)
+            return func(ui,*args,**options)
             
         # Global error handling starts here
     except error.Abort as err:
@@ -79,13 +81,18 @@ def _parse(task,args):
         raise error.SeriousAbort("_parse should only be passed actual "
                                  "commands that are known to exist.")
     try:
+        print(args)
         args = fancyopts.fancyopts(args, entry[1], options)
+        print(args,options)
     except fancyopts.getopt.GetoptError as err:
         raise error.CommandError(err)
     
     return (entry[0], args, options)
         
 if __name__ == '__main__':
-    #args = "new BADABOOOOP".split()
-    #sys.argv.extend(args)
-    exec(sys.argv[1:],os.getcwd())
+    args = ("new ISSUE "
+        "-a assign -l listen,to,me "
+        "--target tomorrow -s realbad "
+        "-c cats -u ME").split(' ')
+    sys.argv.extend(args)
+    sys.exit(exec(sys.argv[1:],os.getcwd()))
