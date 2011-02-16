@@ -14,7 +14,7 @@ data, and passing work off to commands
 Created on Feb 10, 2011
 '''
 import os,sys,traceback
-import commands,error,fancyopts,prefix
+import commands,error,fancyopts,prefix,util
 import db as database
 
 cmdPfx = prefix.Prefix(commands.table.keys())
@@ -46,7 +46,7 @@ def exec(cmds,cwd):
         
         ui = {}
         
-        func, args, options = _parse(task,args)
+        func, options, args = _parse(task,args)
         
         if task not in commands.no_db:
             db = database.DB(cwd)
@@ -75,24 +75,20 @@ def exec(cmds,cwd):
         sys.exit(10)
 
 def _parse(task,args):
-    options = {}
     entry = commands.table[task]
     if entry == None:
         raise error.SeriousAbort("_parse should only be passed actual "
                                  "commands that are known to exist.")
-    try:
-        print(args)
-        args = fancyopts.fancyopts(args, entry[1], options)
-        print(args,options)
-    except fancyopts.getopt.GetoptError as err:
-        raise error.CommandError(err)
     
-    return (entry[0], args, options)
+    options,arg = util.parse_cli(args,entry[1])
+    
+    return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("new ISSUE "
-        "-a assign -l listen,to,me "
-        "--target tomorrow -s realbad "
-        "-c cats -u ME").split(' ')
+    #args = ("new ISSUE "
+    #    "-a assign -l listen,to,me "
+    #    "--target tomorrow -s realbad "
+    #    "-c cats -u ME").split(' ')
+    args = ['init']
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))

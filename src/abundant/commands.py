@@ -21,7 +21,7 @@ Created on Feb 10, 2011
 '''
 
 import os
-import issue,error
+import error,issue,util
 import db as database
 
 # commands ordered alphabetically
@@ -60,24 +60,33 @@ def new(ui, db, *args, **opts):
         print("  Assigned to %s" % iss.assigned_to)
 
 # commands listed in order of display
-table = {'init':
+# the structure is similar to Mercurial's, but
+# not identical in syntax
+# see util.parse_cli for sytax instructions
+table = {'help':
+            (help,[],"TODO"),
+         'init':
             (init,
-             [('','dir', None, "directory to place database")],
+             [
+              util.parser_option('--dir')
+              ],
              "[--dir DIR]"),
          'new':
             (new,
-             [('a','assign_to', None, "assign the issue to the specified user"),
+             [
+              (['-a','--assign_to'],
+               {'dest':'assigned_to'})
+              ],
+             [util.parser_option('a','assign_to',help="assign the issue to the specified user"),
               ('l','listeners', None, "comma separated list of users who should know about this issue"),
               ('t','type', None, "the type of issue, such as Bug or Feature Request"),
               ('','target', None, "a target date or milestone for resolution"),
               ('s','severity', None, "the severity of the issue"),
               ('c','category', None, "categorize the issue"),
-              #('u','user', None, "the user filing the bug")
+              ('u','user', None, "the user filing the bug")
               ],
              "title [-a USER] [-l LISTENER[,...]] [-t TYPE] [--target TARGET] "
-             "[-s SEVERITY] [-c CATEGORY] [-u USER]"),
-         'help':
-            (help,[],"TODO")}
+             "[-s SEVERITY] [-c CATEGORY] [-u USER]")}
 
 #command to run on command lookup failure
 fallback_cmd = 'help'
