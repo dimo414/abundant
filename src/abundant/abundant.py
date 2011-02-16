@@ -35,12 +35,12 @@ def exec(cmds,cwd):
             
             
         except error.UnknownPrefix as err:
-            print("Unknown Command: %s\n" % err.prefix)
+            print("Unknown Command: %s\n" % err.prefix,file=sys.stderr)
             task = commands.fallback_cmd
             args = []
         except error.AmbiguousPrefix as err:
-            print("Ambiguous Command: %s" % err.prefix)
-            print("Did you mean: %s\n" % str(err.choices)[1:-1])
+            print("Ambiguous Command: %s" % err.prefix,file=sys.stderr)
+            print("Did you mean: %s\n" % str(err.choices)[1:-1],file=sys.stderr)
             task = commands.fallback_cmd
             args = []
         
@@ -60,6 +60,9 @@ def exec(cmds,cwd):
     except error.Abort as err:
         print("Abort:",err,file=sys.stderr)
         sys.exit(2)
+    except error.MissingArguments as err:
+        print("Command missing arguments:")
+        exec([commands.fallback_cmd,err.task],cwd)
     except error.CommandError as err:
         print("Invalid Command:",err,file=sys.stderr)
         sys.exit(3)
@@ -82,12 +85,12 @@ def _parse(task,args):
     
     options,arg = util.parse_cli(args,entry[1])
     
+    if len(arg) < entry[2]:
+        raise error.MissingArguments("%s expected more arguments." % task)
+    
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("new ISSUE "
-        "-a assign -l listen -l to -l me "
-        "--target tomorrow -s realbad "
-        "-c cats -u ME").split(' ')
+    args = ("child 8 3").split(' ')
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))

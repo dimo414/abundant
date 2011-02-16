@@ -101,7 +101,7 @@ class Issue:
     
     def filename(self):
         ''' Returns the suggested filename for this issue '''
-        return self.id+".issue"
+        return self.id+ext
     
     def to_JSON(self, path, file=None):
         ''' Converts the issue to a JSON datastructure and writes it
@@ -152,6 +152,9 @@ def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
     specified file '''
     return Issue(**json.load(open(file)))
+
+
+ext = ".issue"
 
 #Constructs an identity issue to compare
 #others against for changes'''

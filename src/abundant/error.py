@@ -25,6 +25,12 @@ class SeriousAbort(Abort):
 class CommandError(Exception):
     '''Raised if input to the command is invalid, wrong, or missing required fields'''
 
+class MissingArguments(CommandError):
+    '''Raised if the command expected more arguments than it received'''
+    def __init__(self,task,*args):
+        Exception.__init__(self,*args)
+        self.task = task
+
 # Prefix Exceptions
 
 class UnknownPrefix(Exception):
@@ -37,5 +43,5 @@ class AmbiguousPrefix(Exception):
     '''Raised if a given prefix maps to multiple items'''
     def __init__(self,prefix,choices,*args):
         Exception.__init__(self,*args)
-        self.prefix
+        self.prefix = prefix
         self.choices = choices

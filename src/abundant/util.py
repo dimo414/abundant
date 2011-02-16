@@ -83,5 +83,12 @@ def parse_cli(args, opts):
     
     return parser.parse_args(args)
     
-        
+def issue_prefix(db):
+    '''Given a database structure, return a Prefix
+    object of the prefixes of the issues.
     
+    This is a potentially expensive command, avoid running
+    more than necessary.'''
+    import issue, prefix
+    list = [i.replace(issue.ext,'') for i in os.listdir(db.issues)]
+    return prefix.Prefix(list)

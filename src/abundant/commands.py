@@ -26,8 +26,20 @@ import db as database
 
 # commands ordered alphabetically
 
-def help(ui):
+def child(ui,db,child,parent):
+    prefix = util.issue_prefix(db)
+    try:
+        child = prefix[child]
+        parent = prefix[parent]
+    except error.AmbiguousPrefix as err:
+        import sys
+        print("Issue ID %s is ambiguous" % err.prefix,file=sys.stderr)
+        
+    
+
+def help(ui,*args):
     print("Help documentation goes here.")
+    print(args)
     return 0
 
 def init(ui, dir='.'):
@@ -45,7 +57,6 @@ def init(ui, dir='.'):
     conf.close()
 
 def new(ui, db, *args, **opts):
-    
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=opts['assign_to'],
                       listeners=opts['listener'],
@@ -63,12 +74,13 @@ def new(ui, db, *args, **opts):
 # not identical in syntax
 # see util.parse_cli for sytax instructions
 table = {'help':
-            (help,[],"TODO"),
+            (help,[],0,"[topic]"),
          'init':
             (init,
              [
               util.parser_option('--dir')
               ],
+              0,
              "[--dir DIR]"),
          'new':
             (new,
@@ -81,8 +93,15 @@ table = {'help':
               util.parser_option('-c','--category',help="categorize the issue"),
               util.parser_option('-u','--user',help="the user filing the bug")
               ],
+              1,
              "title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] "
-             "[-s SEVERITY] [-c CATEGORY] [-u USER]")}
+             "[-s SEVERITY] [-c CATEGORY] [-u USER]"),
+         'child':
+            (child,
+             [],
+             2,
+             "SOMETHING")
+        }
 
 #command to run on command lookup failure
 fallback_cmd = 'help'
