@@ -15,12 +15,19 @@ Created on Feb 10, 2011
 '''
 import os,sys,traceback
 import commands,error,prefix,util
+import ui as usrint
 import db as database
 
 cmdPfx = prefix.Prefix(commands.table.keys())
 
 def exec(cmds,cwd):
     try:
+        ui = usrint.UI()
+    except:
+        sys.stderr.write("FAILED TO CREATE UI OBJECT.\n"
+              "This should not have been possible.")
+    try:
+        
         if len(cmds) < 1:
             prefix = commands.fallback_cmd
             args = []
@@ -33,18 +40,15 @@ def exec(cmds,cwd):
         try:
             task = cmdPfx[prefix]
             
-            
         except error.UnknownPrefix as err:
-            print("Unknown Command: %s\n" % err.prefix,file=sys.stderr)
+            ui.alert("Unknown Command: %s\n" % err.prefix)
             task = commands.fallback_cmd
             args = []
         except error.AmbiguousPrefix as err:
-            print("Ambiguous Command: %s" % err.prefix,file=sys.stderr)
-            print("Did you mean: %s\n" % str(err.choices)[1:-1],file=sys.stderr)
+            ui.alert("Ambiguous Command: %s" % err.prefix)
+            ui.alert("Did you mean: %s\n" % str(err.choices)[1:-1])
             task = commands.fallback_cmd
             args = []
-        
-        ui = {}
         
         func, options, args = _parse(task,args)
         
@@ -58,22 +62,22 @@ def exec(cmds,cwd):
             
         # Global error handling starts here
     except error.Abort as err:
-        print("Abort:",err,file=sys.stderr)
+        ui.alert("Abort:",err,file=sys.stderr)
         sys.exit(2)
     except error.MissingArguments as err:
-        print("Command missing arguments:")
+        ui.alert("Command missing arguments:\n")
         exec([commands.fallback_cmd,err.task],cwd)
+        sys.exit(3)
     except error.CommandError as err:
-        print("Invalid Command:",err,file=sys.stderr)
+        ui.alert("Invalid Command:\n",err)
         sys.exit(3)
         
     except Exception as err:
         '''Exceptions we were not expecting.'''
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        print("Unexpected exception was raised.  This should not happen.",file=sys.stderr)
-        print("Please report the entire output to Michael",file=sys.stderr)
-        print("\nCommand line arguments:\n",sys.argv,file=sys.stderr)
-        print(file=sys.stderr)
+        ui.alert("Unexpected exception was raised.  This should not happen.\n")
+        ui.alert("Please report the entire output to Michael\n")
+        ui.alert("\nCommand line arguments:\n  ",' '.join(sys.argv))
         traceback.print_exception(exc_type,exc_value,exc_traceback)
         sys.exit(10)
 

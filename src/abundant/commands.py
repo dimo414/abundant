@@ -11,11 +11,6 @@ This file handles the actual functionality of
 command line tasks.  There is a one-to-one mapping
 of command line tasks to functions in this module.
 
-This is the deepest module which should be allowed
-to print.  Any module called by this one, directly
-or indirectly, should return values or raise
-exceptions, and never print to stdout or anywhere else. 
-
 @author: Michael Diamond
 Created on Feb 10, 2011
 '''
@@ -32,15 +27,13 @@ def child(ui,db,child,parent):
         child = prefix[child]
         parent = prefix[parent]
     except error.AmbiguousPrefix as err:
-        import sys
-        print("Issue ID %s is ambiguous" % err.prefix,file=sys.stderr)
+        ui.alert("Issue ID %s is ambiguous" % err.prefix)
         
     
 
 def help(ui,*args):
-    print("Help documentation goes here.")
-    print(args)
-    return 0
+    ui.write("Help documentation goes here.")
+    ui.write(args)
 
 def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
@@ -66,8 +59,8 @@ def new(ui, db, *args, **opts):
                       creator=opts['user']
                       )
     iss.to_JSON(db.issues)
-    print("Created new issue with ID %s" % iss.id)
-    print(iss.descChanges(issue.base))
+    ui.write("Created new issue with ID %s" % iss.id)
+    ui.write(iss.descChanges(issue.base))
 
 # commands listed in order of display
 # the structure is similar to Mercurial's, but
