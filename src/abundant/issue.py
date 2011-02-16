@@ -25,6 +25,18 @@ class Issue:
     is optional, and defaults to None or the empty list.  In general, data without
     values should be hidden from the user as if it didn't exist at all.
     '''
+    
+    _pretty = {'id':"ID",
+                 'parent':"Parent", 'children':"Children", 'duplicates':"Duplicates",
+                 'creator':"Creator", 'assigned_to':"Assigned To", 'listeners':"Listeners",
+                 'type':"Type", 'target':"Target", 'severity':"Severity", 'status':"Status",
+                        'resolution':"Resolution", 'category':"Category",
+                 'creation_date':"Created", 'resolved_date':"Resolved", 'projection':"Projection",
+                        'estimate':"Estimate",
+                 'title':"Title", 'paths':"Paths", 'description':"Description",'reproduction':"Reproduction Steps",
+                        'expected':"Expected Result", 'trace':"Stack Trace",
+                 'comments':"Comments"
+               }
 
     def __init__(self,
                  id=None,
@@ -81,7 +93,11 @@ class Issue:
         if self.id == None:
             if self.creation_date == None:
                 self.creation_date = time.time();
-                self.id = util.hash(repr(self.creation_date)+self.title+(self.creator if self.creator != None else ''))
+                self.id = util.hash(repr(self.creation_date)+
+                                    (self.title if self.title != None else '')+
+                                    (self.creator if self.creator != None else ''))
+    def pretty(self,key):
+        return self._pretty[key]
     
     def filename(self):
         ''' Returns the suggested filename for this issue '''
@@ -100,18 +116,57 @@ class Issue:
         json.dump(dict,open(os.path.join(path,file),'w'),
                   indent=1,sort_keys=True)
     
+    def diff(self, iss):
+        '''Returns the difference of two issues.
+        See util.diff_dict for the expected structure
+        of the returned data.'''
+        return util.diff_dict(self.__dict__,iss.__dict__)
+    
+    def descChanges(self, iss, skip=['id','creation_date']):
+        '''Returns a structured string describing the changes
+        between two issues.'''
+        diff = self.diff(iss)
+        out = []
+        
+        def arc(key,word,diff,pad='  '):
+            added, removed, changed = diff
+            if key in added:
+                return "%sAdded %s as %s\n" % (pad,util.list2str(added[key]),word)
+            if key in removed:
+                return "%sRemoved %s, was %s\n" % (pad,word,util.list2str(added[key]))
+            if key in changed:
+                now, was = changed[key]
+                return "%sChanged %s to %s, was %s\n" % (pad,word,util.list2str(now),util.list2str(was))
+            return ''
+        
+        # construct list of strings then join
+        # http://www.skymind.com/~ocrow/python_string/
+        
+        for key in self.__dict__.keys():
+            if key not in skip:
+                out.append(arc(key,self.pretty(key),diff))
+        return ''.join(out)
+
+    
 def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
     specified file '''
     return Issue(**json.load(open(file)))
 
+#Constructs an identity issue to compare
+#others against for changes'''
+base = Issue()
+
 # unit test on bug reading and writing
 if __name__ == '__main__':
+    dir = '.'
     issue = Issue(title="This is a test")
     issue.to_JSON(dir)
     issue2 = JSON_to_Issue(os.path.join(dir,issue.filename()))
-    if issue.id == issue2.id:
-        print("Looks good")
+    if sum([len(s) for s in issue.diff(issue2)]) == 0:
+        print("Read and write looks good")
     else:
-        print("Something's wrong, different IDs")
+        print("Something's wrong, different structure after read/write")
+        print("Diff:",issue.diff(issue2))
     os.remove(issue.filename())
+    print("Diff of issue with base:",issue.diff(base))

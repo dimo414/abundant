@@ -32,6 +32,40 @@ def find_db(p):
 
     return p
 
+def list2str(ls):
+    '''Returns a list as a pretty string'''
+    if isinstance(ls,list):
+        return str(ls)[1:-1]
+    return ls
+
+def diff_dict(to,fro):
+    '''Identifies and returns the differences between
+    two dicts as a tuple of (added,removed,changed)
+    where added is data in to but not in fro, removed
+    is in fro but not to, and changed contains tuples
+    of data in to that is different from fro.
+    
+    Note that this method explicitly treats None and []
+    as nonexistant for the sake of the diff.
+    
+    To get a count of the number of changes:
+    sum([len(s) for s in to.diff(fro)])'''
+    added = {}
+    removed = {}
+    changed = {}
+    def empty(dict,key):
+        return dict[key] == None or dict[key] == []
+    
+    for key in fro.keys():
+        if key not in to or empty(to,key) and not empty(fro,key):
+            removed[key] = fro[key]
+    for key in to.keys():
+        if key not in fro or empty(fro,key) and not empty(to,key):
+            added[key] = to[key]
+        elif to[key] != [] and fro[key] != [] and to[key] != fro[key]:
+            changed[key] = (to[key],fro[key])  
+    return (added,removed,changed)  
+
 parser_option = optparse.make_option
 
 def parse_cli(args, opts):
