@@ -14,7 +14,7 @@ data, and passing work off to commands
 Created on Feb 10, 2011
 '''
 import os,sys,traceback
-import commands,error,fancyopts,prefix,util
+import commands,error,prefix,util
 import db as database
 
 cmdPfx = prefix.Prefix(commands.table.keys())
@@ -85,10 +85,9 @@ def _parse(task,args):
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    #args = ("new ISSUE "
-    #    "-a assign -l listen,to,me "
-    #    "--target tomorrow -s realbad "
-    #    "-c cats -u ME").split(' ')
-    args = ['init']
+    args = ("new ISSUE "
+        "-a assign -l listen -l to -l me "
+        "--target tomorrow -s realbad "
+        "-c cats -u ME").split(' ')
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))

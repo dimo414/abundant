@@ -48,7 +48,7 @@ def new(ui, db, *args, **opts):
     
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=opts['assign_to'],
-                      listeners=opts['listeners'].split(',') if opts['listeners'] else [],
+                      listeners=opts['listener'],
                       type=opts['type'],
                       severity=opts['severity'],
                       category=opts['category'],
@@ -56,8 +56,7 @@ def new(ui, db, *args, **opts):
                       )
     iss.to_JSON(db.issues)
     print("Created new issue with ID %s" % iss.id)
-    if iss.assigned_to:
-        print("  Assigned to %s" % iss.assigned_to)
+    print(iss.descChanges(issue.base))
 
 # commands listed in order of display
 # the structure is similar to Mercurial's, but
@@ -74,18 +73,15 @@ table = {'help':
          'new':
             (new,
              [
-              (['-a','--assign_to'],
-               {'dest':'assigned_to'})
+              util.parser_option('-a','--assign_to',help="assign the issue to the specified user"),
+              util.parser_option('-l','--listener',action='append',help="user who should follow this issue"),
+              util.parser_option('-t','--type',help="the type of issue, such as Bug or Feature Request"),
+              util.parser_option('--target',help="a target date or milestone for resolution"),
+              util.parser_option('-s','--severity',help="the severity of the issue"),
+              util.parser_option('-c','--category',help="categorize the issue"),
+              util.parser_option('-u','--user',help="the user filing the bug")
               ],
-             [util.parser_option('a','assign_to',help="assign the issue to the specified user"),
-              ('l','listeners', None, "comma separated list of users who should know about this issue"),
-              ('t','type', None, "the type of issue, such as Bug or Feature Request"),
-              ('','target', None, "a target date or milestone for resolution"),
-              ('s','severity', None, "the severity of the issue"),
-              ('c','category', None, "categorize the issue"),
-              ('u','user', None, "the user filing the bug")
-              ],
-             "title [-a USER] [-l LISTENER[,...]] [-t TYPE] [--target TARGET] "
+             "title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] "
              "[-s SEVERITY] [-c CATEGORY] [-u USER]")}
 
 #command to run on command lookup failure

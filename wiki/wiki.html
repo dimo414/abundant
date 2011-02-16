@@ -544,8 +544,10 @@ Also see [[AdvancedOptions]]</pre>
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
 </div>
-<div title="Build Alternative to fancyopts" creator="Abundant" modifier="Abundant" created="201102151146" tags="issue" changecount="1">
-<pre>Mercurial uses fancyopts to parse it's parameters.  Though the structure for describing commands is decent (commands.py) fancyopts is limited and uses getopt.  Consider building a replacement parser if we cannot make fancyopts work easily.</pre>
+<div title="Build Alternative to fancyopts" creator="Abundant" modifier="Abundant" created="201102151146" modified="201102161105" tags="resolved" changecount="2">
+<pre>Mercurial uses fancyopts to parse it's parameters.  Though the structure for describing commands is decent (commands.py) fancyopts is limited and uses getopt.  Consider building a replacement parser if we cannot make fancyopts work easily.
+
+Using custom tool now.  Deleted fancyopts.</pre>
 </div>
 <div title="ColorPalette" creator="Abundant" modifier="Abundant" created="201102060223" changecount="1">
 <pre>Background: #fff
@@ -656,6 +658,9 @@ None of these datapoints are required for a user to submit a &quot;complete&quot
 |Comments|List of comments, which each consist of a user, date, and text|
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
+</div>
+<div title="Issue with `new` and empty title" creator="Abundant" modifier="Abundant" created="201102161106" tags="issue" changecount="1">
+<pre>Do we really want to allow no title?  If so, should handle differently than we do now.</pre>
 </div>
 <div title="Look For Domain Name" creator="Abundant" modifier="Abundant" created="201102060057" tags="issue" changecount="1">
 <pre>Should look for a domain name for Abundant sooner than later.</pre>
@@ -1072,6 +1077,9 @@ How mercurial handle's sending email.  (I didn't even realize it sent email :P)<
 </div>
 <div title="issue" creator="Abundant" modifier="Abundant" created="201102021055" tags="resource" changecount="1">
 <pre>To track issues before Abundant is powerful enough to do so, create a new tiddler and tag it with &quot;issue&quot;.  It will show up in this list.  Once an issue is resolved, tag it with &quot;[[resolved]]&quot; instead.</pre>
+</div>
+<div title="util.list2str() isn't quite right" creator="Abundant" modifier="Abundant" created="201102161108" tags="issue" changecount="1">
+<pre>Works for now, but does not actually generate a pretty string from a list.</pre>
 </div>
 <div title="zzConfig" creator="YourName" modifier="Abundant" created="201102021034" modified="201102021035" tags="systemConfig" changecount="2">
 <pre>//{{{
