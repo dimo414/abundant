@@ -13,7 +13,7 @@ Created on Feb 2, 2011
 
 import json,os,time
 
-import util
+import error,util
 
 class Issue:
     '''
@@ -151,7 +151,10 @@ class Issue:
 def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
     specified file '''
-    return Issue(**json.load(open(file)))
+    try:
+        return Issue(**json.load(open(file)))
+    except IOError:
+        raise error.NoSuchIssue("No issue could be found at: \n  %s" % file)
 
 
 ext = ".issue"

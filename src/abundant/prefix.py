@@ -102,7 +102,7 @@ class Prefix(dict):
     def prefix(self,item):
         if self._prefixes == None:
             self._prefixes = _prefixes(self.list)
-        return self._prefixes[item]
+        return self._prefixes.get(item)
             
 if __name__ == '__main__':
     p = Prefix(['a','aaab','hello','yellow','code','contribute'])

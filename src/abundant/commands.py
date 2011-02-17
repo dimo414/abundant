@@ -22,12 +22,8 @@ import db as database
 # commands ordered alphabetically
 
 def child(ui,db,child,parent):
-    prefix = util.issue_prefix(db)
-    try:
-        child = prefix[child]
-        parent = prefix[parent]
-    except error.AmbiguousPrefix as err:
-        ui.alert("Issue ID %s is ambiguous" % err.prefix)
+    child = db.get_issue(child)
+    parent = db.get_issue(parent)
         
     
 

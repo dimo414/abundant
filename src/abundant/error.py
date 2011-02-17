@@ -18,6 +18,9 @@ Created on Feb 12, 2011
 class Abort(Exception):
     '''Raised if a command cannot continue.'''
 
+class NoSuchIssue(Abort):
+    '''Raised if a requested issue does not exist.'''
+
 class SeriousAbort(Abort):
     '''Raised when the issue should have been previously prevented
     in the code.''' 

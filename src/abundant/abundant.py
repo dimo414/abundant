@@ -62,7 +62,7 @@ def exec(cmds,cwd):
             
         # Global error handling starts here
     except error.Abort as err:
-        ui.alert("Abort:",err,file=sys.stderr)
+        ui.alert("Abort:",err)
         sys.exit(2)
     except error.MissingArguments as err:
         ui.alert("Command missing arguments:\n")
