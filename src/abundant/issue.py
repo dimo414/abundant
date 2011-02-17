@@ -40,12 +40,12 @@ class Issue:
 
     def __init__(self,
                  id=None,
-                 parent=None, children=[], duplicates=None,
-                 creator=None, assigned_to=None, listeners=[],
+                 parent=None, children=None, duplicates=None,
+                 creator=None, assigned_to=None, listeners=None,
                  type=None, target=None, severity=None, status=None, resolution=None, category=None,
                  creation_date=None, resolved_date=None, projection=None, estimate=None,
-                 title=None, paths=[], description=None, reproduction=None, expected=None, trace=None,
-                 comments=[]):
+                 title=None, paths=None, description=None, reproduction=None, expected=None, trace=None,
+                 comments=None):
         '''
         The issue constructor takes any of the data that an issue consists of.  (Almost)
         all of the fields are optional.
@@ -63,12 +63,12 @@ class Issue:
         self.id = id
         # Relations
         self.parent = parent
-        self.children = children
+        self.children = children if children != None else []
         self.duplicates = duplicates
         # Users
         self.creator = creator
         self.assigned_to = assigned_to
-        self.listeners = listeners
+        self.listeners = listeners if listeners != None else []
         # Status
         self.type = type
         self.target = target
@@ -83,12 +83,12 @@ class Issue:
         self.estimate = estimate
         # Data
         self.title = title
-        self.paths = paths
+        self.paths = paths if paths != None else []
         self.description = description
         self.reproduction = reproduction
         self.expected = expected
         self.trace = trace
-        self.comments = comments
+        self.comments = comments if comments != None else []
         
         if self.id == None:
             if self.creation_date == None:
