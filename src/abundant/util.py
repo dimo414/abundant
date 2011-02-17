@@ -14,6 +14,7 @@ Created on Feb 7, 2011
 '''
 
 import hashlib, optparse, os
+import error
 
 def hash(text):
     '''Return a hash of the given text for use as an id.
@@ -68,6 +69,13 @@ def diff_dict(to,fro):
 
 parser_option = optparse.make_option
 
+class _ThrowParser(optparse.OptionParser):
+    def error(self, msg):
+        """Overrides optparse's default error handling
+        and instead raises an exception which will be caught upstream
+        """
+        raise optparse.OptParseError(msg)
+
 def parse_cli(args, opts):
     '''Takes a list of arguments to the command line, and a
     data structure of options, and returns a tuple of the 
@@ -79,9 +87,12 @@ def parse_cli(args, opts):
     
     '''
     # help is handled elsewhere
-    parser = optparse.OptionParser(add_help_option=False,option_list=opts)
+    parser = _ThrowParser(add_help_option=False,option_list=opts)
     
-    return parser.parse_args(args)
+    try:
+        return parser.parse_args(args)
+    except optparse.OptParseError as err:
+        raise error.ParsingError(err.msg)
     
 def issue_prefix(db):
     '''Given a database structure, return a Prefix

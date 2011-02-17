@@ -25,17 +25,31 @@ class UI:
         self.out = out
         self.err = err
     
-    def write(self,*msg):
+    def write(self,*msg,ln=True):
         for a in msg:
             self.out.write(str(a))
+        if ln: self.out.write('\n')
     
-    def alert(self,*msg):
+    def alert(self,*msg,ln=True):
         for a in msg:
             self.err.write(str(a))
+        if ln: self.err.write('\n')
     
     def _read(self):
+        '''Read a line of input'''
         return self.inp.readline()
     
     def prompt(self,prompt):
+        '''Prompt the user, then return input'''
         self.write(prompt)
         return self._read()
+    
+    def flush(self):
+        '''Fush StdOut and StdErr
+        
+        From Mercurial ui.py'''
+        try: sys.stdout.flush()
+        except: pass
+        try: sys.stderr.flush()
+        except: pass
+        

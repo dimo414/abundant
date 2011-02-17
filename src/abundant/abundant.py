@@ -41,12 +41,12 @@ def exec(cmds,cwd):
             task = cmdPfx[prefix]
             
         except error.UnknownPrefix as err:
-            ui.alert("Unknown Command: %s\n" % err.prefix)
+            ui.alert("Unknown Command: %s" % err.prefix)
             task = commands.fallback_cmd
             args = []
         except error.AmbiguousPrefix as err:
             ui.alert("Ambiguous Command: %s" % err.prefix)
-            ui.alert("Did you mean: %s\n" % str(err.choices)[1:-1])
+            ui.alert("Did you mean: %s" % str(err.choices)[1:-1])
             task = commands.fallback_cmd
             args = []
         
@@ -64,19 +64,21 @@ def exec(cmds,cwd):
     except error.Abort as err:
         ui.alert("Abort:",err)
         sys.exit(2)
-    except error.MissingArguments as err:
-        ui.alert("Command missing arguments:\n")
-        exec([commands.fallback_cmd,err.task],cwd)
-        sys.exit(3)
     except error.CommandError as err:
         ui.alert("Invalid Command:\n",err)
+        try:
+            ui.flush() # ensure error displays first
+            exec([commands.fallback_cmd,err.task],cwd)
+        except:
+            # if there is no err.task then don't bother outputting help on it
+            pass
         sys.exit(3)
         
     except Exception as err:
         '''Exceptions we were not expecting.'''
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        ui.alert("Unexpected exception was raised.  This should not happen.\n")
-        ui.alert("Please report the entire output to Michael\n")
+        ui.alert("Unexpected exception was raised.  This should not happen.")
+        ui.alert("Please report the entire output to Michael")
         ui.alert("\nCommand line arguments:\n  ",' '.join(sys.argv))
         traceback.print_exception(exc_type,exc_value,exc_traceback)
         sys.exit(10)
@@ -87,14 +89,18 @@ def _parse(task,args):
         raise error.SeriousAbort("_parse should only be passed actual "
                                  "commands that are known to exist.")
     
-    options,arg = util.parse_cli(args,entry[1])
+    try:
+        options,arg = util.parse_cli(args,entry[1])
+    except Exception as err:
+        err.task = task # we know what task, so record that
+        raise
     
     if len(arg) < entry[2]:
-        raise error.MissingArguments("%s expected more arguments." % task)
+        raise error.MissingArguments(task)
     
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("child 8 3").split(' ')
+    args = ("child 2f 2e").split(' ')
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))

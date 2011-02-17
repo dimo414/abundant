@@ -28,10 +28,13 @@ class SeriousAbort(Abort):
 class CommandError(Exception):
     '''Raised if input to the command is invalid, wrong, or missing required fields'''
 
+class ParsingError(CommandError):
+    '''Raised to indicate parsing the command line failed'''
+
 class MissingArguments(CommandError):
     '''Raised if the command expected more arguments than it received'''
     def __init__(self,task,*args):
-        Exception.__init__(self,*args)
+        Exception.__init__(self,"%s expected more arguments." % task,*args)
         self.task = task
 
 # Prefix Exceptions
