@@ -21,11 +21,17 @@ import db as database
 
 # commands ordered alphabetically
 
-def child(ui,db,child,parent):
-    child = db.get_issue(child)
-    parent = db.get_issue(parent)
+def child(ui,db,child_pref,parent_pref):
+    child = db.get_issue(child_pref)
+    parent = db.get_issue(parent_pref)
         
+    child.parent = parent.id
+    parent.children.append(child.id)
     
+    child.to_JSON(db.issues)
+    parent.to_JSON(db.issues)
+    
+    ui.write("Marked issue %s as a child of issue %s" % (child_pref,parent_pref))
 
 def help(ui,*args):
     ui.write("Help documentation goes here.")
@@ -44,6 +50,9 @@ def init(ui, dir='.'):
     conf = open(db.conf,"w")
     # write any initial configuration to config file
     conf.close()
+    
+    ui.write("Created Abundant issue database in %s" % db.path)
+    return 0
 
 def new(ui, db, *args, **opts):
     iss = issue.Issue(title=(' '.join(args)).strip(),
@@ -57,6 +66,7 @@ def new(ui, db, *args, **opts):
     iss.to_JSON(db.issues)
     ui.write("Created new issue with ID %s" % iss.id)
     ui.write(iss.descChanges(issue.base))
+    return 0
 
 # commands listed in order of display
 # the structure is similar to Mercurial's, but

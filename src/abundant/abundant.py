@@ -101,6 +101,6 @@ def _parse(task,args):
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("child 2f 2e").split(' ')
+    args = ("child e 55").split(' ')
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))
