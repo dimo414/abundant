@@ -566,7 +566,7 @@ TertiaryMid: #999
 TertiaryDark: #666
 Error: #f88</pre>
 </div>
-<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102171119" tags="feature" changecount="22">
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102180442" tags="feature" changecount="23">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
 |!&amp;nbsp;|!Command|!Signature|!Description|
@@ -574,7 +574,7 @@ Error: #f88</pre>
 |&amp;Dagger;|{{{init}}}|{{{init [--db path]}}}|Creates an issue database in this directory.  Should eventually prompt if there is a DVCS directory above this directory if the db should be created there instead.|
 | |{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|
 |&gt;|&gt;|&gt;|!Issue|
-|&amp;dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
+|&amp;Dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
 |&amp;Dagger;|{{{child}}}|{{{child child_prefix parent_prefix}}}|Makes child issue a child of parent issue|
 | |{{{details}}}|{{{details prefix}}}|Outputs the full details of the current issue|
 | |{{{assign}}}|{{{assign prefix user}}}|Assigns the issue to the specified user, group, or meta-user|
@@ -614,6 +614,11 @@ This needs to include security controls to limit access as necessary.
 
 !Eclipse Plugin (Potentially)
 If time permits, an Eclipse plugin providing functionality like line highlighting and inline reporting would be very nice.</pre>
+</div>
+<div title="Issue ID formatting" creator="Abundant" modifier="Abundant" created="201102180443" modified="201102180444" tags="issue" changecount="2">
+<pre>Issue IDs should be output as prefix:remainder whenever possible
+
+This issue should remain open until completely confident IDs are always output in this format</pre>
 </div>
 <div title="Issue Module needs a unit test on the Issue class" creator="Abundant" modifier="Abundant" created="201102070936" modified="201102071137" tags="resolved" changecount="2">
 <pre>Test reading and writing of bugs
@@ -833,7 +838,7 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|

@@ -32,10 +32,12 @@ def child(ui,db,child_pref,parent_pref):
     parent.to_JSON(db.issues)
     
     ui.write("Marked issue %s as a child of issue %s" % (child_pref,parent_pref))
+    return 0
 
 def help(ui,*args):
     ui.write("Help documentation goes here.")
     ui.write(args)
+    return 0
 
 def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
@@ -61,10 +63,18 @@ def new(ui, db, *args, **opts):
                       type=opts['type'],
                       severity=opts['severity'],
                       category=opts['category'],
+                      parent=db.get_issue_id(opts['parent']) if opts['parent'] else None,
                       creator=opts['user']
                       )
+    if opts['parent']:
+        parent = db.get_issue(opts['parent'])
+        parent.children.append(iss.id)
+        parent.to_JSON(db.issues)
+    
+    db.prefix_obj().add(iss.id)
     iss.to_JSON(db.issues)
-    ui.write("Created new issue with ID %s" % iss.id)
+    
+    ui.write("Created new issue with ID %s" % db.get_issue_id_str(iss.id))
     ui.write(iss.descChanges(issue.base))
     return 0
 
@@ -90,6 +100,7 @@ table = {'help':
               util.parser_option('--target',help="a target date or milestone for resolution"),
               util.parser_option('-s','--severity',help="the severity of the issue"),
               util.parser_option('-c','--category',help="categorize the issue"),
+              util.parser_option('-p','--parent',help="specify a parent issue"),
               util.parser_option('-u','--user',help="the user filing the bug")
               ],
               1,

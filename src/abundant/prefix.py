@@ -103,7 +103,15 @@ class Prefix(dict):
         if self._prefixes == None:
             self._prefixes = _prefixes(self.list)
         return self._prefixes.get(item)
-            
+    
+    def add(self,*items):
+        self.list.extend(items)
+        # this is currently less efficient than it could be
+        # since we recompute all the prefixes, rather than
+        # just updating conflicts.  It'd be good to improve.
+        if self._prefixes != None:
+            self._prefixes = _prefixes(self.list)
+                        
 if __name__ == '__main__':
     p = Prefix(['a','aaab','hello','yellow','code','contribute'])
     print(p['h'])

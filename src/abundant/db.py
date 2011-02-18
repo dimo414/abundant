@@ -69,3 +69,7 @@ class DB(object):
             raise error.Abort("Issue prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,choices(err.choices)))
         except error.UnknownPrefix as err:
             raise error.Abort("Issue prefix %s does not correspond to any issues" % err.prefix)
+    
+    def get_issue_id_str(self,id):
+        pref = self.get_issue_prefix(id)
+        return pref+':'+id[len(pref):]
