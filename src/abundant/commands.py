@@ -78,11 +78,30 @@ def new(ui, db, *args, **opts):
     ui.write(iss.descChanges(issue.base))
     return 0
 
-# commands listed in order of display
+def tasks(ui, db, user=None):
+    list = [issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues)]
+    list = [i for i in list if user is None or i.assigned_to == user]
+    ln = len(list)
+    
+    ui.write("Found %s issue%s assigned to %s" % 
+             (ln if ln > 0 else "no","" if ln == 1 else "s", user if user is not None else "anybody"))
+    if len(list) > 0:
+        for i in list:
+            ui.write("%s:\t%s" % (db.get_issue_prefix(i.id), i.title))
+        return 0
+    else:
+        return 1
+
+# commands listed in alphabetical order
 # the structure is similar to Mercurial's, but
 # not identical in syntax
 # see util.parse_cli for sytax instructions
-table = {'help':
+table = {'child':
+            (child,
+             [],
+             2,
+             "SOMETHING"),
+         'help':
             (help,[],0,"[topic]"),
          'init':
             (init,
@@ -106,11 +125,11 @@ table = {'help':
               1,
              "title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] "
              "[-s SEVERITY] [-c CATEGORY] [-u USER]"),
-         'child':
-            (child,
-             [],
-             2,
-             "SOMETHING")
+          'tasks':
+             (tasks,
+              [],
+              0,
+              "tasks [assigned_to]")
         }
 
 #command to run on command lookup failure
