@@ -55,10 +55,7 @@ class Prefix:
     
     def prefix(self,item):
         '''Return the unique prefix of the given item, or None if not found'''
-        matched = self._root[item]
-        if matched is None:
-            return None
-        return matched.prefix
+        return self._root.prefix(item)
             
     def add(self,item):
         '''Add an item to the data structure'''
@@ -81,8 +78,9 @@ class _Node:
     
     def add(self,item,depth=0):
         if self.result is not None and not self.final:
+            print(self.result,item,depth)
             res_letter = self.result[depth].lower()
-            self.children[res_letter] = _Node(self.result)
+            self.children[res_letter] = _Node(self.result,len(self.result)==depth+1)
             self.result = None
             
         if len(item) == depth:
@@ -97,13 +95,23 @@ class _Node:
         else:
             self.children[letter] = _Node(item,len(item) == depth+1)
 
-    def __getitem__(self,item):
-        if len(item) == 0 or len(self.children) == 0:
+    def __getitem__(self,prefix):
+        if len(prefix) == 0 or len(self.children) == 0:
             return self
+        letter = prefix[0]
+        if letter in self.children:
+            return self.children[letter][prefix[1:]]
+        else: return None
+
+    def prefix(self,item):
+        if len(item) == 0 or len(self.children) == 0:
+            return ''
         letter = item[0]
         if letter in self.children:
-            return self.children[letter][item[1:]]
-        else: return None
+            child = self.children[letter].prefix(item[1:])
+            if child is not None:
+                return letter + child 
+        return None
     
     def all(self):
         ret = [self.result] if self.result is not None else []
@@ -112,12 +120,15 @@ class _Node:
         return ret
     
 if __name__ == '__main__':
-    p = Prefix(reversed(['a','and','hello','yellow','code','contribute']))
+    p = Prefix(reversed(['a','and','hello','yellow','code','contribute','hell']))
     
-    print(p['a'])
-    print(p['an'])
-    print(p['h'])
     try:
+        print(p['a'])
+        print(p['an'])
+        print(p['hel'])
+        print(p.prefix('hello'))
+        p.add("howitzer")
+        print(p.prefix('hello'))
         print(p['co'])
     except error.AmbiguousPrefix as err:
         print("%s is ambiguous, choices: %s" % (err.prefix,err.choices))
