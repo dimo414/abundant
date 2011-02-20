@@ -11,11 +11,8 @@ This class represents a mapping of unique prefixes to strings.  It is given
 a list of strings, and constructs a mapping such that any string which
 uniquely maps to the front of a string returns the matched string.
 
-This class is currently used in Abundant both for issue IDs and commands,
-both of which the user can specify via unique prefix.
-
-Much of this code comes from b and/or t, the Mercurial extension bug tracker
-Michael Diamond built, and the task manager Steve Losh built respectively.
+This class is used in Abundant to easily access many datasets, including
+issue IDs, commands, usernames, and more.
 
 @author: Michael Diamond
 Created on Feb 14, 2011
@@ -25,8 +22,11 @@ import error;
 
 class Prefix:
     '''
-    A Trie datastructure (http://en.wikipedia.org/wiki/Trie) which enables
-    fast data retrieval by prefix.  
+    A trie datastructure (http://en.wikipedia.org/wiki/Trie) which enables
+    fast data retrieval by prefix.
+    
+    Note that for more reasonable lookup, the trie only searches in lower
+    case.  This means the strings 
     '''
 
     def __init__(self,list):
@@ -58,9 +58,10 @@ class Prefix:
         return self._root.prefix(item)
     
     def pref_str(self,pref):
+        '''returns the item with a colon indicating the shortest unique prefix'''
         id = self[pref]
         pref = self.prefix(id)
-        return pref+':'+id[len(pref):]
+        return id[:len(pref)]+':'+id[len(pref):]
             
     def add(self,item):
         '''Add an item to the data structure'''
@@ -78,12 +79,18 @@ class _Node:
         self.children = {}
     
     def _tree(self):
+        '''Returns a tree structure representing the trie.  Useful for debugging'''
         return "( %s%s, { %s } )" % (self.result, '*' if self.final else '',
                                    ', '.join(["%s: %s" % (k,v._tree()) for (k,v) in self.children.items()]))
     
     def add(self,item,depth=0):
+        '''Adds an item at this node or deeper.  Depth indicates
+        which index is being used for comparison'''
+        if self.result is not None and item.lower() == self.result.lower():
+            self.result = item #this would override an old value
+            return
+        
         if self.result is not None and not self.final:
-            print(self.result,item,depth)
             res_letter = self.result[depth].lower()
             self.children[res_letter] = _Node(self.result,len(self.result)==depth+1)
             self.result = None
@@ -101,6 +108,10 @@ class _Node:
             self.children[letter] = _Node(item,len(item) == depth+1)
 
     def __getitem__(self,prefix):
+        '''Given a prefix, returns the node that matches
+        This will either have a result, or if not the prefix
+        was ambiguous.  If None is returned, there was no
+        such prefix'''
         if len(prefix) == 0 or len(self.children) == 0:
             return self
         letter = prefix[0]
@@ -109,6 +120,9 @@ class _Node:
         else: return None
 
     def prefix(self,item):
+        '''Given an item (or a prefix) finds the shortest
+        prefix necessary to reach the given item.
+        None if item does not exist.'''
         if len(item) == 0 or len(self.children) == 0:
             return ''
         letter = item[0]
@@ -119,6 +133,7 @@ class _Node:
         return None
     
     def all(self):
+        '''Returns a list of all items in and below this node'''
         ret = [self.result] if self.result is not None else []
         for (_,k) in self.children.items():
             ret.extend(k.all())
@@ -130,10 +145,12 @@ if __name__ == '__main__':
     try:
         print(p['a'])
         print(p['an'])
-        print(p['hel'])
+        #print(p['hel'])
         print(p.prefix('hello'))
         p.add("howitzer")
         print(p.prefix('hello'))
+        p.add('aNd')
+        print(p['an'])
         print(p['co'])
     except error.AmbiguousPrefix as err:
         print("%s is ambiguous, choices: %s" % (err.prefix,err.choices))
