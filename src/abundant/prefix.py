@@ -23,96 +23,102 @@ Created on Feb 14, 2011
 
 import error;
 
-def _prefixes(ids):
-    """Return a mapping of ids to prefixes in O(n) time.
-    
-    Each prefix will be the shortest possible substring of the ID that
-    can uniquely identify it among the given group of IDs.
-    
-    If an ID of one task is entirely a substring of another task's ID, the
-    entire ID will be the prefix.
-    
-    From b
-    """
-    pre = {}
-    for id in ids:
-        id_len = len(id)
-        for i in range(1, id_len+1):
-            """ identifies an empty prefix slot, or a singular collision """
-            prefix = id[:i]
-            if (not prefix in pre) or (pre[prefix] != ':' and prefix != pre[prefix]):
-                break
-        if prefix in pre:
-            """ if there is a collision """
-            collide = pre[prefix]
-            for j in range(i,id_len+1):
-                if collide[:j] == id[:j]:
-                    pre[id[:j]] = ':'
-                else:
-                    pre[collide[:j]] = collide
-                    pre[id[:j]] = id
-                    break
-            else:
-                pre[collide[:id_len+1]] = collide
-                pre[id] = id
-        else:
-            """ no collision, can safely add """
-            pre[prefix] = id
-    pre = dict(zip(pre.values(),pre.keys()))
-    if ':' in pre:
-        del pre[':']
-    return pre
-
-class Prefix(dict):
+class Prefix:
     '''
-    A custom dictionary data structure which looks up items in a list
-    by unique prefixes to that item.
+    A Trie datastructure (http://en.wikipedia.org/wiki/Trie) which enables
+    fast data retrieval by prefix.  
     '''
-
 
     def __init__(self,list):
-        '''
-        Takes a lit of strings to construct a map from
-        '''
-        self.list = list
-        self._prefixes = None
+        self._root = _Node(None,True)
+        for i in list:
+            self._root.add(i)
     
     def __getitem__(self, prefix):
-        '''Return the task with the given prefix.
+        '''Return the item with the given prefix.
         
-        If more than one task matches the prefix an AmbiguousPrefix exception
+        If more than one item matches the prefix an AmbiguousPrefix exception
         will be raised, unless the prefix is the entire ID of one task.
         
-        If no tasks match the prefix an UnknownPrefix exception will be raised.
+        If no items match the prefix an UnknownPrefix exception will be raised.
         
-        From b (from t)
+        If an item exactly matches the prefix, it will be returned even if
+        there exist other (longer) items which match the prefix
         '''
-        matched = [item for item in self.list if item.startswith(prefix)]
-        if len(matched) == 1:
-            return matched[0]
-        elif len(matched) == 0:
+        matched = self._root[prefix.lower()]
+        if matched is None:
             raise error.UnknownPrefix(prefix)
+        if matched.result is not None:
+            return matched.result
         else:
-            exactMatch = [item for item in self.list if item == prefix]
-            if len(exactMatch) == 1:
-                return exactMatch[0]
-            else:
-                raise error.AmbiguousPrefix(prefix,matched)
+            raise error.AmbiguousPrefix(prefix,matched.all())
     
     def prefix(self,item):
-        if self._prefixes == None:
-            self._prefixes = _prefixes(self.list)
-        return self._prefixes.get(item)
+        '''Return the unique prefix of the given item, or None if not found'''
+        matched = self._root[item]
+        if matched is None:
+            return None
+        return matched.prefix
+            
+    def add(self,item):
+        '''Add an item to the data structure'''
+        self._root.add(item,0)
+        
+class _Node:
+    '''Represents a node in the Trie.  It contains either
+    an exact match, a set of children, or both
+    '''
     
-    def add(self,*items):
-        self.list.extend(items)
-        # this is currently less efficient than it could be
-        # since we recompute all the prefixes, rather than
-        # just updating conflicts.  It'd be good to improve.
-        if self._prefixes != None:
-            self._prefixes = _prefixes(self.list)
-                        
+    def __init__(self, item, final=False):
+        '''Constructs a new node which contains an item'''
+        self.final = final
+        self.result = item
+        self.children = {}
+    
+    def _tree(self):
+        return "( %s%s, { %s } )" % (self.result, '*' if self.final else '',
+                                   ', '.join(["%s: %s" % (k,v._tree()) for (k,v) in self.children.items()]))
+    
+    def add(self,item,depth=0):
+        if self.result is not None and not self.final:
+            res_letter = self.result[depth].lower()
+            self.children[res_letter] = _Node(self.result)
+            self.result = None
+            
+        if len(item) == depth:
+            self.result = item #this could override an old value
+            self.final = True
+            return
+        
+        letter = item[depth].lower()
+        if letter in self.children:
+            child = self.children[letter]
+            child.add(item,depth+1)
+        else:
+            self.children[letter] = _Node(item,len(item) == depth+1)
+
+    def __getitem__(self,item):
+        if len(item) == 0 or len(self.children) == 0:
+            return self
+        letter = item[0]
+        if letter in self.children:
+            return self.children[letter][item[1:]]
+        else: return None
+    
+    def all(self):
+        ret = [self.result] if self.result is not None else []
+        for (_,k) in self.children.items():
+            ret.extend(k.all())
+        return ret
+    
 if __name__ == '__main__':
-    p = Prefix(['a','aaab','hello','yellow','code','contribute'])
+    p = Prefix(reversed(['a','and','hello','yellow','code','contribute']))
+    
+    print(p['a'])
+    print(p['an'])
     print(p['h'])
-    print(p.prefix("code"))
+    try:
+        print(p['co'])
+    except error.AmbiguousPrefix as err:
+        print("%s is ambiguous, choices: %s" % (err.prefix,err.choices))
+    print(p._root._tree())
