@@ -43,33 +43,27 @@ class DB(object):
     def exists(self):
         return os.path.exists(self.db)
     
-    def prefix_obj(self):
+    def iss_prefix_obj(self):
         try:
-            return self._prefix
+            return self._iss_prefix
         except AttributeError:
             list = [i.replace(issue.ext,'') for i in os.listdir(self.issues)]
-            self._prefix = prefix.Prefix(list)
-        return self._prefix
-    
-    def get_issue_prefix(self,id):
-        return self.prefix_obj().prefix(id)
+            self._iss_prefix = prefix.Prefix(list)
+        return self._iss_prefix
     
     def get_issue(self,pref):
         return issue.JSON_to_Issue(os.path.join(self.issues,self.get_issue_id(pref)+issue.ext))
     
     def get_issue_id(self,pref):
         try:
-            return self.prefix_obj()[pref]
+            return self.iss_prefix_obj()[pref]
         except error.AmbiguousPrefix as err:
             def choices(issLs):
                 ls = [self.get_issue(i) for i in 
                         (issLs[:2] if len(issLs) > 3 else issLs[:])]
-                return ', '.join([self.get_issue_prefix(i.id)+(':'+i.title if i.title else '') for i in ls])
+                return ', '.join([self.iss_prefix_obj.prefix(i.id)+(':'+i.title if i.title else '') for i in ls])
                 
             raise error.Abort("Issue prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,choices(err.choices)))
         except error.UnknownPrefix as err:
             raise error.Abort("Issue prefix %s does not correspond to any issues" % err.prefix)
     
-    def get_issue_id_str(self,id):
-        pref = self.get_issue_prefix(id)
-        return pref+':'+id[len(pref):]

@@ -56,6 +56,11 @@ class Prefix:
     def prefix(self,item):
         '''Return the unique prefix of the given item, or None if not found'''
         return self._root.prefix(item)
+    
+    def pref_str(self,pref):
+        id = self[pref]
+        pref = self.prefix(id)
+        return pref+':'+id[len(pref):]
             
     def add(self,item):
         '''Add an item to the data structure'''

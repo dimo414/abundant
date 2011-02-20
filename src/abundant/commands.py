@@ -71,10 +71,10 @@ def new(ui, db, *args, **opts):
         parent.children.append(iss.id)
         parent.to_JSON(db.issues)
     
-    db.prefix_obj().add(iss.id)
+    db.iss_prefix_obj().add(iss.id)
     iss.to_JSON(db.issues)
     
-    ui.write("Created new issue with ID %s" % db.get_issue_id_str(iss.id))
+    ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(issue.base))
     return 0
 
@@ -87,7 +87,7 @@ def tasks(ui, db, user=None):
              (ln if ln > 0 else "no","" if ln == 1 else "s", user if user is not None else "anybody"))
     if len(list) > 0:
         for i in list:
-            ui.write("%s:\t%s" % (db.get_issue_prefix(i.id), i.title))
+            ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
         return 0
     else:
         return 1
