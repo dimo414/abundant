@@ -26,13 +26,14 @@ class Prefix:
     fast data retrieval by prefix.
     
     Note that for more reasonable lookup, the trie only searches in lower
-    case.  This means the strings 
+    case.  This means there can be colliding strings such as 'prefix' vs 'Prefix'.
+    In this case, more recent inserts override older ones. 
     '''
 
     def __init__(self,list):
-        self._root = _Node(None,True)
+        self._root = _Node(None,None,True)
         for i in list:
-            self._root.add(i)
+            self._root.add(i.lower(),i)
     
     def __getitem__(self, prefix):
         '''Return the item with the given prefix.
@@ -55,7 +56,7 @@ class Prefix:
     
     def prefix(self,item):
         '''Return the unique prefix of the given item, or None if not found'''
-        return self._root.prefix(item)
+        return self._root.prefix(item.lower())
     
     def pref_str(self,pref):
         '''returns the item with a colon indicating the shortest unique prefix'''
@@ -65,16 +66,17 @@ class Prefix:
             
     def add(self,item):
         '''Add an item to the data structure'''
-        self._root.add(item,0)
+        self._root.add(item.lower(),item,0)
         
 class _Node:
     '''Represents a node in the Trie.  It contains either
     an exact match, a set of children, or both
     '''
     
-    def __init__(self, item, final=False):
+    def __init__(self, key, item, final=False):
         '''Constructs a new node which contains an item'''
         self.final = final
+        self.key = key
         self.result = item
         self.children = {}
     
@@ -83,29 +85,34 @@ class _Node:
         return "( %s%s, { %s } )" % (self.result, '*' if self.final else '',
                                    ', '.join(["%s: %s" % (k,v._tree()) for (k,v) in self.children.items()]))
     
-    def add(self,item,depth=0):
+    def add(self,key,item,depth=0):
         '''Adds an item at this node or deeper.  Depth indicates
         which index is being used for comparison'''
-        if self.result is not None and item.lower() == self.result.lower():
+        # the correct node has been found, replace result with new value
+        if self.key is not None and key == self.key:
             self.result = item #this would override an old value
             return
         
+        # this is currently a leaf node, move the leave one down
         if self.result is not None and not self.final:
-            res_letter = self.result[depth].lower()
-            self.children[res_letter] = _Node(self.result,len(self.result)==depth+1)
+            if self.key == None: print(self.key,self.result,key,item)
+            key_letter = self.key[depth]
+            self.children[key_letter] = _Node(self.key,self.result,len(self.key)==depth+1)
+            self.key = None
             self.result = None
             
         if len(item) == depth:
+            self.key = key
             self.result = item #this could override an old value
             self.final = True
             return
         
-        letter = item[depth].lower()
+        letter = key[depth]
         if letter in self.children:
             child = self.children[letter]
-            child.add(item,depth+1)
+            child.add(key,item,depth+1)
         else:
-            self.children[letter] = _Node(item,len(item) == depth+1)
+            self.children[letter] = _Node(key,item,len(key) == depth+1)
 
     def __getitem__(self,prefix):
         '''Given a prefix, returns the node that matches
