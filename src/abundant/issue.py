@@ -131,15 +131,16 @@ class Issue:
         out = []
         
         def arc(key,word,diff,pad='  '):
-            added, removed, changed = diff
-            if key in added:
-                return "%sAdded %s as %s\n" % (pad,util.list2str(added[key]),word)
-            if key in removed:
-                return "%sRemoved %s, was %s\n" % (pad,word,util.list2str(added[key]))
-            if key in changed:
-                now, was = changed[key]
-                return "%sChanged %s to %s, was %s\n" % (pad,word,util.list2str(now),util.list2str(was))
-            return ''
+            if key not in diff: return ''
+            
+            now, was = diff[key]
+            if now == None:
+                return "%sRemoved %s, was %s\n" % (pad,word,util.list2str(was))
+            else:
+                str = "%sSet %s to %s" % (pad,word,util.list2str(now))
+                if was != None:
+                    str = "%s, was %s" % (str,util.list2str(was))
+                return str+'\n'
         
         # construct list of strings then join
         # http://www.skymind.com/~ocrow/python_string/
