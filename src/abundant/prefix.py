@@ -30,8 +30,9 @@ class Prefix:
     In this case, more recent inserts override older ones. 
     '''
 
-    def __init__(self,list):
+    def __init__(self,list=[]):
         self._root = _Node(None,None,True)
+        self._aliases = {}
         for i in list:
             self._root.add(i.lower(),i)
     
@@ -50,7 +51,9 @@ class Prefix:
         if matched is None:
             raise error.UnknownPrefix(prefix)
         if matched.result is not None:
-            return matched.result
+            if matched.result in self._aliases:
+                return self._aliases[matched.result]
+            else: return matched.result
         else:
             raise error.AmbiguousPrefix(prefix,matched.all())
     
@@ -67,6 +70,11 @@ class Prefix:
     def add(self,item):
         '''Add an item to the data structure'''
         self._root.add(item.lower(),item,0)
+    
+    def alias(self,alias,item):
+        '''Add an item to the trie which maps to another item'''
+        self._aliases[alias] = self[item]
+        self.add(alias)
         
 class _Node:
     '''Represents a node in the Trie.  It contains either
@@ -158,6 +166,8 @@ if __name__ == '__main__':
         print(p.prefix('hello'))
         p.add('aNd')
         print(p['an'])
+        p.alias('nothing','hell')
+        print(p['not'])
         print(p['co'])
     except error.AmbiguousPrefix as err:
         print("%s is ambiguous, choices: %s" % (err.prefix,err.choices))
