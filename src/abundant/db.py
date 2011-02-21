@@ -39,14 +39,39 @@ class DB(object):
         self.issues = os.path.join(self.db,'issues')
         self.cache = os.path.join(self.db,'.cache')
         self.conf = os.path.join(self.db,"ab.conf")
+        self.users = os.path.join(self.db,"users")
+        
+        self._usr_prefix = None
+        self._iss_prefix = None
         
     def exists(self):
         return os.path.exists(self.db)
     
-    def iss_prefix_obj(self):
+    def usr_prefix_obj(self):
+        if self._usr_prefix is None:
+            self._usr_prefix = prefix.Prefix()
+            try:
+                for line in open(self.users, 'r'):
+                    line = line.strip()
+                    self._usr_prefix.add(line)
+                    lt = line.find('<')
+                    gt = line.find('>')
+                    if lt >= 0 and gt >= 0 and gt > lt:
+                        self._usr_prefix.alias(line[lt+1:gt], line)
+            except:
+                pass # file doesn't exist, nbd
+        return self._usr_prefix
+    
+    def get_user(self,prefix):
         try:
-            return self._iss_prefix
-        except AttributeError:
+            return self.usr_prefix_obj()[prefix]
+        except error.AmbiguousPrefix as err:
+            raise error.Abort("User prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,err.choices))
+        except error.UnknownPrefix as err:
+            raise error.Abort("User prefix %s does not correspond to any known user" % err.prefix)
+    
+    def iss_prefix_obj(self):
+        if self._iss_prefix is None:
             list = [i.replace(issue.ext,'') for i in os.listdir(self.issues)]
             self._iss_prefix = prefix.Prefix(list)
         return self._iss_prefix

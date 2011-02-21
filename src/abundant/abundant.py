@@ -62,7 +62,7 @@ def exec(cmds,cwd):
             
         # Global error handling starts here
     except error.Abort as err:
-        ui.alert("Abort:",err)
+        ui.alert("Abort: ",err)
         sys.exit(2)
     except error.CommandError as err:
         ui.alert("Invalid Command:\n",err)
@@ -101,6 +101,6 @@ def _parse(task,args):
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("child e 55").split(' ')
+    args = ("new issue -a bf").split(' ')
     sys.argv.extend(args)
     sys.exit(exec(sys.argv[1:],os.getcwd()))

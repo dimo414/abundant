@@ -49,22 +49,24 @@ def init(ui, dir='.'):
     # don't need to make db.db because makedirs handles that
     os.makedirs(db.issues)
     os.mkdir(db.cache)
-    conf = open(db.conf,"w")
+    conf = open(db.conf,'w')
     # write any initial configuration to config file
     conf.close()
+    usr = open(db.users,'w')
+    usr.close()
     
     ui.write("Created Abundant issue database in %s" % db.path)
     return 0
 
 def new(ui, db, *args, **opts):
     iss = issue.Issue(title=(' '.join(args)).strip(),
-                      assigned_to=opts['assign_to'],
-                      listeners=opts['listener'],
+                      assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
+                      listeners=[db.get_user(i) for i in opts['listener']] if opts['listener'] else None,
                       type=opts['type'],
                       severity=opts['severity'],
                       category=opts['category'],
                       parent=db.get_issue_id(opts['parent']) if opts['parent'] else None,
-                      creator=opts['user']
+                      creator=db.get_user(opts['user']) if opts['user'] else None
                       )
     if opts['parent']:
         parent = db.get_issue(opts['parent'])
