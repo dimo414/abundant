@@ -134,12 +134,27 @@ class Issue:
             if key not in diff: return ''
             
             now, was = diff[key]
+        
+            if(isinstance(now,list) or isinstance(was,list)):
+                if now is None: now = []
+                if was is None: was = []
+                str = pad
+                if len(now) > 0:
+                    str += "Added %s to %s" % (util.list2str(now),word)
+                if len(now) > 0 and len(was) > 0:
+                    str += ", "
+                if len(was) > 0:
+                    str += "Removed %s" % util.list2str(was)
+                    if len(now) == 0:
+                        str += " from %s" % word
+                return str+'\n'
+            
             if now == None:
-                return "%sRemoved %s, was %s\n" % (pad,word,util.list2str(was))
+                return "%sRemoved %s, was %s\n" % (pad,word,was)
             else:
-                str = "%sSet %s to %s" % (pad,word,util.list2str(now))
+                str = "%sSet %s to %s" % (pad,word,now)
                 if was != None:
-                    str = "%s, was %s" % (str,util.list2str(was))
+                    str = "%s, was %s" % (str,was)
                 return str+'\n'
         
         # construct list of strings then join

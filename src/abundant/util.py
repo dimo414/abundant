@@ -46,6 +46,10 @@ def diff_dict(to,fro):
     or None if the data was removed, and the second entry
     is the from value, or None if the data was added.
     
+    If an item in the dict is a list, it will identify
+    differences between the two lists, and the tuple contains
+    data added and data removed from the list.
+    
     Note that this method explicitly treats None and []
     as nonexistent for the sake of the diff.'''
     diff = {}
@@ -59,7 +63,12 @@ def diff_dict(to,fro):
         if key not in fro or empty(fro,key) and not empty(to,key):
             diff[key] = (to[key],None)
         elif to[key] != [] and fro[key] != [] and to[key] != fro[key]:
-            diff[key] = (to[key],fro[key])  
+            if isinstance(to[key],list) and isinstance(fro[key],list):
+                to_set = set(to[key])
+                fro_set = set(fro[key])
+                diff[key] = (to_set.difference(fro_set),fro_set.difference(to_set))
+            else:
+                diff[key] = (to[key],fro[key])  
     return diff 
 
 parser_option = optparse.make_option
