@@ -63,7 +63,7 @@ def exec(cmds,cwd):
         # Global error handling starts here
     except error.Abort as err:
         ui.alert("Abort: ",err)
-        sys.exit(2)
+        return 2
     except error.CommandError as err:
         ui.alert("Invalid Command:\n",err)
         try:
@@ -72,7 +72,7 @@ def exec(cmds,cwd):
         except:
             # if there is no err.task then don't bother outputting help on it
             pass
-        sys.exit(3)
+        return 3
         
     except Exception as err:
         '''Exceptions we were not expecting.'''
@@ -81,7 +81,7 @@ def exec(cmds,cwd):
         ui.alert("Please report the entire output to Michael")
         ui.alert("\nCommand line arguments:\n  ",' '.join(sys.argv))
         traceback.print_exception(exc_type,exc_value,exc_traceback)
-        sys.exit(10)
+        return 10
 
 def _parse(task,args):
     entry = commands.table[task]
@@ -101,6 +101,12 @@ def _parse(task,args):
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
-    args = ("new issue -a bf").split(' ')
-    sys.argv.extend(args)
-    sys.exit(exec(sys.argv[1:],os.getcwd()))
+    while True:
+        line = sys.stdin.readline()
+        if line == 'exit': break
+        args = line.split(' ')
+        ret = exec(args,os.getcwd())
+        sys.stderr.flush()
+        sys.stdout.flush()
+        sys.stderr.write("Return Code: %d\n" % ret)
+        sys.stderr.flush()
