@@ -56,9 +56,12 @@ def exec(cmds,cwd):
             db = database.DB(cwd)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
-            return func(ui,db,*args,**options)
+            ret = func(ui,db,*args,**options)
         else:
-            return func(ui,*args,**options)
+            ret = func(ui,*args,**options)
+        if ret is None:
+            return 0
+        else: return ret
             
         # Global error handling starts here
     except error.Abort as err:
@@ -101,9 +104,10 @@ def _parse(task,args):
     return (entry[0], options.__dict__, arg)
         
 if __name__ == '__main__':
+    sys.stdout.write("Welcome to Abundant:\n")
     while True:
         line = sys.stdin.readline()
-        if line == 'exit': break
+        if line.strip().lower() == 'exit': break
         args = line.split(' ')
         ret = exec(args,os.getcwd())
         sys.stderr.flush()

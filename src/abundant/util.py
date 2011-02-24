@@ -33,9 +33,11 @@ def find_db(p):
 
     return p
 
-def list2str(ls):
+def list2str(ls,lines=False):
     '''Returns a list as a pretty string'''
     if isinstance(ls,list):
+        if lines:
+            return '\n'.join(ls)
         return str(ls)[1:-1]
     return ls
 

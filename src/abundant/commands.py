@@ -34,10 +34,13 @@ def child(ui,db,child_pref,parent_pref):
     ui.write("Marked issue %s as a child of issue %s" % (child_pref,parent_pref))
     return 0
 
+def details(ui,db,*args):
+    iss = db.get_issue(args[0])
+    ui.write(iss.details(ui))
+
 def help(ui,*args):
     ui.write("Help documentation goes here.")
     ui.write(args)
-    return 0
 
 def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
@@ -56,7 +59,6 @@ def init(ui, dir='.'):
     usr.close()
     
     ui.write("Created Abundant issue database in %s" % db.path)
-    return 0
 
 def new(ui, db, *args, **opts):
     iss = issue.Issue(title=(' '.join(args)).strip(),
@@ -77,8 +79,7 @@ def new(ui, db, *args, **opts):
     iss.to_JSON(db.issues)
     
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
-    ui.write(iss.descChanges(issue.base))
-    return 0
+    ui.write(iss.descChanges(issue.base,ui))
 
 def tasks(ui, db, user=None):
     list = [issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues)]
@@ -103,6 +104,8 @@ table = {'child':
              [],
              2,
              "SOMETHING"),
+         'details':
+            (details,[],1,'prefix'),
          'help':
             (help,[],0,"[topic]"),
          'init':

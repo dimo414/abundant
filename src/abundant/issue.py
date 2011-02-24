@@ -26,6 +26,7 @@ class Issue:
     values should be hidden from the user as if it didn't exist at all.
     '''
     
+    # display strings for issue components 
     _pretty = {'id':"ID",
                  'parent':"Parent", 'children':"Children", 'duplicates':"Duplicates",
                  'creator':"Creator", 'assigned_to':"Assigned To", 'listeners':"Listeners",
@@ -37,6 +38,11 @@ class Issue:
                         'expected':"Expected Result", 'trace':"Stack Trace",
                  'comments':"Comments"
                }
+    # issue data that are dates
+    _dates = set(['creation_date','resolved_date'])
+    # issue data that is likely to be multi-line
+    _long = set(['listeners','paths','description','reproduction','expected','trace','comments'])
+    
 
     def __init__(self,
                  id=None,
@@ -117,6 +123,23 @@ class Issue:
                 dict[k] = v
         json.dump(dict,open(os.path.join(path,file),'w'),
                   indent=1,sort_keys=True)
+        
+    def details(self, ui=None, skip=[]):
+        out = []
+        for key in self.__dict__.keys():
+            if key not in skip:
+                val = self.__dict__[key]
+                if val is None or val == []:
+                    continue
+                if ui is not None and key in self._dates:
+                    val = ui.to_long_time(val)
+                
+                str = "%s:%s%s" % (self.pretty(key),
+                                   "\n" if key in self._long else " ",
+                                   util.list2str(val, key in self._long)) 
+                
+                out.append(str)
+        return '\n'.join(out)
     
     def diff(self, iss):
         '''Returns the difference of two issues.
@@ -124,7 +147,7 @@ class Issue:
         of the returned data.'''
         return util.diff_dict(self.__dict__,iss.__dict__)
     
-    def descChanges(self, iss, skip=['id','creation_date']):
+    def descChanges(self, iss, ui=None, skip=['id','creation_date']):
         '''Returns a structured string describing the changes
         between two issues.'''
         diff = self.diff(iss)
@@ -134,6 +157,10 @@ class Issue:
             if key not in diff: return ''
             
             now, was = diff[key]
+            
+            if ui is not None and key in self._dates:
+                now = ui.to_short_time(now)
+                was = ui.to_short_time(was)
         
             if(isinstance(now,list) or isinstance(was,list)):
                 if now is None: now = []
@@ -147,15 +174,15 @@ class Issue:
                     str += "Removed %s" % util.list2str(was)
                     if len(now) == 0:
                         str += " from %s" % word
-                return str+'\n'
+                return str
             
             if now == None:
-                return "%sRemoved %s, was %s\n" % (pad,word,was)
+                return "%sRemoved %s, was %s" % (pad,word,was)
             else:
                 str = "%sSet %s to %s" % (pad,word,now)
                 if was != None:
                     str = "%s, was %s" % (str,was)
-                return str+'\n'
+                return str
         
         # construct list of strings then join
         # http://www.skymind.com/~ocrow/python_string/
@@ -163,7 +190,7 @@ class Issue:
         for key in self.__dict__.keys():
             if key not in skip:
                 out.append(arc(key,self.pretty(key),diff))
-        return ''.join(out)
+        return '\n'.join(filter((lambda x : x.strip() != ''),out))
 
     
 def JSON_to_Issue(file):

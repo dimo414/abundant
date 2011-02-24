@@ -15,7 +15,7 @@ Many methods modeled from Mercurial
 Created on Feb 16, 2011
 '''
 
-import sys
+import sys,time
 
 class UI:
     def __init__(self,inp=sys.stdin,out=sys.stdout,err=sys.stderr):
@@ -24,7 +24,24 @@ class UI:
         self.inp = inp
         self.out = out
         self.err = err
+        
+        #this should eventually parse a config file properly
+        self.short_date = '%d/%m/%y %I:%M%p'
+        self.long_date = '%a, %b. %d %y at %I:%M:%S%p'
     
+    #
+    #Date / Time
+    #
+    
+    def to_short_time(self,timestamp):
+        return time.strftime(self.short_date,time.localtime(timestamp))
+    
+    def to_long_time(self,timestamp):
+        return time.strftime(self.long_date,time.localtime(timestamp))
+    
+    #
+    #IO
+    #
     def write(self,*msg,ln=True):
         for a in msg:
             self.out.write(str(a))
