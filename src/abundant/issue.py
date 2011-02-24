@@ -38,6 +38,14 @@ class Issue:
                         'expected':"Expected Result", 'trace':"Stack Trace",
                  'comments':"Comments"
                }
+    # display order of issue components, since they're stored in a dict
+    _order = ['id','parent','children','duplicates',
+              'creator','assigned_to','listeners',
+              'type','target','severity','status','resolution','category',
+              'creation_date','resolved_date','projection','estimate',
+              'title','paths','description','reproduction','expected','trace','comments']
+    # issue data that are IDs
+    _ids = set(['id','parent','children','duplicates'])
     # issue data that are dates
     _dates = set(['creation_date','resolved_date'])
     # issue data that is likely to be multi-line
@@ -124,13 +132,19 @@ class Issue:
         json.dump(dict,open(os.path.join(path,file),'w'),
                   indent=1,sort_keys=True)
         
-    def details(self, ui=None, skip=[]):
+    def details(self, ui=None, db=None, skip=[]):
         out = []
-        for key in self.__dict__.keys():
+        for key in self._order:
             if key not in skip:
                 val = self.__dict__[key]
                 if val is None or val == []:
                     continue
+                
+                if db is not None and key in self._ids:
+                    if isinstance(val,list):
+                        val = [db.iss_prefix_obj().pref_str(i) for i in val]
+                        print(val)
+                    else: val = db.iss_prefix_obj().pref_str(val)
                 if ui is not None and key in self._dates:
                     val = ui.to_long_time(val)
                 
@@ -187,7 +201,7 @@ class Issue:
         # construct list of strings then join
         # http://www.skymind.com/~ocrow/python_string/
         
-        for key in self.__dict__.keys():
+        for key in self._order:
             if key not in skip:
                 out.append(arc(key,self.pretty(key),diff))
         return '\n'.join(filter((lambda x : x.strip() != ''),out))

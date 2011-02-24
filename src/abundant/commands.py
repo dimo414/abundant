@@ -21,6 +21,15 @@ import db as database
 
 # commands ordered alphabetically
 
+def adduser(ui,db,*args,**opts):
+    name = (' '.join(args)).strip()
+    if 'email' in opts:
+        name = "%s <%s>" % (name,opts['email'].strip())
+    f = open(db.users,'a')
+    f.write('%s\n' % name)
+    f.close()
+    ui.write("Added %s to the list of users" % name)
+
 def child(ui,db,child_pref,parent_pref):
     child = db.get_issue(child_pref)
     parent = db.get_issue(parent_pref)
@@ -35,8 +44,8 @@ def child(ui,db,child_pref,parent_pref):
     return 0
 
 def details(ui,db,*args):
-    iss = db.get_issue(args[0])
-    ui.write(iss.details(ui))
+    iss = db.get_issue(args[0].strip())
+    ui.write(iss.details(ui,db))
 
 def help(ui,*args):
     ui.write("Help documentation goes here.")
@@ -99,11 +108,16 @@ def tasks(ui, db, user=None):
 # the structure is similar to Mercurial's, but
 # not identical in syntax
 # see util.parse_cli for sytax instructions
-table = {'child':
+table = {'adduser':
+            (adduser,
+             [util.parser_option('-e','--email')],
+             1,
+             "NAME [-e EMAIL]"),
+         'child':
             (child,
              [],
              2,
-             "SOMETHING"),
+             "CHILD_PREFIX PARENT_PREFIX"),
          'details':
             (details,[],1,'prefix'),
          'help':

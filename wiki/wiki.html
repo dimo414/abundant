@@ -566,13 +566,14 @@ TertiaryMid: #999
 TertiaryDark: #666
 Error: #f88</pre>
 </div>
-<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102180516" tags="feature" changecount="24">
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102240524" tags="feature" changecount="26">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
 |!&amp;nbsp;|!Command|!Signature|!Description|
 |&gt;|&gt;|&gt;|!Global|
 |&amp;Dagger;|{{{init}}}|{{{init [--db path]}}}|Creates an issue database in this directory.  Should eventually prompt if there is a DVCS directory above this directory if the db should be created there instead.|
 |&amp;Dagger;|{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|
+|&amp;Dagger;|{{{adduser}}}|{{{adduser [-e email address]}}}|Adds a user to Abundant's userlist|
 |&gt;|&gt;|&gt;|!Issue|
 |&amp;Dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
 |&amp;Dagger;|{{{child}}}|{{{child child_prefix parent_prefix}}}|Makes child issue a child of parent issue|
@@ -601,7 +602,7 @@ Error: #f88</pre>
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.type="file" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.page.revision="200807230133">
+<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.page.revision="200807230133" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.type="file">
 <pre>/***
 |Name|DisableWikiLinksPlugin|
 |Source|http://www.TiddlyTools.com/#DisableWikiLinksPlugin|
@@ -940,7 +941,7 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|

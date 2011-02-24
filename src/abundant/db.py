@@ -53,6 +53,8 @@ class DB(object):
             try:
                 for line in open(self.users, 'r'):
                     line = line.strip()
+                    if line == '' or line[0] == '#':
+                        continue
                     self._usr_prefix.add(line)
                     lt = line.find('<')
                     gt = line.find('>')
@@ -86,7 +88,7 @@ class DB(object):
             def choices(issLs):
                 ls = [self.get_issue(i) for i in 
                         (issLs[:2] if len(issLs) > 3 else issLs[:])]
-                return ', '.join([self.iss_prefix_obj.prefix(i.id)+(':'+i.title if i.title else '') for i in ls])
+                return ', '.join([self.iss_prefix_obj().prefix(i.id)+(':'+i.title if i.title else '') for i in ls])
                 
             raise error.Abort("Issue prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,choices(err.choices)))
         except error.UnknownPrefix as err:
