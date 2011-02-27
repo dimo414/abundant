@@ -13,7 +13,7 @@ A set of utility operations used throughout Abundant.
 Created on Feb 7, 2011
 '''
 
-import hashlib, optparse, os
+import hashlib, optparse, os, subprocess, sys
 import error
 
 def hash(text):
@@ -33,11 +33,11 @@ def find_db(p):
 
     return p
 
-def list2str(ls,lines=False):
+def list2str(ls,lines=False,pad='  '):
     '''Returns a list as a pretty string'''
     if isinstance(ls,list):
         if lines:
-            return '\n'.join(ls)
+            return ('\n'+pad).join(ls)
         return str(ls)[1:-1]
     return ls
 
@@ -99,3 +99,46 @@ def parse_cli(args, opts):
         return parser.parse_args(args)
     except optparse.OptParseError as err:
         raise error.ParsingError(err.msg)
+
+def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
+    '''enhanced shell command execution.
+    run with environment maybe modified, maybe in different dir.
+
+    if command fails and onerr is None, return status.  if ui object,
+    print error message and return status, else raise onerr object as
+    exception.
+
+    if out is specified, it is assumed to be a file-like object that has a
+    write() method. stdout and stderr will be redirected to out.
+    
+    From Mercurial's util.py'''
+    try:
+        sys.stdout.flush()
+    except Exception:
+        pass
+    def py2shell(val):
+        'convert python object into string that is useful to shell'
+        if val is None or val is False:
+            return '0'
+        if val is True:
+            return '1'
+        return str(val)
+    origcmd = cmd
+    env = dict(os.environ)
+    env.update((k, py2shell(v)) for k, v in environ.iteritems())
+    if out is None:
+        rc = subprocess.call(cmd, shell=True, env=env, cwd=cwd)
+    else:
+        proc = subprocess.Popen(cmd, shell=True, env=env, cwd=cwd,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for line in proc.stdout:
+            out.write(line)
+        proc.wait()
+        rc = proc.returncode
+    if rc and onerr:
+        errmsg = '%s %s' % (os.path.basename(origcmd.split(None, 1)[0]),
+                            "Failed to execute subprocess.")
+        if errprefix:
+            errmsg = '%s: %s' % (errprefix, errmsg)
+        raise onerr(errmsg)
+    return rc

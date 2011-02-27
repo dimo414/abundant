@@ -566,7 +566,7 @@ TertiaryMid: #999
 TertiaryDark: #666
 Error: #f88</pre>
 </div>
-<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102240524" tags="feature" changecount="26">
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102240749" tags="feature" changecount="27">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
 |!&amp;nbsp;|!Command|!Signature|!Description|
@@ -577,9 +577,9 @@ Error: #f88</pre>
 |&gt;|&gt;|&gt;|!Issue|
 |&amp;Dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
 |&amp;Dagger;|{{{child}}}|{{{child child_prefix parent_prefix}}}|Makes child issue a child of parent issue|
-| |{{{details}}}|{{{details prefix}}}|Outputs the full details of the current issue|
-| |{{{assign}}}|{{{assign prefix user}}}|Assigns the issue to the specified user, group, or meta-user|
-| |{{{update}}}|{{{update prefix status}}}|Update the status of the issue to the specified status|
+|&amp;Dagger;|{{{details}}}|{{{details prefix}}}|Outputs the full details of the current issue|
+| |{{{edit}}}|{{{edit prefix}}}|Edit the content of the issue|
+| |{{{update}}}|{{{update prefix [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Update the status of the issue to the specified status|
 | |{{{resolve}}}|{{{resolve prefix resolution}}}|Mark the issue as resolved, and specify the resolution|
 | |{{{duplicate}}}|{{{duplicate dup_prefix main_prefix}}}|Marks dup_prefix as a duplicate of main_prefix and resolves dup_prefix|
 | |{{{comment}}}|{{{comment prefix [-m message]}}}|Add a comment with given message, or launch an editor to populate it|

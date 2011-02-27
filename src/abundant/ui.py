@@ -15,7 +15,7 @@ Many methods modeled from Mercurial
 Created on Feb 16, 2011
 '''
 
-import sys,time
+import error,util,os,sys,tempfile,time
 
 class UI:
     def __init__(self,inp=sys.stdin,out=sys.stdout,err=sys.stderr):
@@ -60,6 +60,31 @@ class UI:
         '''Prompt the user, then return input'''
         self.write(prompt)
         return self._read()
+    
+    def edit(self, text):
+        '''Launch the user's default editor in order to take more detailed
+        input, notably editing an issue.
+        
+        From Mercurial's ui.py'''
+        (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt",
+                                      text=True)
+        try:
+            f = os.fdopen(fd, "w")
+            f.write(text)
+            f.close()
+
+            editor = self.geteditor()
+
+            util.system("%s \"%s\"" % (editor, name)
+                        onerr=error.Abort, errprefix=_("edit failed"))
+
+            f = open(name)
+            t = f.read()
+            f.close()
+        finally:
+            os.unlink(name)
+
+        return t
     
     def flush(self):
         '''Fush StdOut and StdErr
