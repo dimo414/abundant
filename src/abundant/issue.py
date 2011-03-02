@@ -105,12 +105,11 @@ class Issue:
         self.comments = comments if comments != None else []
         
         #new issue
-        if self.id == None:
-            if self.creation_date == None:
-                self.creation_date = time.time();
-                self.id = util.hash(repr(self.creation_date)+
-                                    (self.title if self.title != None else '')+
-                                    (self.creator if self.creator != None else ''))
+        if self.id == None and self.creation_date == None:
+            self.creation_date = time.time();
+            self.id = util.hash(repr(self.creation_date)+
+                                (self.title if self.title != None else '')+
+                                (self.creator if self.creator != None else ''))
     
     def pretty(self,key):
         return self._pretty[key]
