@@ -48,8 +48,12 @@ def details(ui,db,*args):
     ui.write(iss.details(ui,db))
 
 def help(ui,*args):
-    ui.write("Help documentation goes here.")
-    ui.write(args)
+    ui.write("Help documentation:")
+    if len(args) > 0: ui.write("Args: %s" % args)
+    out = []
+    for k,v in table.items():
+        out.append("%s %s" %(k,v[3]))
+    ui.write('\n'.join(out))
 
 def init(ui, dir='.'):
     """Initialize an Abundant database by creating a
@@ -148,7 +152,7 @@ table = {'adduser':
              (tasks,
               [],
               0,
-              "tasks [assigned_to]")
+              "[assigned_to]")
         }
 
 #command to run on command lookup failure

@@ -75,7 +75,7 @@ class UI:
 
             editor = self.geteditor()
 
-            util.system("%s \"%s\"" % (editor, name)
+            util.system("%s \"%s\"" % (editor, name),
                         onerr=error.Abort, errprefix=_("edit failed"))
 
             f = open(name)
