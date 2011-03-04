@@ -108,7 +108,7 @@ if __name__ == '__main__':
     while True:
         line = sys.stdin.readline()
         if line.strip().lower() == 'exit': break
-        args = line.split(' ')
+        args = line.strip().split(' ')
         ret = exec(args,os.getcwd())
         sys.stderr.flush()
         sys.stdout.flush()
