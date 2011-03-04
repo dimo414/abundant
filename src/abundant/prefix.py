@@ -48,7 +48,12 @@ class Prefix:
         there exist other (longer) items which match the prefix
         '''
         matched = self._root[prefix.lower()]
-        if matched is None:
+        if (matched is None or
+            (matched.result is None and len(matched.children) == 0) or
+            # this is needed because prefix will return if prefix
+            # is longer than necessary, and the necessary part
+            # matches, but the extra text does not
+            (matched.key is not None and not matched.key.startswith(prefix.lower()))):
             raise error.UnknownPrefix(prefix)
         if matched.result is not None:
             if matched.result in self._aliases:
@@ -155,19 +160,22 @@ class _Node:
         return ret
     
 if __name__ == '__main__':
-    p = Prefix(reversed(['a','and','hello','yellow','code','contribute','hell']))
+    p = Prefix(reversed(['a','and','hello','pi','yellow','code','contribute','hell']))
     
+    print(p['a'])
+    print(p['an'])
+    print(p.prefix('hello'))
+    p.add("howitzer")
+    print(p.prefix('hello'))
+    p.add('aNd')
+    print(p['an'])
+    p.alias('nothing','hell')
+    print(p['not'])
     try:
-        print(p['a'])
-        print(p['an'])
-        #print(p['hel'])
-        print(p.prefix('hello'))
-        p.add("howitzer")
-        print(p.prefix('hello'))
-        p.add('aNd')
-        print(p['an'])
-        p.alias('nothing','hell')
-        print(p['not'])
+        print(p['pie'])
+    except error.UnknownPrefix as err:
+        print("%s is an unkown." % err.prefix)
+    try:
         print(p['co'])
     except error.AmbiguousPrefix as err:
         print("%s is ambiguous, choices: %s" % (err.prefix,err.choices))

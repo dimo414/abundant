@@ -30,7 +30,7 @@ class Issue:
     _pretty = {'id':"ID",
                  'parent':"Parent", 'children':"Children", 'duplicates':"Duplicates",
                  'creator':"Creator", 'assigned_to':"Assigned To", 'listeners':"Listeners",
-                 'type':"Type", 'target':"Target", 'severity':"Severity", 'status':"Status",
+                 'issue':"Issue Type", 'target':"Target", 'severity':"Severity", 'status':"Status",
                         'resolution':"Resolution", 'category':"Category",
                  'creation_date':"Created", 'resolved_date':"Resolved", 'projection':"Projection",
                         'estimate':"Estimate",
@@ -41,7 +41,7 @@ class Issue:
     # display order of issue components, since they're stored in a dict
     _order = ['id','parent','children','duplicates',
               'creator','assigned_to','listeners',
-              'type','target','severity','status','resolution','category',
+              'issue','target','severity','status','resolution','category',
               'creation_date','resolved_date','projection','estimate',
               'title','paths','description','reproduction','expected','trace','comments']
     # issue data that are IDs
@@ -56,7 +56,7 @@ class Issue:
                  id=None,
                  parent=None, children=None, duplicates=None,
                  creator=None, assigned_to=None, listeners=None,
-                 type=None, target=None, severity=None, status=None, resolution=None, category=None,
+                 issue=None, target=None, severity=None, status=None, resolution=None, category=None,
                  creation_date=None, resolved_date=None, projection=None, estimate=None,
                  title=None, paths=None, description=None, reproduction=None, expected=None, trace=None,
                  comments=None):
@@ -84,7 +84,7 @@ class Issue:
         self.assigned_to = assigned_to
         self.listeners = listeners if listeners != None else []
         # Status
-        self.type = type
+        self.issue = issue
         self.target = target
         self.severity = severity
         self.status = status
