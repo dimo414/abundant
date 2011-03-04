@@ -566,20 +566,21 @@ TertiaryMid: #999
 TertiaryDark: #666
 Error: #f88</pre>
 </div>
-<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201102240749" tags="feature" changecount="27">
+<div title="Command Interface" creator="Abundant" modifier="Abundant" created="201102040942" modified="201103040133" tags="feature" changecount="30">
 <pre>The Abundant command line interface, its functionality and syntax will be documented here.  This document is currently a work in progress, but will be considered canonical, if the actual Abundant interface does not match up, that should be considered a bug.
 
 |!&amp;nbsp;|!Command|!Signature|!Description|
 |&gt;|&gt;|&gt;|!Global|
 |&amp;Dagger;|{{{init}}}|{{{init [--db path]}}}|Creates an issue database in this directory.  Should eventually prompt if there is a DVCS directory above this directory if the db should be created there instead.|
-|&amp;Dagger;|{{{tasks}}}|{{{tasks [user]}}}|Returns the list of issues assigned to the current user, or {{{user}}}, if specified.|
+| |{{{list}}}|{{{list [-r] [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY] [-g SEARCH]}}}|List issues which match the given parameters.|
+|&amp;times;|{{{tasks}}}|{{{tasks  [-r] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY] [-g SEARCH]}}}|Alias for list which automatically limits to search on the current user's tasks|
 |&amp;Dagger;|{{{adduser}}}|{{{adduser [-e email address]}}}|Adds a user to Abundant's userlist|
 |&gt;|&gt;|&gt;|!Issue|
-|&amp;Dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
+|&amp;Dagger;|{{{new}}}|{{{new title [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY] [-p PARENT] [-u USER]}}}|Creates a new bug, launches an editor to populate additional fields|
 |&amp;Dagger;|{{{child}}}|{{{child child_prefix parent_prefix}}}|Makes child issue a child of parent issue|
 |&amp;Dagger;|{{{details}}}|{{{details prefix}}}|Outputs the full details of the current issue|
 | |{{{edit}}}|{{{edit prefix}}}|Edit the content of the issue|
-| |{{{update}}}|{{{update prefix [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT] [-u USER]}}}|Update the status of the issue to the specified status|
+|&amp;Dagger;|{{{update}}}|{{{update prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY][-p PARENT]}}}|Update the given attributes of the issue|
 | |{{{resolve}}}|{{{resolve prefix resolution}}}|Mark the issue as resolved, and specify the resolution|
 | |{{{duplicate}}}|{{{duplicate dup_prefix main_prefix}}}|Marks dup_prefix as a duplicate of main_prefix and resolves dup_prefix|
 | |{{{comment}}}|{{{comment prefix [-m message]}}}|Add a comment with given message, or launch an editor to populate it|
@@ -602,7 +603,7 @@ Error: #f88</pre>
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.page.revision="200807230133" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.type="file">
+<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.type="file" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.page.revision="200807230133">
 <pre>/***
 |Name|DisableWikiLinksPlugin|
 |Source|http://www.TiddlyTools.com/#DisableWikiLinksPlugin|
@@ -717,6 +718,9 @@ This needs to include security controls to limit access as necessary.
 
 !Eclipse Plugin (Potentially)
 If time permits, an Eclipse plugin providing functionality like line highlighting and inline reporting would be very nice.</pre>
+</div>
+<div title="Handle changing parents" creator="Abundant" modifier="Abundant" created="201103032240" modified="201103032241" tags="issue" changecount="2">
+<pre>If an issue already has a parent, and is set to have a different parent, the original parent should have the child issue removed from it's children</pre>
 </div>
 <div title="Issue ID formatting" creator="Abundant" modifier="Abundant" created="201102180443" modified="201102180444" tags="issue" changecount="2">
 <pre>Issue IDs should be output as prefix:remainder whenever possible
@@ -918,6 +922,9 @@ Decided against this plan.  Between the time, title, and username, it seems high
 [[Return Codes]]
 [[Useful Mercurial Code]]</pre>
 </div>
+<div title="Rename Type to Issue" creator="Abundant" modifier="Abundant" created="201103032227" tags="issue" changecount="1">
+<pre>Since Type and Target are both somewhat likely to be common, and target currently always has to be referred to as --target, rename type (bug, feature request, etc.) to Issue.</pre>
+</div>
 <div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102090959" tags="resource" changecount="6">
 <pre>Helpful Reference Documents:
 
@@ -941,7 +948,7 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|

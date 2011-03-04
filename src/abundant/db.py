@@ -60,8 +60,9 @@ class DB(object):
                     gt = line.find('>')
                     if lt >= 0 and gt >= 0 and gt > lt:
                         self._usr_prefix.alias(line[lt+1:gt], line)
-            except:
+            except IOError:
                 pass # file doesn't exist, nbd
+            except: raise
         return self._usr_prefix
     
     def get_user(self,prefix):

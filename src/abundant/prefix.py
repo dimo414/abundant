@@ -48,11 +48,12 @@ class Prefix:
         there exist other (longer) items which match the prefix
         '''
         matched = self._root[prefix.lower()]
-        if (matched is None or 
+        if (matched is None or
+            (matched.result is None and len(matched.children) == 0) or
             # this is needed because prefix will return if prefix
             # is longer than necessary, and the necessary part
             # matches, but the extra text does not
-            (matched.key is not None and not matched.key.startswith(prefix))):
+            (matched.key is not None and not matched.key.startswith(prefix.lower()))):
             raise error.UnknownPrefix(prefix)
         if matched.result is not None:
             if matched.result in self._aliases:

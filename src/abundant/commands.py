@@ -104,6 +104,35 @@ def tasks(ui, db, user=None):
     else:
         return 1
 
+def update(ui, db, prefix, **opts):
+    iss = db.get_issue(prefix)
+    origiss = db.get_issue(prefix)
+    #[-a USER] [-l LISTENER]... [--rl LISTENER]... [-t TYPE] [--target TARGET] [-s SEVERITY] [-c CATEGORY]
+    if len(opts) == 0:
+        raise error.Abort("Did not specify any updates to make to issue %s" % 
+                          db.iss_prefix_obj().pref_str(iss.id))
+        
+    if opts['assign_to']:
+        iss.assigned_to = db.get_user(opts['assign_to'])
+    if opts['listener']:
+        iss.listeners.extend([db.get_user(i) for i in opts['listener']])
+    if opts['rl']:
+        for l in [db.get_user(i) for i in opts['rl']]:
+            iss.listeners.remove(l)
+    if opts['type']:
+        iss.type = opts['type']
+    if opts['target']:
+        iss.target = opts['target']
+    if opts['severity']:
+        iss.severity = opts['severity']
+    if opts['category']:
+        iss.category = opts['category']
+    
+    iss.to_JSON(db.issues)
+    
+    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
+    ui.write(iss.descChanges(origiss,ui))
+
 # commands listed in alphabetical order
 # the structure is similar to Mercurial's, but
 # not identical in syntax
@@ -148,7 +177,21 @@ table = {'adduser':
              (tasks,
               [],
               0,
-              "tasks [assigned_to]")
+              "tasks [assigned_to]"),
+          'update':
+             (update,
+              [
+               util.parser_option('-a','--assign_to',help="assign the issue to the specified user"),
+               util.parser_option('-l','--listener',action='append',help="user who should follow this issue"),
+               util.parser_option('--rl','--removelistener',action='append',help="user who should no longer follow this issue"),
+               util.parser_option('-t','--type',help="the type of issue, such as Bug or Feature Request"),
+               util.parser_option('--target',help="a target date or milestone for resolution"),
+               util.parser_option('-s','--severity',help="the severity of the issue"),
+               util.parser_option('-c','--category',help="categorize the issue")
+               ],
+              1,
+              "update prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-t TYPE] "
+              "[--target TARGET] [-s SEVERITY] [-c CATEGORY]")
         }
 
 #command to run on command lookup failure

@@ -68,7 +68,8 @@ def diff_dict(to,fro):
             if isinstance(to[key],list) and isinstance(fro[key],list):
                 to_set = set(to[key])
                 fro_set = set(fro[key])
-                diff[key] = (to_set.difference(fro_set),fro_set.difference(to_set))
+                diff[key] = ([i for i in to_set.difference(fro_set)],
+                             [i for i in fro_set.difference(to_set)])
             else:
                 diff[key] = (to[key],fro[key])  
     return diff 
