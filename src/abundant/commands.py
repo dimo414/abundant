@@ -79,11 +79,13 @@ def list(ui, db, **opts):
     
     if opts['assigned_to'] != '*':
         user = db.get_user(opts['assigned_to']) if opts['assigned_to'] else None
-        
+    if opts['listener']:
+        lstset = set([db.get_user(i) for i in opts['listener']])
+
     list = [i for i in iss_iter
             if (bool(i.resolution) == bool(opts['resolved'])) and
                (opts['assigned_to'] == '*' or i.assigned_to == user) and
-               (not opts['listener'] or not set(i.listeners).isdisjoint(set(opts['listener']))) and
+               (not opts['listener'] or not set(i.listeners).isdisjoint(lstset)) and
                (not opts['issue'] or i.issue == opts['issue']) and
                (not opts['target'] or i.target == opts['target']) and
                (not opts['severity'] or i.severity == opts['severity']) and 
@@ -95,7 +97,7 @@ def list(ui, db, **opts):
     ln = len(list)
     
     ui.write("Found %s matching issue%s" % (ln if ln > 0 else "no","" if ln == 1 else "s"))
-    if len(list) > 0:
+    if ln > 0:
         for i in list:
             ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
         return 0
