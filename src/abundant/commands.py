@@ -73,7 +73,24 @@ def init(ui, dir='.'):
     
     ui.write("Created Abundant issue database in %s" % db.path)
 
+def list(ui, db, **opts):
+    user = db.get_user(opts['assigned_to']) if opts['assigned_to'] else None
+    list = [issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues)]
+    list = [i for i in list if not user or i.assigned_to == user]
+    ln = len(list)
+    
+    ui.write("Found %s issue%s assigned to %s" % 
+             (ln if ln > 0 else "no","" if ln == 1 else "s", user if user else "anybody"))
+    if len(list) > 0:
+        for i in list:
+            ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
+        return 0
+    else:
+        return 1
+    
+
 def new(ui, db, *args, **opts):
+    
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
                       listeners=[db.get_user(i) for i in opts['listener']] if opts['listener'] else None,
@@ -94,19 +111,8 @@ def new(ui, db, *args, **opts):
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(issue.base,ui))
 
-def tasks(ui, db, user=None):
-    list = [issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues)]
-    list = [i for i in list if user is None or i.assigned_to == user]
-    ln = len(list)
-    
-    ui.write("Found %s issue%s assigned to %s" % 
-             (ln if ln > 0 else "no","" if ln == 1 else "s", user if user is not None else "anybody"))
-    if len(list) > 0:
-        for i in list:
-            ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
-        return 0
-    else:
-        return 1
+def tasks(ui, db, user=None, **opts):
+    return list(ui, db, assigned_to=user, **opts)
 
 def update(ui, db, prefix, **opts):
     iss = db.get_issue(prefix)
@@ -161,6 +167,20 @@ table = {'adduser':
               ],
               0,
              "[--dir DIR]"),
+         'list':
+            (list,
+             [
+              util.parser_option('-a','--assigned_to',help="issues assugned to this user"),
+              util.parser_option('-l','--listener',action='append',help="issues being followed by these users"),
+              util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
+              util.parser_option('-t','--target',help="a target date or milestone for resolution"),
+              util.parser_option('-s','--severity',help="the severity of the issue"),
+              util.parser_option('-c','--category',help="categorize the issue"),
+              util.parser_option('--creator',help="the user filing the bug")
+              ],
+             0,
+             "[-r] [-a USER] [-l LISTENER]... [-t TYPE] [--target TARGET] "
+             "[--creator CREAT[-s SEVERITY] [-c CATEGORY] [-g SEARCH]"),
          'new':
             (new,
              [
@@ -178,9 +198,17 @@ table = {'adduser':
              "[-s SEVERITY] [-c CATEGORY] [-u USER]"),
           'tasks':
              (tasks,
-              [],
+              [
+               util.parser_option('-l','--listener',action='append',help="issues being followed by these users"),
+               util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
+               util.parser_option('-t','--target',help="a target date or milestone for resolution"),
+               util.parser_option('-s','--severity',help="the severity of the issue"),
+               util.parser_option('-c','--category',help="categorize the issue"),
+               util.parser_option('--creator',help="the user filing the bug")
+              ],
               0,
-              "tasks [assigned_to]"),
+              "tasks [assigned_to] [-l LISTENER]... [-t TYPE] [--target TARGET] "
+             "[--creator CREAT[-s SEVERITY] [-c CATEGORY] [-g SEARCH]"),
           'update':
              (update,
               [
