@@ -22,7 +22,7 @@ class DB(object):
     A representation of the current database
     '''
 
-    def __init__(self,path,recurse=True):
+    def __init__(self,path,recurse=True,ui=None):
         '''
         Tries to find an Abundant database in the current or
         parent directory of path.  If it cannot, constructs what
@@ -30,6 +30,7 @@ class DB(object):
         '''
         self.search = path
         self.path = None
+        self.ui = ui
         if recurse:
             self.path = util.find_db(path)
         if self.path == None:
@@ -63,10 +64,17 @@ class DB(object):
             except IOError:
                 pass # file doesn't exist, nbd
             except: raise
+            if self.ui.cur_user:
+                try:
+                    self._usr_prefix.alias('me',self.ui.cur_user)
+                except error.UnknownPrefix:
+                    raise error.Abort("The specified current user, '%s', does not exist.  "
+                                      "Use `adduser` to add it" % self.ui.cur_user)
         return self._usr_prefix
     
     def get_user(self,prefix):
         try:
+            if 'nobody'.startswith(prefix.lower()): return None
             return self.usr_prefix_obj()[prefix]
         except error.AmbiguousPrefix as err:
             raise error.Abort("User prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,err.choices))

@@ -207,7 +207,7 @@ table = {'adduser':
                util.parser_option('--creator',help="the user filing the bug")
               ],
               0,
-              "tasks [assigned_to] [-l LISTENER]... [-t TYPE] [--target TARGET] "
+              "[assigned_to] [-l LISTENER]... [-t TYPE] [--target TARGET] "
              "[--creator CREAT[-s SEVERITY] [-c CATEGORY] [-g SEARCH]"),
           'update':
              (update,
@@ -221,7 +221,7 @@ table = {'adduser':
                util.parser_option('-c','--category',help="categorize the issue")
                ],
               1,
-              "update prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-i ISSUE] "
+              "prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-i ISSUE] "
               "[-t TARGET] [-s SEVERITY] [-c CATEGORY]")
         }
 

@@ -28,6 +28,7 @@ class UI:
         #this should eventually parse a config file properly
         self.short_date = '%d/%m/%y %I:%M%p'
         self.long_date = '%a, %b. %d %y at %I:%M:%S%p'
+        self.cur_user = 'Michael Diamond'
     
     #
     #Date / Time

@@ -53,7 +53,7 @@ def exec(cmds,cwd):
         func, options, args = _parse(task,args)
         
         if task not in commands.no_db:
-            db = database.DB(cwd)
+            db = database.DB(cwd,ui=ui)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
             ret = func(ui,db,*args,**options)
