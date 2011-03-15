@@ -74,6 +74,7 @@ def init(ui, dir='.'):
     ui.write("Created Abundant issue database in %s" % db.path)
 
 def list(ui, db, **opts):
+    num = 30 # specify the maximum number of results to display
     # use a generator to avoid loading all issues into memory
     iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
     
@@ -82,7 +83,7 @@ def list(ui, db, **opts):
     if opts['listener']:
         lstset = set([db.get_user(i) for i in opts['listener']])
 
-    list = [i for i in iss_iter
+    list = (i for i in iss_iter
             if (bool(i.resolution) == bool(opts['resolved'])) and
                (opts['assigned_to'] == '*' or i.assigned_to == user) and
                (not opts['listener'] or not set(i.listeners).isdisjoint(lstset)) and
@@ -92,19 +93,32 @@ def list(ui, db, **opts):
                (not opts['category'] or i.category == opts['category']) and
                (not opts['creator'] or i.creator == db.get_user(opts['creator'])) and
                (not opts['grep'] or opts['grep'].lower() in i.title.lower())
-            ]
+            )
     
-    ln = len(list)
+    # we further make a generator out of the print operation to
+    # keep large result sets from straining the system unnecessarily
+    def writeNext():
+        def genLs(ls,num):
+            count = 0
+            for i in ls:
+                ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
+                count += 1
+                if count >= num: yield count
+            yield count
+        gen = genLs(list,num)
+        res = next(gen)
+        ui.write("Found %s matching issue%s" % (res if res > 0 else "no","" if res == 1 else "s"))
+        return res
     
-    ui.write("Found %s matching issue%s" % (ln if ln > 0 else "no","" if ln == 1 else "s"))
-    if ln > 0:
-        for i in list:
-            ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
-        return 0
-    else:
+    res = writeNext()
+    if res == 0:
         return 1
+    while res == num:
+        if ui.confirm_positive("More results found, continue printing?"):
+            res = writeNext()
+        else: break
+    return 0
     
-
 def new(ui, db, *args, **opts):
     
     iss = issue.Issue(title=(' '.join(args)).strip(),

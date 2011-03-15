@@ -62,6 +62,10 @@ class UI:
         self.write(prompt)
         return self._read()
     
+    def confirm_positive(self,prompt):
+        res = self.prompt(prompt+" (y/n):")
+        return res.strip().lower() != 'n'
+    
     def edit(self, text):
         '''Launch the user's default editor in order to take more detailed
         input, notably editing an issue.
