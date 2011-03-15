@@ -14,7 +14,7 @@ Created on Feb 7, 2011
 '''
 
 import hashlib, optparse, os, subprocess, sys
-import error
+from abundant import error
 
 def hash(text):
     '''Return a hash of the given text for use as an id.

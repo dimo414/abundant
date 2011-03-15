@@ -15,7 +15,8 @@ Many methods modeled from Mercurial
 Created on Feb 16, 2011
 '''
 
-import error,util,os,sys,tempfile,time
+import os,sys,tempfile,time
+from abundant import error,util
 
 class UI:
     def __init__(self,inp=sys.stdin,out=sys.stdout,err=sys.stderr):

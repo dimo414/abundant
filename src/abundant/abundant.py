@@ -14,9 +14,9 @@ data, and passing work off to commands
 Created on Feb 10, 2011
 '''
 import os,sys,traceback
-import commands,error,prefix,util
-import ui as usrint
-import db as database
+from abundant import commands,error,prefix,util
+from abundant import ui as usrint
+from abundant import db as database
 
 cmdPfx = prefix.Prefix(commands.table.keys())
 
@@ -102,15 +102,3 @@ def _parse(task,args):
         raise error.MissingArguments(task)
     
     return (entry[0], options.__dict__, arg)
-        
-if __name__ == '__main__':
-    sys.stdout.write("Welcome to Abundant:\n")
-    while True:
-        line = sys.stdin.readline()
-        if line.strip().lower() == 'exit': break
-        args = line.strip().split(' ')
-        ret = exec(args,os.getcwd())
-        sys.stderr.flush()
-        sys.stdout.flush()
-        sys.stderr.write("Return Code: %d\n" % ret)
-        sys.stderr.flush()

@@ -16,8 +16,8 @@ Created on Feb 10, 2011
 '''
 
 import os
-import error,issue,util
-import db as database
+from abundant import error,issue,util
+from abundant import db as database
 
 # commands ordered alphabetically
 

@@ -13,7 +13,7 @@ Created on Feb 2, 2011
 
 import json,os,time
 
-import error,util
+from abundant import error,util
 
 class Issue:
     '''

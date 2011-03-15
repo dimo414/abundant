@@ -15,7 +15,7 @@ Created on Feb 13, 2011
 '''
 
 import os
-import error,issue,prefix,util
+from abundant import error,issue,prefix,util
 
 class DB(object):
     '''

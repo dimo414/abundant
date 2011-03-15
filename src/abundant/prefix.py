@@ -18,7 +18,7 @@ issue IDs, commands, usernames, and more.
 Created on Feb 14, 2011
 '''
 
-import error;
+from abundant import error;
 
 class Prefix:
     '''
