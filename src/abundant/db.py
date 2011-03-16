@@ -28,6 +28,7 @@ class DB(object):
         parent directory of path.  If it cannot, constructs what
         database should look like, use exists() to check for existence
         '''
+        path = os.path.abspath(path)
         self.search = path
         self.path = None
         self.ui = ui
@@ -35,7 +36,6 @@ class DB(object):
             self.path = util.find_db(path)
         if self.path == None:
             self.path = path
-        self.path = os.path.abspath(self.path)
         self.db = os.path.join(self.path,'.ab')
         self.issues = os.path.join(self.db,'issues')
         self.cache = os.path.join(self.db,'.cache')

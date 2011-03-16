@@ -20,6 +20,12 @@ from abundant import db as database
 
 cmdPfx = prefix.Prefix(commands.table.keys())
 
+globalArgs = [util.parser_option('-D','--database',help="the directory to search for the Abundant database"),
+              util.parser_option('-q','--quiet',action='store_const',const=-1,dest='volume',default=0,
+                                 help="Limit output to errors and unexpected data"),
+              util.parser_option('-v','--verbose',action='store_const',const=1,dest='volume',
+                                 help="Output additional content the user wouldn't usually need")]
+
 def exec(cmds,cwd):
     try:
         ui = usrint.UI()
@@ -53,7 +59,9 @@ def exec(cmds,cwd):
         func, options, args = _parse(task,args)
         
         if task not in commands.no_db:
-            db = database.DB(cwd,ui=ui)
+            path = os.path.join(cwd,options['database']) if options['database'] else cwd
+            
+            db = database.DB(path,ui=ui)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
             ret = func(ui,db,*args,**options)
@@ -69,6 +77,7 @@ def exec(cmds,cwd):
         return 2
     except error.CommandError as err:
         ui.alert("Invalid Command:\n",err)
+        ui.alert(cmds)
         try:
             ui.flush() # ensure error displays first
             exec([commands.fallback_cmd,err.task],cwd)
@@ -93,7 +102,7 @@ def _parse(task,args):
                                  "commands that are known to exist.")
     
     try:
-        options,arg = util.parse_cli(args,entry[1])
+        options,arg = util.parse_cli(args,globalArgs+entry[1])
     except Exception as err:
         err.task = task # we know what task, so record that
         raise

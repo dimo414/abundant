@@ -30,7 +30,7 @@ def adduser(ui,db,*args,**opts):
     f.close()
     ui.write("Added %s to the list of users" % name)
 
-def child(ui,db,child_pref,parent_pref):
+def child(ui,db,child_pref,parent_pref,*args,**opts):
     child = db.get_issue(child_pref)
     parent = db.get_issue(parent_pref)
         
@@ -43,11 +43,11 @@ def child(ui,db,child_pref,parent_pref):
     ui.write("Marked issue %s as a child of issue %s" % (child_pref,parent_pref))
     return 0
 
-def details(ui,db,*args):
+def details(ui,db,*args,**opts):
     iss = db.get_issue(args[0].strip())
     ui.write(iss.details(ui,db))
 
-def help(ui,*args):
+def help(ui,*args,**opts):
     ui.write("Help documentation:")
     if len(args) > 0: ui.write("Args: %s" % args)
     out = []
@@ -55,7 +55,7 @@ def help(ui,*args):
         out.append("%s %s" %(k,v[3]))
     ui.write('\n'.join(out))
 
-def init(ui, dir='.'):
+def init(ui, dir='.',*args,**opts):
     """Initialize an Abundant database by creating a
     '.ab' directory in the specified directory, or the
     cwd if not otherwise set."""
@@ -73,7 +73,7 @@ def init(ui, dir='.'):
     
     ui.write("Created Abundant issue database in %s" % db.path)
 
-def list(ui, db, **opts):
+def list(ui, db, *args, **opts):
     num = 30 # specify the maximum number of results to display
     # use a generator to avoid loading all issues into memory
     iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
@@ -141,10 +141,10 @@ def new(ui, db, *args, **opts):
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(issue.base,ui))
 
-def tasks(ui, db, user='me', **opts):
+def tasks(ui, db, user='me', *args, **opts):
     return list(ui, db, assigned_to=user, **opts)
 
-def update(ui, db, prefix, **opts):
+def update(ui, db, prefix, *args, **opts):
     iss = db.get_issue(prefix)
     origiss = db.get_issue(prefix)
     if len(opts) == 0:
