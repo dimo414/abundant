@@ -18,6 +18,11 @@ Created on Feb 16, 2011
 import os,sys,tempfile,time
 from abundant import error,util
 
+quiet = 0
+normal = 1
+verbose = 2
+debug = 3
+
 class UI:
     def __init__(self,inp=sys.stdin,out=sys.stdout,err=sys.stderr):
         '''Takes file-like objects for input, output,
@@ -30,6 +35,8 @@ class UI:
         self.short_date = '%d/%m/%y %I:%M%p'
         self.long_date = '%a, %b. %d %y at %I:%M:%S%p'
         self.cur_user = 'Test User'
+        
+        self.volume = normal
     
     #
     #Date / Time
@@ -44,28 +51,61 @@ class UI:
     #
     #IO
     #
-    def write(self,*msg,ln=True):
-        for a in msg:
-            self.out.write(str(a))
-        if ln: self.out.write('\n')
+    def set_volume(self,volume):
+        '''Set the ui object's volume'''
+        self.volume = volume
+    
+    def write(self,*msg,ln=True,volume=normal):
+        '''Write a message to the output stream.
+
+        The ui object's volume must be as high as the message volume to actually output.'''
+        if self.volume >= volume:
+            for a in msg:
+                self.out.write(str(a))
+            if ln: self.out.write('\n')
+    
+    def verbose(self,*msg,ln=True):
+        '''Write a verbose message to the output stream.
+        
+        Only happens if ui's volume is set to verbose or higher'''
+        self.write(*msg,ln=ln,volume=verbose)
+    
+    def debug(self,*msg,ln=True):
+        '''Write a debug message to the output stream.
+        
+        Only happens if ui's volume is set to debug or higher'''
+        self.write(*msg,ln=ln,volume=debug)
     
     def alert(self,*msg,ln=True):
+        '''Writes a message to the error stream.  Not affected by volume.'''
         for a in msg:
             self.err.write(str(a))
         if ln: self.err.write('\n')
     
     def _read(self):
         '''Read a line of input'''
+        self.flush()
         return self.inp.readline()
     
-    def prompt(self,prompt):
-        '''Prompt the user, then return input'''
-        self.write(prompt)
+    def prompt(self,prompt,volume=normal):
+        '''Prompt the user, then return input, or nothing if volume is too low'''
+        if self.volume < volume: # if nothing would be output
+            return ''
+        self.write(prompt,ln=False,volume=volume)
         return self._read()
     
-    def confirm_positive(self,prompt):
-        res = self.prompt(prompt+" (y/n):")
-        return res.strip().lower() != 'n'
+    def confirm(self,prompt,default,volume=normal):
+        '''Asks the user to confirm an action.
+        
+        Default is returned if volume is too low.  Additionally,
+        default determines how unusual input is handled.  If default
+        is false, the user must expressly say y or yes to confirm;
+        if default is true, the user must expressly say n or no to deny.'''
+        res = self.prompt(prompt+" (y/n): ",volume=volume).strip()
+        if res == '':
+            return default
+        res = res.lower()[0]
+        return (default and res != 'n') or (not default and res == 'y')
     
     def edit(self, text):
         '''Launch the user's default editor in order to take more detailed

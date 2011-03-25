@@ -114,7 +114,7 @@ def list(ui, db, *args, **opts):
     if res == 0:
         return 1
     while res == num:
-        if ui.confirm_positive("More results found, continue printing?"):
+        if ui.confirm("More results found, continue printing?",True):
             res = writeNext()
         else: break
     return 0

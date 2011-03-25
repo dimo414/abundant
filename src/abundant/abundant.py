@@ -21,10 +21,12 @@ from abundant import db as database
 cmdPfx = prefix.Prefix(commands.table.keys())
 
 globalArgs = [util.parser_option('-D','--database',help="the directory to search for the Abundant database"),
-              util.parser_option('-q','--quiet',action='store_const',const=-1,dest='volume',default=0,
+              util.parser_option('-q','--quiet',action='store_const',const=usrint.quiet,dest='volume',default=usrint.normal,
                                  help="Limit output to errors and unexpected data"),
-              util.parser_option('-v','--verbose',action='store_const',const=1,dest='volume',
-                                 help="Output additional content the user wouldn't usually need")]
+              util.parser_option('-v','--verbose',action='store_const',const=usrint.verbose,dest='volume',
+                                 help="Output additional content the user wouldn't usually need"),
+              util.parser_option('--debug',action='store_const',const=usrint.debug,dest='volume',
+                                 help="Output debug information useful for development / debugging")]
 
 def exec(cmds,cwd):
     try:
@@ -57,6 +59,9 @@ def exec(cmds,cwd):
             args = []
         
         func, options, args = _parse(task,args)
+        
+        #set volume
+        ui.set_volume(options['volume'])
         
         if task not in commands.no_db:
             path = os.path.join(cwd,options['database']) if options['database'] else cwd

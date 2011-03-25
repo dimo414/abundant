@@ -603,7 +603,7 @@ Error: #f88</pre>
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.page.revision="200807230133" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.type="file">
+<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.type="file" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.page.revision="200807230133">
 <pre>/***
 |Name|DisableWikiLinksPlugin|
 |Source|http://www.TiddlyTools.com/#DisableWikiLinksPlugin|
@@ -721,6 +721,22 @@ If time permits, an Eclipse plugin providing functionality like line highlightin
 </div>
 <div title="Handle changing parents" creator="Abundant" modifier="Abundant" created="201103032240" modified="201103032241" tags="issue" changecount="2">
 <pre>If an issue already has a parent, and is set to have a different parent, the original parent should have the child issue removed from it's children</pre>
+</div>
+<div title="IO Standards" creator="Abundant" modifier="Abundant" created="201103250444" changecount="1">
+<pre>Input and output is governed by the UI class, which manages both command line IO as well as launching editors for the user to edit more complex data.
+
+The 'volume' of the UI class determines how much content should be output:
+|!Volume|!Description|
+|0|Quiet: only messages that are critical should be output.  Generally speaking, very little should fall into this category, and the output should be easily parsed by a machine.|
+|1|Normal: the default volume, most messages should be at this volume.|
+|2|Verbose: additional details that the user would not normally need.|
+|3|Debug: details that are useful for developers and debuggers, but not usually useful for users.|
+
+!!Prompting
+In general, we should avoid prompting where possible.  Aborting with a suggestion (like Mercurial does for pushing a new branch, for instance) is usually more desirable.  There are prompting methods however, and they are designed to fail gracefully if not displayed (due to volume being too low).  The standard prompt method will return the empty string, without waiting for input, and the confirmation prompt will return the default.
+
+!!Text Editing
+Like Mercurial, we want to be able to launch the user's preferred text editor to allow them to create and edit detailed content, like comments and issue details.</pre>
 </div>
 <div title="Issue ID formatting" creator="Abundant" modifier="Abundant" created="201102180443" modified="201102180444" tags="issue" changecount="2">
 <pre>Issue IDs should be output as prefix:remainder whenever possible
@@ -918,10 +934,11 @@ cf. [[TiddlyWiki.com|http://www.tiddlywiki.com/#EmbeddedImages]]
 Decided against this plan.  Between the time, title, and username, it seems highly unlikely there will be conflicts.  Can always implement later if we decide to go a different direction.
 </pre>
 </div>
-<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" modified="201102132330" changecount="2">
+<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" modified="201103250209" changecount="3">
 <pre>[[Issue Structure]]
 [[Command Interface]]
 [[Return Codes]]
+[[IO Standards]]
 [[Useful Mercurial Code]]</pre>
 </div>
 <div title="Rename Type to Issue" creator="Abundant" modifier="Abundant" created="201103032227" modified="201103041908" tags="resolved" changecount="3">
@@ -952,7 +969,7 @@ Done</pre>
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|
