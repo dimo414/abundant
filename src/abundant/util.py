@@ -126,7 +126,7 @@ def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
         return str(val)
     origcmd = cmd
     env = dict(os.environ)
-    env.update((k, py2shell(v)) for k, v in environ.iteritems())
+    env.update((k, py2shell(v)) for k, v in environ.items())
     if out is None:
         rc = subprocess.call(cmd, shell=True, env=env, cwd=cwd)
     else:

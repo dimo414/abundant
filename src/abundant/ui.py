@@ -117,7 +117,7 @@ class UI:
         
         From Mercurial's ui.py'''
         (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt",
-                                      text=True)
+                                      text=False)
         try:
             f = os.fdopen(fd, "w")
             f.write(text)
@@ -126,7 +126,7 @@ class UI:
             editor = self.geteditor()
 
             util.system("%s \"%s\"" % (editor, name),
-                        onerr=error.Abort, errprefix=_("edit failed"))
+                        onerr=error.Abort, errprefix="Edit failed")
 
             f = open(name)
             t = f.read()
@@ -135,6 +135,9 @@ class UI:
             os.unlink(name)
 
         return t
+    
+    def geteditor(self):
+        return 'notepad'
     
     def flush(self):
         '''Fush StdOut and StdErr
