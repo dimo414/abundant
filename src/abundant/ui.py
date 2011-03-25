@@ -63,6 +63,10 @@ class UI:
             for a in msg:
                 self.out.write(str(a))
             if ln: self.out.write('\n')
+            
+    def quiet(self,*msg,ln=True):
+        '''Write a message to the output stream, even if quiet.'''
+        self.write(*msg,ln=ln,volume=quiet)
     
     def verbose(self,*msg,ln=True):
         '''Write a verbose message to the output stream.

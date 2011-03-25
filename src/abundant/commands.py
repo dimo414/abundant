@@ -95,29 +95,19 @@ def list(ui, db, *args, **opts):
                (not opts['grep'] or opts['grep'].lower() in i.title.lower())
             )
     
-    # we further make a generator out of the print operation to
-    # keep large result sets from straining the system unnecessarily
-    def writeNext():
-        def genLs(ls,num):
-            count = 0
-            for i in ls:
-                ui.write("%s:\t%s" % (db.iss_prefix_obj().prefix(i.id), i.title))
-                count += 1
-                if count >= num: yield count
-            yield count
-        gen = genLs(list,num)
-        res = next(gen)
-        ui.write("Found %s matching issue%s" % (res if res > 0 else "no","" if res == 1 else "s"))
-        return res
+    count = 0
     
-    res = writeNext()
-    if res == 0:
-        return 1
-    while res == num:
-        if ui.confirm("More results found, continue printing?",True):
-            res = writeNext()
-        else: break
-    return 0
+    # for now, if the user wants to slow down output, they must pipe output through less/more
+    # we ought to be able to do this for them in certain cases
+    for i in list:
+        ui.quiet(db.iss_prefix_obj().prefix(i.id),ln=False)
+        ui.write(":\t%s" % i.title,ln=False)
+        ui.quiet()
+        count += 1
+    
+    ui.write("Found %s matching issue%s" % (count if count > 0 else "no","" if count == 1 else "s"))
+    
+    return 0 if count > 0 else 1
     
 def new(ui, db, *args, **opts):
     
