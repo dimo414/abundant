@@ -47,6 +47,67 @@ def details(ui,db,*args,**opts):
     iss = db.get_issue(args[0].strip())
     ui.write(iss.details(ui,db))
 
+def edit(ui,db,*args,**opts):
+    '''Edits the content of the issue, notably the fields Paths, Description,
+    Reproduction Steps, Expected Result, and Stack Trace.  An editor is launched
+    prompting the user to update this data, unless any of these are provided
+    at the command line, in which case the provided fields are overwritten.'''
+    iss = db.get_issue(args[0].strip())
+    origiss = db.get_issue(args[0].strip())
+    
+    if opts['paths'] or opts['description'] or opts['reproduction'] or opts['expected'] or opts['trace']:
+        iss.paths = opts['paths'] if opts['paths'] else iss.paths
+        iss.description = opts['description'] if opts['description'] else iss.description
+        iss.reproduction = opts['reproduction'] if opts['reproduction'] else iss.reproduction
+        iss.expected = opts['expected'] if opts['expected'] else iss.expected
+        iss.trace = opts['trace'] if opts['trace'] else iss.trace
+    else:
+        formatting = (("Editing Issue %s:  %s\n\n"
+                       "[Paths]\n%s\n\n"
+                       "[Description]\n%s\n\n"
+                       "[Reproduction Steps]\n%s\n\n"
+                       "[Expected Result]\n%s\n\n"
+                       "[Stack Trace]\n%s") % 
+                       (db.iss_prefix_obj().prefix(iss.id),iss.title,
+                        util.list2str(iss.paths,True,''),
+                        iss.description if iss.description else '',
+                        iss.reproduction if iss.reproduction else '',
+                        iss.expected if iss.expected else '',
+                        iss.trace if iss.trace else ''))
+        
+        details = util.bracket_strip(ui.edit(formatting))
+        
+        danger = False
+        count = len(details)
+        if count != 6:
+            if count < 6:
+                details+=['']*(6-count)
+            danger = True
+            
+        _, paths, description, reproduction, expected, trace = details[0:6]
+        
+        if danger:
+            ui.alert("Warning: The details could not be parsed cleanly.\n"
+                     "This is usually due to inserting or removing sections.")
+            ui.alert(("The issue's details will be set to the following:\n"
+                      "Paths:\n%s\n\nDescription:\n%s\n\nReproduction Steps:\n%s\n\n"
+                      "Expected Results:\n%s\n\nStack Trace:\n%s")
+                      % (paths, description, reproduction, expected, trace))
+            safe = ui.confirm("Do you want to continue?",False,err=True)
+            if not safe:
+                raise error.Abort("Failed to parse the details file.")
+        
+        iss.paths = paths.splitlines()
+        iss.description = description if description else None
+        iss.reproduction = reproduction if reproduction else None
+        iss.expected = expected if expected else None
+        iss.trace = trace if trace else None
+        
+    iss.to_JSON(db.issues)
+    
+    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
+    ui.write(iss.descChanges(origiss,ui))
+
 def help(ui,*args,**opts):
     ui.write("Help documentation:")
     if len(args) > 0: ui.write("Args: %s" % args)
@@ -74,7 +135,6 @@ def init(ui, dir='.',*args,**opts):
     ui.write("Created Abundant issue database in %s" % db.path)
 
 def list(ui, db, *args, **opts):
-    num = 30 # specify the maximum number of results to display
     # use a generator to avoid loading all issues into memory
     iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
     
@@ -177,7 +237,18 @@ table = {'adduser':
              2,
              "CHILD_PREFIX PARENT_PREFIX"),
          'details':
-            (details,[],1,'prefix'),
+            (details,[],1,"PREFIX"),
+         'edit':
+            (edit,
+             [
+              util.parser_option('-p','--paths'),
+              util.parser_option('-d','--description'),
+              util.parser_option('-r','--reproduction'),
+              util.parser_option('-e','--expected'),
+              util.parser_option('-t','--trace')
+             ],
+             0,
+             "[-p PATHS] [-d DESCRIPTION] [-r REPRODUCTION] [-e EXPECTED] [-t TRACE]"),
          'help':
             (help,[],0,"[topic]"),
          'init':
@@ -197,12 +268,12 @@ table = {'adduser':
               util.parser_option('-t','--target',help="a target date or milestone for resolution"),
               util.parser_option('-s','--severity',help="the severity of the issue"),
               util.parser_option('-c','--category',help="the category of the issue"),
-              util.parser_option('--creator',help="the user filing the bug"),
+              util.parser_option('-C','--creator',help="the user filing the bug"),
               util.parser_option('-g','--grep',help="text to match in the title")
               ],
              0,
              "[-a USER] [-r] [-l LISTENER]... [-i ISSUE] [-t TARGET] [-s SEVERITY] "
-             "[-c CATEGORY] [--creator USER] [-g SEARCH]"),
+             "[-c CATEGORY] [-C USER] [-g SEARCH]"),
          'new':
             (new,
              [
@@ -227,12 +298,12 @@ table = {'adduser':
                util.parser_option('-t','--target',help="a target date or milestone for resolution"),
                util.parser_option('-s','--severity',help="the severity of the issue"),
                util.parser_option('-c','--category',help="the category of the issue"),
-               util.parser_option('--creator',help="the user filing the bug"),
+               util.parser_option('-C','--creator',help="the user filing the bug"),
                util.parser_option('-g','--grep',help="text to match in the title")
                ],
               0,
               "[assigned_to] [-r] [-l LISTENER]... [-i ISSUE] [-t TARGET] [-s SEVERITY] "
-             "[-c CATEGORY] [--creator USER] [-g SEARCH]"),
+             "[-c CATEGORY] [-C USER] [-g SEARCH]"),
           'update':
              (update,
               [

@@ -13,7 +13,7 @@ A set of utility operations used throughout Abundant.
 Created on Feb 7, 2011
 '''
 
-import hashlib, optparse, os, subprocess, sys
+import hashlib, optparse, os, re, subprocess, sys
 from abundant import error
 
 def hash(text):
@@ -143,3 +143,22 @@ def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
             errmsg = '%s: %s' % (errprefix, errmsg)
         raise onerr(errmsg)
     return rc
+
+def bracket_strip(lines):
+    '''Used to process files containing input from the user.
+    
+    Given a iterator of strings containing sections delimited by
+    strings starting with bracketed text (like "[section]") return
+    a list of the text in each section.  Note that index 0 of the
+    list is any content before the first section.'''
+    secs = []
+    sec = []
+    bracket_pat = re.compile(r'\s*\[.+\]\s*')
+    for line in lines:
+        if bracket_pat.match(line):
+            secs.append(''.join(sec).strip())
+            sec = []
+        else:
+            sec.append(line)
+    secs.append(''.join(sec).strip())
+    return secs

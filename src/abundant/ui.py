@@ -91,21 +91,24 @@ class UI:
         self.flush()
         return self.inp.readline()
     
-    def prompt(self,prompt,volume=normal):
+    def prompt(self,prompt,volume=normal,err=False):
         '''Prompt the user, then return input, or nothing if volume is too low'''
         if self.volume < volume: # if nothing would be output
             return ''
-        self.write(prompt,ln=False,volume=volume)
+        if err:
+            self.alert(prompt,ln=False)
+        else:
+            self.write(prompt,ln=False,volume=volume)
         return self._read()
     
-    def confirm(self,prompt,default,volume=normal):
+    def confirm(self,prompt,default,volume=normal,err=False):
         '''Asks the user to confirm an action.
         
         Default is returned if volume is too low.  Additionally,
         default determines how unusual input is handled.  If default
         is false, the user must expressly say y or yes to confirm;
         if default is true, the user must expressly say n or no to deny.'''
-        res = self.prompt(prompt+" (y/n): ",volume=volume).strip()
+        res = self.prompt(prompt+" (y/n): ",volume=volume,err=err).strip()
         if res == '':
             return default
         res = res.lower()[0]
@@ -129,12 +132,11 @@ class UI:
                         onerr=error.Abort, errprefix="Edit failed")
 
             f = open(name)
-            t = f.read()
+            for line in f:
+                yield line
             f.close()
         finally:
             os.unlink(name)
-
-        return t
     
     def geteditor(self):
         return 'notepad'
