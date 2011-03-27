@@ -15,7 +15,7 @@ of command line tasks to functions in this module.
 Created on Feb 10, 2011
 '''
 
-import os
+import os,time
 from abundant import error,issue,util
 from abundant import db as database
 
@@ -46,11 +46,31 @@ def child(ui,db,child_pref,parent_pref,*args,**opts):
 def comment(ui,db,pref,*args,**opts):
     iss = db.get_issue(pref)
     
+    if opts['message']:
+        message = opts['message'].strip()
+    else:
+        lines = util.ab_strip(ui.edit("AB: Commenting on Issue %s:  %s\n"
+                                      "AB: Lines starting with 'AB:' are ignored.\n\n" %
+                                      (db.iss_prefix_obj().prefix(iss.id),iss.title)))
+        message = ''.join(lines).strip()
+        
+    if message == '':
+        raise error.Abort("Must provide a comment for the specified issue.")
     
+    comment = [ui.cur_user,time.time(),message]
+    iss.comments.append(comment)
+    
+    iss.to_JSON(db.issues)
+    
+    ui.write("Added Comment to Issue %s:" % db.iss_prefix_obj().prefix(iss.id))
+    ui.write(issue.comment_to_str(comment))
+    
+    return 0
 
 def details(ui,db,pref,*args,**opts):
     iss = db.get_issue(pref)
     ui.write(iss.details(ui,db))
+    return 0
 
 def edit(ui,db,pref,*args,**opts):
     '''Edits the content of the issue, notably the fields Paths, Description,
@@ -80,7 +100,7 @@ def edit(ui,db,pref,*args,**opts):
                         iss.expected if iss.expected else '',
                         iss.trace if iss.trace else ''))
         
-        details = util.bracket_strip(ui.edit(formatting))
+        details = util.bracket_strip(util.ab_strip(ui.edit(formatting)))
         
         danger = False
         count = len(details)
@@ -112,6 +132,8 @@ def edit(ui,db,pref,*args,**opts):
     
     ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(origiss,ui))
+    
+    return 0
 
 def help(ui,*args,**opts):
     ui.write("Help documentation:")
@@ -241,6 +263,11 @@ table = {'adduser':
              [],
              2,
              "CHILD_PREFIX PARENT_PREFIX"),
+         'comment':
+            (comment,
+             [util.parser_option('-m','--message')],
+             1,
+             "PREFIX [-m MESSAGE]"),
          'details':
             (details,[],1,"PREFIX"),
          'edit':

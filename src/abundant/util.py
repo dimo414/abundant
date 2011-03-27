@@ -144,18 +144,30 @@ def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
         raise onerr(errmsg)
     return rc
 
+_ab_pat = re.compile(r'\s*AB:.*')
+def ab_strip(lines):
+    '''Used to process files containing input from the user.
+    
+    Given an iterator of strings, concatenates those strings
+    which do not start with "AB:"'''
+    lns = []
+    for line in lines:
+        if not _ab_pat.match(line):
+            lns.append(line)
+    return ''.join(lns).strip()
+
+_bracket_pat = re.compile(r'\s*\[.+\]\s*')
 def bracket_strip(lines):
     '''Used to process files containing input from the user.
     
-    Given a iterator of strings containing sections delimited by
+    Given an iterator of strings containing sections delimited by
     strings starting with bracketed text (like "[section]") return
     a list of the text in each section.  Note that index 0 of the
     list is any content before the first section.'''
     secs = []
     sec = []
-    bracket_pat = re.compile(r'\s*\[.+\]\s*')
     for line in lines:
-        if bracket_pat.match(line):
+        if _bracket_pat.match(line):
             secs.append(''.join(sec).strip())
             sec = []
         else:

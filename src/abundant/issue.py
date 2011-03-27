@@ -144,6 +144,8 @@ class Issue:
                         val = [db.iss_prefix_obj().pref_str(i) for i in val]
                         print(val)
                     else: val = db.iss_prefix_obj().pref_str(val)
+                if key == 'comments':
+                    val = [comment_to_str(i,ui) for i in val]
                 if ui is not None and key in self._dates:
                     val = ui.to_long_time(val)
                 
@@ -205,6 +207,11 @@ class Issue:
                 out.append(arc(key,self.pretty(key),diff))
         return '\n'.join(filter((lambda x : x.strip() != ''),out))
 
+def comment_to_str(com,ui=None):
+    ret = "%s\n\nAt %s" % (com[2],ui.to_short_time(com[1]) if ui else com[1])
+    if com[0]:
+        return ret + " by %s" % com[0]
+    return ret
     
 def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
