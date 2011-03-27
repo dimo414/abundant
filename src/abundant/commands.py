@@ -43,17 +43,22 @@ def child(ui,db,child_pref,parent_pref,*args,**opts):
     ui.write("Marked issue %s as a child of issue %s" % (child_pref,parent_pref))
     return 0
 
-def details(ui,db,*args,**opts):
-    iss = db.get_issue(args[0].strip())
+def comment(ui,db,pref,*args,**opts):
+    iss = db.get_issue(pref)
+    
+    
+
+def details(ui,db,pref,*args,**opts):
+    iss = db.get_issue(pref)
     ui.write(iss.details(ui,db))
 
-def edit(ui,db,*args,**opts):
+def edit(ui,db,pref,*args,**opts):
     '''Edits the content of the issue, notably the fields Paths, Description,
     Reproduction Steps, Expected Result, and Stack Trace.  An editor is launched
     prompting the user to update this data, unless any of these are provided
     at the command line, in which case the provided fields are overwritten.'''
-    iss = db.get_issue(args[0].strip())
-    origiss = db.get_issue(args[0].strip())
+    iss = db.get_issue(pref)
+    origiss = db.get_issue(pref)
     
     if opts['paths'] or opts['description'] or opts['reproduction'] or opts['expected'] or opts['trace']:
         iss.paths = opts['paths'] if opts['paths'] else iss.paths
