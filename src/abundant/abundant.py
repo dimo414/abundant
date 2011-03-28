@@ -26,7 +26,8 @@ globalArgs = [util.parser_option('-D','--database',help="the directory to search
               util.parser_option('-v','--verbose',action='store_const',const=usrint.verbose,dest='volume',
                                  help="Output additional content the user wouldn't usually need"),
               util.parser_option('--debug',action='store_const',const=usrint.debug,dest='volume',
-                                 help="Output debug information useful for development / debugging")]
+                                 help="Output debug information useful for development / debugging"),
+              util.parser_option('-h','--help',action="store_true")]
 
 def exec(cmds,cwd):
     try:
@@ -58,10 +59,16 @@ def exec(cmds,cwd):
             task = commands.fallback_cmd
             args = []
         
-        func, options, args = _parse(task,args)
+        func, options, args_left = _parse(task,args)
         
         #set volume
         ui.set_volume(options['volume'])
+        
+        #check for -h,--help
+        if options['help']:
+            new_args = [task] + args
+            task = commands.fallback_cmd
+            func, options, args_left = _parse(task,new_args)
         
         if task not in commands.no_db:
             path = os.path.join(cwd,options['database']) if options['database'] else cwd
@@ -69,9 +76,9 @@ def exec(cmds,cwd):
             db = database.DB(path,ui=ui)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
-            ret = func(ui,db,*args,**options)
+            ret = func(ui,db,*args_left,**options)
         else:
-            ret = func(ui,*args,**options)
+            ret = func(ui,*args_left,**options)
         if ret is None:
             return 0
         else: return ret
