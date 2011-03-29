@@ -207,8 +207,13 @@ def init(ui, dir='.',*args,**opts):
     ui.write("Created Abundant issue database in %s" % db.path)
 
 def list(ui, db, *args, **opts):
-    '''Get a list of matching issues
+    '''Get a list of open issues
     
+    Called without arguments, list will display all open issues.
+    The -r,--resolved flag will instead display resolved issues.
+    
+    Use the other parameters, detailed below, to further filter
+    the issues you wish to see.
     '''
     
     # use a generator to avoid loading all issues into memory
@@ -246,6 +251,12 @@ def list(ui, db, *args, **opts):
     return 0 if count > 0 else 1
     
 def new(ui, db, *args, **opts):
+    '''Create a new issue
+    
+    Creates a new open issue and, if set, marks the current user as the creator.
+    Options can be used to set additional information about the issue.  See the
+    update command to change/add/remove this information from an existing issue. 
+    '''
     
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
@@ -268,9 +279,16 @@ def new(ui, db, *args, **opts):
     ui.write(iss.descChanges(issue.base,ui))
 
 def tasks(ui, db, user='me', *args, **opts):
+    '''List issues assigned to current user
+    
+    An alias for list that defaults to showing issues assigned to the
+    current user.  A different user can be passed as an argument, and
+    all parameters to list except assigned to work as normal.
+    '''
     return list(ui, db, assigned_to=user, **opts)
 
 def update(ui, db, prefix, *args, **opts):
+    '''Updates the information associated with an issue'''
     iss = db.get_issue(prefix)
     origiss = db.get_issue(prefix)
     if len(opts) == 0:
