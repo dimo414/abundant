@@ -20,8 +20,29 @@ from abundant import error,issue,util
 from abundant import db as database
 
 # commands ordered alphabetically
+# the doc comments for functions in this module should
+# be considered world readable, as they are served up
+# as the help documentation for each command.
 
 def adduser(ui,db,*args,**opts):
+    '''Manually add a user to the list of users
+    
+    When Abundant is aware of the VCS it's residing in,
+    it will attempt to load usernames from the VCS.  This
+    command can be used to manually add a user who has not
+    committed any changes to the repository yet.
+    
+    All arguments after the command are joined together and
+    added to the users file in the Abundant database.
+    
+    You can also use the -e,--email flag to include an email
+    address with the user's name.
+    
+    Example (the following are functionally identical):
+    ab adduser Firstname Lastname -e flastname@example.com
+    ab adduser Firstname Lastname <flastname@example.com>    
+    '''
+    
     name = (' '.join(args)).strip()
     if 'email' in opts:
         name = "%s <%s>" % (name,opts['email'].strip())
@@ -31,6 +52,12 @@ def adduser(ui,db,*args,**opts):
     ui.write("Added %s to the list of users" % name)
 
 def child(ui,db,child_pref,parent_pref,*args,**opts):
+    '''Mark an issue as a child of another issue
+    
+    This simply affects the relationship between the
+    issues, and does not, for instance, prevent a user
+    from resolving the parent issue if they so desire.
+    '''
     child = db.get_issue(child_pref)
     parent = db.get_issue(parent_pref)
         
@@ -44,6 +71,15 @@ def child(ui,db,child_pref,parent_pref,*args,**opts):
     return 0
 
 def comment(ui,db,pref,*args,**opts):
+    '''Add a comment to an issue
+    
+    Appends a time and potentially user-stamped comment
+    to the specified issue.  If -m,--message is passed,
+    the specified message is used as the comment text.
+    Otherwise, an editor is launched and the user is prompted
+    to construct a comment.
+    '''
+    
     iss = db.get_issue(pref)
     
     if opts['message']:
@@ -68,15 +104,21 @@ def comment(ui,db,pref,*args,**opts):
     return 0
 
 def details(ui,db,pref,*args,**opts):
+    '''Display all the details and status of the given issue'''
     iss = db.get_issue(pref)
     ui.write(iss.details(ui,db))
     return 0
 
 def edit(ui,db,pref,*args,**opts):
-    '''Edits the content of the issue, notably the fields Paths, Description,
-    Reproduction Steps, Expected Result, and Stack Trace.  An editor is launched
-    prompting the user to update this data, unless any of these are provided
-    at the command line, in which case the provided fields are overwritten.'''
+    '''Edit the content of the issue
+    
+    Notably the fields Paths, Description, Reproduction Steps,
+    Expected Result, and Stack Trace.  An editor is launched
+    prompting the user to update this data, unless any of these
+    are provided at the command line, in which case the
+    provided fields are overwritten without launching an editor.
+    '''
+    
     iss = db.get_issue(pref)
     origiss = db.get_issue(pref)
     
@@ -136,6 +178,7 @@ def edit(ui,db,pref,*args,**opts):
     return 0
 
 def help(ui,*args,**opts):
+    '''Get help using Abundant'''
     ui.write("Help documentation:")
     if len(args) > 0: ui.write("Args: %s" % args)
     out = []
@@ -144,9 +187,11 @@ def help(ui,*args,**opts):
     ui.write('\n'.join(out))
 
 def init(ui, dir='.',*args,**opts):
-    """Initialize an Abundant database by creating a
-    '.ab' directory in the specified directory, or the
-    cwd if not otherwise set."""
+    '''Initialize an Abundant database
+    
+    Creates an '.ab' directory in the specified directory,
+    or the cwd if not otherwise set.
+    '''
     db = database.DB(dir,False)
     if db.exists():
         raise error.Abort("Abundant database already exists.")
@@ -162,6 +207,10 @@ def init(ui, dir='.',*args,**opts):
     ui.write("Created Abundant issue database in %s" % db.path)
 
 def list(ui, db, *args, **opts):
+    '''Get a list of matching issues
+    
+    '''
+    
     # use a generator to avoid loading all issues into memory
     iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
     
