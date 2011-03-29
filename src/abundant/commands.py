@@ -179,8 +179,8 @@ def edit(ui,db,pref,*args,**opts):
 
 def help(ui,prefix=None,*args,**opts):
     '''Get help using Abundant'''
-    error = False
     from abundant import abundant
+    error = False
     if prefix:
         try:
             cmd = table[abundant.cmdPfx[prefix]]
@@ -350,6 +350,17 @@ def update(ui, db, prefix, *args, **opts):
     ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(origiss,ui))
 
+def version(ui, *args, **opts):
+    '''Abundant version information and licensing'''
+    from abundant import abundant
+    ui.write("Abundant Issue Tracking - Version %d.%d" % abundant.version)
+    ui.write("Copyright (C) 2011 Michael Diamond\n")
+    ui.write("This is free software, released under the GPL 3+ license,\n"
+             "available at http://www.gnu.org/licenses/.\n")
+    ui.write("This program is distributed in the hope that it will be useful,\n"
+             "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+             "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
+
 # commands listed in alphabetical order
 # the structure is similar to Mercurial's, but
 # not identical in syntax
@@ -455,11 +466,12 @@ table = {'adduser':
                ],
               1,
               "prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-i ISSUE] "
-              "[-t TARGET] [-s SEVERITY] [-c CATEGORY]")
+              "[-t TARGET] [-s SEVERITY] [-c CATEGORY]"),
+          'version':(version,[],0,"")
         }
 
 #command to run on command lookup failure
 fallback_cmd = 'help'
 
 # commands that do not need a db object
-no_db = ['init','help']
+no_db = ['init','help','version']
