@@ -18,6 +18,10 @@ from abundant import commands,error,prefix,util
 from abundant import ui as usrint
 from abundant import db as database
 
+#Major/Minor release number.
+#Any updates to this should be tagged change sets.
+version = (0,1)
+
 cmdPfx = prefix.Prefix(commands.table.keys())
 
 globalArgs = [util.parser_option('-D','--database',help="the directory to search for the Abundant database"),
@@ -35,6 +39,7 @@ def exec(cmds,cwd):
     except:
         sys.stderr.write("FAILED TO CREATE UI OBJECT.\n"
               "This should not have been possible.")
+        raise
     try:
         
         if len(cmds) < 1:
@@ -55,7 +60,7 @@ def exec(cmds,cwd):
             args = []
         except error.AmbiguousPrefix as err:
             ui.alert("Ambiguous Command: %s" % err.prefix)
-            ui.alert("Did you mean: %s" % str(err.choices)[1:-1])
+            ui.alert("Did you mean: %s" % util.list2str(err.choices))
             task = commands.fallback_cmd
             args = []
         
@@ -101,9 +106,9 @@ def exec(cmds,cwd):
     except Exception as err:
         '''Exceptions we were not expecting.'''
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        ui.alert("Unexpected exception was raised.  This should not happen.")
-        ui.alert("Please report the entire output to Michael")
-        ui.alert("\nCommand line arguments:\n  ",' '.join(sys.argv))
+        sys.stderr.write("Unexpected exception was raised.  This should not happen.")
+        sys.stderr.write("Please report the entire output to Michael")
+        sys.stderr.write("\nCommand line arguments:\n  %s" % ' '.join(sys.argv))
         traceback.print_exception(exc_type,exc_value,exc_traceback)
         return 10
 
@@ -119,7 +124,7 @@ def _parse(task,args):
         err.task = task # we know what task, so record that
         raise
     
-    if len(arg) < entry[2]:
+    if len(arg) < entry[2] and not options.help:
         raise error.MissingArguments(task)
     
     return (entry[0], options.__dict__, arg)

@@ -177,15 +177,49 @@ def edit(ui,db,pref,*args,**opts):
     
     return 0
 
-def help(ui,*args,**opts):
+def help(ui,prefix=None,*args,**opts):
     '''Get help using Abundant'''
-    ui.write("Help documentation:")
-    if len(args) > 0: ui.write("Args: %s" % args)
+    error = False
+    from abundant import abundant
+    if prefix:
+        try:
+            cmd = table[abundant.cmdPfx[prefix]]
+            
+            ui.write(cmd[3])
+            ui.write()
+            ui.write(cmd[0].__doc__)
+            
+            ui.write("Options:")
+            
+            ui.write(util.option_str(cmd[1]))
+            
+            return 0
+            
+        except error.UnknownPrefix as err:
+            error = True
+            ui.alert("Unknown Command: %s" % err.prefix)
+        except error.AmbiguousPrefix as err:
+            error = True
+            ui.alert("Ambiguous Command: %s" % err.prefix)
+            ui.alert("Did you mean: %s" % util.list2str(err.choices))
+        
+    # we don't use else here so that bad command prefixes cause standard help output
+    
+    ui.write("Abundant Issue Tracking - Version %d.%d\n\nCommands:" 
+             % abundant.version)
+    
+    max_cmd = max([len(i) for i in table.keys()])+3
     out = []
-    for k,v in table.items():
-        out.append("%s %s" %(k,v[3]))
+    for cmd in sorted(table):
+        str = table[cmd][0].__doc__.splitlines()[0]
+        out.append(' '+cmd.ljust(max_cmd)+str)
+        if ui.is_verbose():
+            out.append('   '+table[cmd][3])
+    
     ui.write('\n'.join(out))
-
+    
+    return 1 if error else 0 
+        
 def init(ui, dir='.',*args,**opts):
     '''Initialize an Abundant database
     
@@ -319,7 +353,12 @@ def update(ui, db, prefix, *args, **opts):
 # commands listed in alphabetical order
 # the structure is similar to Mercurial's, but
 # not identical in syntax
-# see util.parse_cli for sytax instructions
+# 
+# the tuple consists of the following:
+#     The function to run
+#     a list of optparse Options
+#     the number of mandatory positional arguments
+#     a usage string
 table = {'adduser':
             (adduser,
              [util.parser_option('-e','--email')],

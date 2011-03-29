@@ -84,14 +84,12 @@ class _ThrowParser(optparse.OptionParser):
         raise optparse.OptParseError(msg)
 
 def parse_cli(args, opts):
-    '''Takes a list of arguments to the command line, and a
-    data structure of options, and returns a tuple of the 
-    remaining positional arguments and the options parsed
-    out of the arguments
+    '''Parses command line input into options and positional arguments
     
-    Opts Structure:
-    the opts structure should be a tuple of the following:
-    
+    Takes a list of arguments to the command line, and a
+    list of options, constructed from parser_option(), and
+    returns a tuple of the remaining positional arguments
+    and the options parsed out of the arguments.
     '''
     # help is handled elsewhere
     parser = _ThrowParser(add_help_option=False,option_list=opts)
@@ -100,6 +98,41 @@ def parse_cli(args, opts):
         return parser.parse_args(args)
     except optparse.OptParseError as err:
         raise error.ParsingError(err.msg)
+    
+def option_str(options):
+    '''Constructs an option string
+    
+    Based on optparse.HelpFormatter code and styled after 
+    Mercurial's help output, turns an optparse.Option into
+    a string for displaying help info.
+    '''
+    
+    max_len = 80
+    multi_set = set(['append','append_const','count'])
+    
+    optstrs = []
+    for option in options:
+        str = (' ' + ' '.join(i for i in option._short_opts) + 
+               ' ' + ' '.join(i for i in option._long_opts))
+        if option.takes_value():
+            metavar = option.metavar or option.dest.upper()
+            str = "%s %s" % (str,metavar)
+        if option.action in multi_set:
+            str = "%s %s" % (str,'[+]')
+        optstrs.append((str,option.help))
+    
+    opt_len = max([len(i) for (i,_) in optstrs])+2
+    hlp_len = max_len - opt_len
+    
+    out = []
+    for (opt,hlp) in optstrs:
+        out.append(opt.ljust(opt_len) + hlp[:hlp_len])
+        while True:
+            hlp = hlp[hlp_len:]
+            if len(hlp) == 0: break
+            out.append(''.ljust(opt_len)+hlp[:hlp_len])
+    
+    return '\n'.join(out)
 
 def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
     '''enhanced shell command execution.

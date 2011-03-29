@@ -54,6 +54,18 @@ class UI:
     def set_volume(self,volume):
         '''Set the ui object's volume'''
         self.volume = volume
+        
+    def is_quiet(self):
+        '''Indicates UI is set to quiet'''
+        return self.volume <= quiet
+    
+    def is_verbose(self):
+        '''Indicates UI is set to verbose'''
+        return self.volume >= verbose
+    
+    def is_debug(self):
+        '''Indicates UI is set to debug'''
+        return self.volume >= debug
     
     def write(self,*msg,ln=True,volume=normal):
         '''Write a message to the output stream.
