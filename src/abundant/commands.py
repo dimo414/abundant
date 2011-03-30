@@ -15,7 +15,7 @@ of command line tasks to functions in this module.
 Created on Feb 10, 2011
 '''
 
-import os,time
+import os,sys,time
 from abundant import error,issue,util
 from abundant import db as database
 
@@ -180,26 +180,28 @@ def edit(ui,db,pref,*args,**opts):
 def help(ui,prefix=None,*args,**opts):
     '''Get help using Abundant'''
     from abundant import abundant
-    err = False
+    fail = False
     if prefix:
         try:
-            cmd = table[abundant.cmdPfx[prefix]]
+            name = abundant.cmdPfx[prefix]
+            cmd = table[name]
             
-            ui.write(cmd[3])
+            ui.write(' '.join([sys.argv[0],name,cmd[3]]))
             ui.write()
             ui.write(cmd[0].__doc__)
             
-            ui.write("Options:")
-            
-            ui.write(util.option_str(cmd[1]))
+            if cmd[1]:
+                ui.write("Options:")
+                
+                ui.write(util.option_str(cmd[1]))
             
             return 0
             
         except error.UnknownPrefix as err:
-            err = True
+            fail = True
             ui.alert("Unknown Command: %s" % err.prefix)
         except error.AmbiguousPrefix as err:
-            err = True
+            fail = True
             ui.alert("Ambiguous Command: %s" % err.prefix)
             ui.alert("Did you mean: %s" % util.list2str(err.choices))
         
@@ -218,7 +220,7 @@ def help(ui,prefix=None,*args,**opts):
     
     ui.write('\n'.join(out))
     
-    return 1 if err else 0 
+    return 1 if fail else 0
         
 def init(ui, dir='.',*args,**opts):
     '''Initialize an Abundant database
@@ -284,7 +286,7 @@ def list(ui, db, *args, **opts):
     
     return 0 if count > 0 else 1
 
-def open(ui, db, prefix, status='Open', *args, **opts):
+def open_iss(ui, db, prefix, status='Open', *args, **opts):
     '''Opens a previously resolved issue
     
     This command reopens the issue, and optionally sets its
@@ -441,11 +443,9 @@ table = {'adduser':
             (help,[],0,"[topic]"),
          'init':
             (init,
-             [
-              util.parser_option('--dir')
-              ],
+             [],
               0,
-             "[--dir DIR]"),
+             "[DIR]"),
          'list':
             (list,
              [
@@ -463,7 +463,7 @@ table = {'adduser':
              "[-a USER] [-r] [-l LISTENER]... [-i ISSUE] [-t TARGET] [-s SEVERITY] "
              "[-c CATEGORY] [-C USER] [-g SEARCH]"),
          'open':
-            (open,[],0,"PREFIX [STATUS]"),
+            (open_iss,[],0,"PREFIX [STATUS]"),
          'new':
             (new,
              [

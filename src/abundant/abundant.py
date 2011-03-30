@@ -106,9 +106,9 @@ def exec(cmds,cwd):
     except Exception as err:
         '''Exceptions we were not expecting.'''
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        sys.stderr.write("Unexpected exception was raised.  This should not happen.")
-        sys.stderr.write("Please report the entire output to Michael")
-        sys.stderr.write("\nCommand line arguments:\n  %s" % ' '.join(sys.argv))
+        sys.stderr.write("Unexpected exception was raised.  This should not happen.\n")
+        sys.stderr.write("Please report the entire output to Michael\n")
+        sys.stderr.write("\nCommand line arguments:\n  %s\n" % ' '.join(sys.argv))
         traceback.print_exception(exc_type,exc_value,exc_traceback)
         return 10
 
