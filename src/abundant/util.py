@@ -119,7 +119,7 @@ def option_str(options):
             str = "%s %s" % (str,metavar)
         if option.action in multi_set:
             str = "%s %s" % (str,'[+]')
-        optstrs.append((str,option.help))
+        optstrs.append((str,option.help if option.help else ''))
     
     opt_len = max([len(i) for (i,_) in optstrs])+2
     hlp_len = max_len - opt_len

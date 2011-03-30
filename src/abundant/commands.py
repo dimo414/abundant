@@ -180,7 +180,7 @@ def edit(ui,db,pref,*args,**opts):
 def help(ui,prefix=None,*args,**opts):
     '''Get help using Abundant'''
     from abundant import abundant
-    error = False
+    err = False
     if prefix:
         try:
             cmd = table[abundant.cmdPfx[prefix]]
@@ -196,10 +196,10 @@ def help(ui,prefix=None,*args,**opts):
             return 0
             
         except error.UnknownPrefix as err:
-            error = True
+            err = True
             ui.alert("Unknown Command: %s" % err.prefix)
         except error.AmbiguousPrefix as err:
-            error = True
+            err = True
             ui.alert("Ambiguous Command: %s" % err.prefix)
             ui.alert("Did you mean: %s" % util.list2str(err.choices))
         
@@ -218,7 +218,7 @@ def help(ui,prefix=None,*args,**opts):
     
     ui.write('\n'.join(out))
     
-    return 1 if error else 0 
+    return 1 if err else 0 
         
 def init(ui, dir='.',*args,**opts):
     '''Initialize an Abundant database
