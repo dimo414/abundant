@@ -283,6 +283,24 @@ def list(ui, db, *args, **opts):
     ui.write("Found %s matching issue%s" % (count if count > 0 else "no","" if count == 1 else "s"))
     
     return 0 if count > 0 else 1
+
+def open(ui, db, prefix, status='Open', *args, **opts):
+    '''Opens a previously resolved issue
+    
+    This command reopens the issue, and optionally sets its
+    status to the passed status.'''
+    iss = db.get_issue(prefix)
+    if not iss.resolution:
+        raise error.Abort("Cannot open issue %s, it is already open."
+                          "Use resolve to close an open issue." % 
+                          db.iss_prefix_obj().pref_str(iss.id))
+    
+    iss.status = status
+    iss.resolution = None
+    
+    iss.to_JSON(db.issues)
+    
+    ui.write("Reopened issue %s, set status to %s" % (db.iss_prefix_obj().pref_str(iss.id),iss.status))
     
 def new(ui, db, *args, **opts):
     '''Create a new issue
@@ -311,6 +329,27 @@ def new(ui, db, *args, **opts):
     
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(issue.base,ui))
+
+def resolve(ui, db, prefix, resolution='Resolved', *args, **opts):
+    '''Marks an issue resolved
+    
+    If the issue is not simply "resolved", for instance
+    it is concluded it will not be fixed, or it lacks information,
+    it may be considered resolved nevertheless.  Therefore you can
+    specify a custom resolved status.
+    '''
+    iss = db.get_issue(prefix)
+    if iss.resolution:
+        raise error.Abort("Cannot resolve issue %s, it is already resolved with resolution %s."
+                          "Use open to reopen a resolved issue." % 
+                          (db.iss_prefix_obj().pref_str(iss.id),iss.resolution))
+    
+    iss.status = 'Resolved'
+    iss.resolution = resolution
+    
+    iss.to_JSON(db.issues)
+    
+    ui.write("Resolved issue %s with resolution %s" % (db.iss_prefix_obj().pref_str(iss.id),iss.resolution))
 
 def tasks(ui, db, user='me', *args, **opts):
     '''List issues assigned to current user
@@ -423,6 +462,8 @@ table = {'adduser':
              0,
              "[-a USER] [-r] [-l LISTENER]... [-i ISSUE] [-t TARGET] [-s SEVERITY] "
              "[-c CATEGORY] [-C USER] [-g SEARCH]"),
+         'open':
+            (open,[],0,"PREFIX [STATUS]"),
          'new':
             (new,
              [
@@ -438,6 +479,8 @@ table = {'adduser':
               1,
              "title [-a USER] [-l LISTENER]... [-i ISSUE] [-t TARGET] "
              "[-s SEVERITY] [-c CATEGORY] [-u USER]"),
+          'resolve':
+             (resolve,[],0,"PREFIX [RESOLUTION]"),
           'tasks':
              (tasks,
               [
