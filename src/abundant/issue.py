@@ -142,7 +142,6 @@ class Issue:
                 if db is not None and key in self._ids:
                     if isinstance(val,list):
                         val = [db.iss_prefix_obj().pref_str(i) for i in val]
-                        print(val)
                     else: val = db.iss_prefix_obj().pref_str(val)
                 if key == 'comments':
                     val = [comment_to_str(i,ui) for i in val]

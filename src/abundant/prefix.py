@@ -155,8 +155,8 @@ class _Node:
     def all(self):
         '''Returns a list of all items in and below this node'''
         ret = [self.result] if self.result is not None else []
-        for (_,k) in self.children.items():
-            ret.extend(k.all())
+        for k,v in self.children.items():
+            ret.extend(v.all())
         return ret
     
 if __name__ == '__main__':

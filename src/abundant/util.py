@@ -36,9 +36,10 @@ def find_db(p):
 def list2str(ls,lines=False,pad='  '):
     '''Returns a list as a pretty string'''
     if isinstance(ls,list):
+        ls = [str(i) for i in ls]
         if lines:
             return ('\n'+pad).join(ls)
-        return str(ls)[1:-1]
+        return ', '.join(ls)
     return ls
 
 def diff_dict(to,fro):
