@@ -221,7 +221,7 @@ def help(ui,prefix=None,*args,**opts):
             name = abundant.cmdPfx[prefix]
             cmd = table[name]
             
-            ui.write(' '.join([sys.argv[0],name,cmd[3]]))
+            ui.write(' '.join([os.path.basename(sys.argv[0]),name,cmd[3]]))
             ui.write()
             ui.write(cmd[0].__doc__)
             
