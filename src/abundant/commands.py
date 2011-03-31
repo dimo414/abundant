@@ -109,6 +109,33 @@ def details(ui,db,pref,*args,**opts):
     ui.write(iss.details(ui,db))
     return 0
 
+def duplicate(ui,db,dup_pref,parent_pref,*args,**opts):
+    '''Mark an issue as a duplicate of another
+    
+    This marks the duplicate issue as resolved, reason "duplicate"
+    and further marks the duplicate issue a child of the issue being
+    duplicated.
+    
+    If the duplicate issue was already a child issue, it will be
+    disconnected from its original parent.
+    '''
+    dup_iss = db.get_issue(dup_pref)
+    par_iss = db.get_issue(parent_pref)
+    
+    # clear original parent
+    if dup_iss.parent:
+        orig_par = db.get_issue(dup_iss.parent)
+        orig_par.children.remove(dup_iss.id)
+        orig_par.to_JSON(db.issues)
+    
+    par_iss.children.append(dup_iss.id)
+    dup_iss.duplicates = par_iss.id
+    
+    par_iss.to_JSON(db.issues)
+    dup_iss.to_JSON(db.issues)
+    
+    ui.write("Marked issue %s as a duplicate of issue %s" % (dup_pref,parent_pref))
+
 def edit(ui,db,pref,*args,**opts):
     '''Edit the content of the issue
     
@@ -428,6 +455,8 @@ table = {'adduser':
              "PREFIX [-m MESSAGE]"),
          'details':
             (details,[],1,"PREFIX"),
+         'duplicate':
+            (duplicate,[],2,"DUPLICATE_PREFIX PARENT_PREFIX"),
          'edit':
             (edit,
              [
