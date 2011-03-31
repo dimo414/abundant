@@ -60,7 +60,15 @@ def child(ui,db,child_pref,parent_pref,*args,**opts):
     '''
     child = db.get_issue(child_pref)
     parent = db.get_issue(parent_pref)
-        
+    
+    if child.parent:
+        if not ui.confirm("Issue %s is already a child of issue %s, do you really want to change it's parent to issue %s?"
+                   % (child_pref,db.iss_prefix_obj().prefix(child.parent),parent_pref), True):
+            raise error.Abort("Did not change issue %s's parent." % child_pref)
+        orig = db.get_issue(child.parent)
+        orig.children.remove(child.id)
+        orig.to_JSON(db.issues)
+    
     child.parent = parent.id
     parent.children.append(child.id)
     
