@@ -42,6 +42,53 @@ def list2str(ls,lines=False,pad='  '):
         return ', '.join(ls)
     return ls
 
+def expandpath(path):
+    '''Expands system variables in paths
+    
+    such as ~ or %USERPROFILE%
+    
+    Taken from Mercurial's util.py
+    ''' 
+    return os.path.expanduser(os.path.expandvars(path))
+
+_configpath = None
+
+def configpaths():
+    '''returns all locations to look for config files,
+    excluding repo-specific paths.
+    
+    Currently this is very limited, but should work for our
+    purposes at the moment.  At present, the result of this
+    function contains paths for multiple os's, and as such
+    they cannot be trusted to necessarily even be valid paths. 
+    
+    Styled after Mercurial's rcpath() in util.py
+    '''
+    
+    global _configpath
+    if _configpath is None:
+        execpath = os.path.dirname(sys.argv[0])
+        #later should override earlier
+        path = [os.path.join(i,'ab.conf') for i in 
+                   ['/etc/abundant',
+                    execpath,
+                    os.path.join(os.path.join(os.path.dirname(execpath),'etc'),'abundant'),
+                    '%APPDATA%',
+                    '%HOMEPATH%',
+                    '%USERPROFILE%']
+                ]
+        path.append(os.path.join('~','.ab.conf'))
+        
+        if 'ABCONFPATH' in os.environ:
+            for p in os.environ['ABCONFPATH'].split(os.pathsep):
+                if not p:
+                    continue
+                path.append(p)
+        
+        _configpath = [expandpath(p) for p in path]
+    
+    return _configpath
+
 def diff_dict(to,fro):
     '''Identifies and returns the differences between
     two dicts as a dictionary of fields to tuples 

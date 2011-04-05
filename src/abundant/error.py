@@ -23,7 +23,14 @@ class NoSuchIssue(Abort):
 
 class SeriousAbort(Abort):
     '''Raised when the issue should have been previously prevented
-    in the code.''' 
+    in the code.'''
+
+class ConfigError(Exception):
+    '''Raised if parsing a config file fails'''
+    def __init__(self,error,line,*args):
+        Exception.__init__(self,*args)
+        self.error = error
+        self.line = line
 
 class CommandError(Exception):
     '''Raised if input to the command is invalid, wrong, or missing required fields'''

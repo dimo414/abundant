@@ -272,6 +272,9 @@ def init(ui, dir='.',*args,**opts):
     conf = open(db.conf,'w')
     # write any initial configuration to config file
     conf.close()
+    lconf = open(db.local_conf,'w')
+    # write any initial configuration to local config file
+    lconf.close()
     usr = open(db.users,'w')
     usr.close()
     

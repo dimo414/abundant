@@ -38,7 +38,8 @@ def exec(cmds,cwd):
         ui = usrint.UI()
     except:
         sys.stderr.write("FAILED TO CREATE UI OBJECT.\n"
-              "This should not have been possible.")
+              "This should not have been possible.\n"
+              "Please report this issue immediately.\n\n")
         raise
     try:
         

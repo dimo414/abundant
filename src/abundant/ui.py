@@ -16,7 +16,7 @@ Created on Feb 16, 2011
 '''
 
 import os,sys,tempfile,time
-from abundant import error,util
+from abundant import config,error,util
 
 quiet = 0
 normal = 1
@@ -37,6 +37,20 @@ class UI:
         self.cur_user = 'Test User'
         
         self.volume = normal
+        
+        # parse system config files
+        self._conf = config.config()
+        for f in util.configpaths():
+            try:
+                fp = open(f)
+                conf = config.config()
+                conf.read(f,fp)
+                self._conf.update(conf)
+            except IOError:
+                pass # file doesn't exist
+            except error.ConfigError as err:
+                self.alert("** Warning: Parsing a config file failed: %s" % err.line)
+                self.flush()
     
     #
     #Date / Time

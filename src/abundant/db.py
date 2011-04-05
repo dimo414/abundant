@@ -40,6 +40,7 @@ class DB(object):
         self.issues = os.path.join(self.db,'issues')
         self.cache = os.path.join(self.db,'.cache')
         self.conf = os.path.join(self.db,"ab.conf")
+        self.local_conf = os.path.join(self.db,"ab.local.conf")
         self.users = os.path.join(self.db,"users")
         
         self._usr_prefix = None
