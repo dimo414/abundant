@@ -65,12 +65,12 @@ class DB(object):
             except IOError:
                 pass # file doesn't exist, nbd
             except: raise
-            if self.ui.cur_user:
+            if self.ui.config('ui','username'):
                 try:
-                    self._usr_prefix.alias('me',self.ui.cur_user)
+                    self._usr_prefix.alias('me',self.ui.config('ui','username'))
                 except error.UnknownPrefix:
                     raise error.Abort("The specified current user, '%s', does not exist.  "
-                                      "Use `adduser` to add it" % self.ui.cur_user)
+                                      "Use `adduser` to add it" % self.ui.config('ui','username'))
         return self._usr_prefix
     
     def get_user(self,prefix):

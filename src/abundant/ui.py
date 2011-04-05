@@ -31,36 +31,56 @@ class UI:
         self.out = out
         self.err = err
         
-        #this should eventually parse a config file properly
-        self.short_date = '%d/%m/%y %I:%M%p'
-        self.long_date = '%a, %b. %d %y at %I:%M:%S%p'
-        self.cur_user = 'Test User'
+        #populate config defaults
+        self._conf = config.config()
+        self._conf.set('ui','short_date','%d/%m/%y %I:%M%p','default')
+        self._conf.set('ui','long_date','%a, %b. %d %y at %I:%M:%S%p','default')
         
         self.volume = normal
         
         # parse system config files
-        self._conf = config.config()
-        for f in util.configpaths():
+        self._conf.update(self._load_conf_files(util.configpaths()))
+    
+    def _load_conf_files(self, files):
+        conf = config.config()
+        for f in files:
             try:
                 fp = open(f)
-                conf = config.config()
-                conf.read(f,fp)
-                self._conf.update(conf)
+                tconf = config.config()
+                tconf.read(f,fp)
+                self.debug("Loaded config file at %s" % f)
+                conf.update(tconf)
             except IOError:
                 pass # file doesn't exist
             except error.ConfigError as err:
                 self.alert("** Warning: Parsing a config file failed: %s" % err.line)
                 self.flush()
+        return conf
+    
+    def db_conf(self, db):
+        self._conf.update(self._load_conf_files([db.conf,db.local_conf]))
+        
+        #confirm the current user is in the userlist
+        name = self.config('ui','username')
+        try:
+            lookup = db.get_user(name)
+        except:
+            f = open(db.users,'a')
+            f.write('%s\n' % name)
+            f.close()
+    
+    def config(self, section, name, default=None):
+        return self._conf.get(section,name,default)
     
     #
     #Date / Time
     #
     
     def to_short_time(self,timestamp):
-        return time.strftime(self.short_date,time.localtime(timestamp))
+        return time.strftime(self.config('ui','short_date'),time.localtime(timestamp))
     
     def to_long_time(self,timestamp):
-        return time.strftime(self.long_date,time.localtime(timestamp))
+        return time.strftime(self.config('ui','long_date'),time.localtime(timestamp))
     
     #
     #IO
@@ -165,7 +185,9 @@ class UI:
             os.unlink(name)
     
     def geteditor(self):
-        return 'notepad'
+        if os.name == 'nt':
+            return 'notepad'
+        return self.config('ui', 'editor', os.environ['EDITOR'] or 'vi')
     
     def flush(self):
         '''Fush StdOut and StdErr

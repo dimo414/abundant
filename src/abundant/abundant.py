@@ -82,6 +82,7 @@ def exec(cmds,cwd):
             db = database.DB(path,ui=ui)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
+            ui.db_conf(db)
             ret = func(ui,db,*args_left,**options)
         else:
             ret = func(ui,*args_left,**options)

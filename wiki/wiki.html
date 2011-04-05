@@ -593,7 +593,7 @@ Error: #f88</pre>
 ''&amp;dagger;'' In Progress
 ''&amp;times;'' Broken</pre>
 </div>
-<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" changecount="1">
+<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" modified="201104051112" changecount="3">
 <pre>Abundant uses config files to customize and control it's behavior on a per-system, per-install, per-user, and per-database level.
 
 !Locations
@@ -613,7 +613,18 @@ Abundant looks in the following locations for files:
 |{{{&lt;path_to_repo&gt;/.ab/ab.local.conf}}}|
 
 Files later in this list override files earlier in the list.  Note that only {{{.ab/ab.conf}}} should be checked into version control with the project.
-</pre>
+
+!Sections
+
+!!ui
+!!!editor
+The default editor to launch when needed (user calls edit, for instance).  Defaults to vi or $EDITOR unless on Windows, where it defaults to notepad.
+!!!short_date
+[[Formatting|http://docs.python.org/library/datetime.html#strftime-and-strptime-behavior]] for dates being displayed in a shorter, less complete format.  Default is {{{%d/%m/%y %I:%M%p}}}.
+!!!long_date
+Formatting for dates being displayed more completely.  Default is {{{%a, %b. %d %y at %I:%M:%S%p}}}.
+!!!username
+The current user's username.  Ideally, this should be pulled from the current user of the VCS being used, however it can be manually specified here.  Used when creating a new issue and when commenting on an issue, and is also added to the list of users available to be selected for assignment etc.</pre>
 </div>
 <div title="DefaultTiddlers" creator="Abundant" modifier="Abundant" created="201102021037" modified="201102140116" changecount="2">
 <pre>[[Welcome]]</pre>

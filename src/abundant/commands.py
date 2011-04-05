@@ -101,7 +101,7 @@ def comment(ui,db,pref,*args,**opts):
     if message == '':
         raise error.Abort("Must provide a comment for the specified issue.")
     
-    comment = [ui.cur_user,time.time(),message]
+    comment = [ui.config('ui','username'),time.time(),message]
     iss.comments.append(comment)
     
     iss.to_JSON(db.issues)
@@ -349,7 +349,9 @@ def new(ui, db, *args, **opts):
     Options can be used to set additional information about the issue.  See the
     update command to change/add/remove this information from an existing issue. 
     '''
-    
+    if not opts['user']:
+        opts['user'] = ui.config('ui','username')
+        
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
                       listeners=[db.get_user(i) for i in opts['listener']] if opts['listener'] else None,
