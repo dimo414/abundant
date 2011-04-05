@@ -44,7 +44,7 @@ def adduser(ui,db,*args,**opts):
     '''
     
     name = (' '.join(args)).strip()
-    if 'email' in opts:
+    if opts['email']:
         name = "%s <%s>" % (name,opts['email'].strip())
     f = open(db.users,'a')
     f.write('%s\n' % name)
