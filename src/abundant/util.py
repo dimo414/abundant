@@ -229,13 +229,11 @@ _ab_pat = re.compile(r'\s*AB:.*')
 def ab_strip(lines):
     '''Used to process files containing input from the user.
     
-    Given an iterator of strings, concatenates those strings
-    which do not start with "AB:"'''
-    lns = []
+    Given an iterator of strings, returns an iterator of those
+    strings which do not start with "AB:"'''
     for line in lines:
         if not _ab_pat.match(line):
-            lns.append(line)
-    return ''.join(lns).strip()
+            yield line
 
 _bracket_pat = re.compile(r'\s*\[.+\]\s*')
 def bracket_strip(lines):
