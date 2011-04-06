@@ -60,14 +60,20 @@ class UI:
     def db_conf(self, db):
         self._conf.update(self._load_conf_files([db.conf,db.local_conf]))
         
-        #confirm the current user is in the userlist
         name = self.config('ui','username')
         try:
-            lookup = db.get_user(name)
+            if name:
+                lookup = db.get_user(name)
         except:
+            # if the current user is not in the userlist, add them
             f = open(db.users,'a')
             f.write('%s\n' % name)
             f.close()
+            db.usr_prefix_obj().add(name)
+            lt = name.find('<')
+            gt = name.find('>')
+            if lt >= 0 and gt >= 0 and gt > lt:
+                db.usr_prefix_obj().alias(name[lt+1:gt], name)
     
     def config(self, section, name, default=None):
         return self._conf.get(section,name,default)
