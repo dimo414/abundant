@@ -1,0 +1,7 @@
+{
+ "creation_date": 1302049671.951, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Grep implies the user can use regex. Either allow (Python?) regex, or don't call it grep.", 
+ "id": "42421b3f38c5e50cd0f62df3429463ed698508a5", 
+ "title": "List arg \"grep\" is really just \"find\""
+}
