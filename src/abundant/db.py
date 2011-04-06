@@ -68,18 +68,15 @@ class DB(object):
             except IOError:
                 pass # file doesn't exist, nbd
             except: raise
-            if self.ui.config('ui','username'):
-                try:
-                    self._usr_prefix.alias('me',self.ui.config('ui','username'))
-                except error.UnknownPrefix:
-                    raise error.Abort("The specified current user, '%s', does not exist.  "
-                                      "Use `adduser` to add it" % self.ui.config('ui','username'))
         return self._usr_prefix
     
     def get_user(self,prefix):
         try:
-            if 'nobody'.startswith(prefix.lower()): return None
-            return self.usr_prefix_obj()[prefix]
+            ret = self.usr_prefix_obj()[prefix]
+            if ret == 'me' or ret == 'nobody':
+                return None
+            return ret
+        
         except error.AmbiguousPrefix as err:
             raise error.Abort("User prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,err.choices))
         except error.UnknownPrefix as err:

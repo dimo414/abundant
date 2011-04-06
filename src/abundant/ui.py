@@ -58,18 +58,28 @@ class UI:
         return conf
     
     def db_conf(self, db):
+        # load db specific config files
         self._conf.update(self._load_conf_files([db.conf,db.local_conf]))
         
+        # populate psudo-usernames 'me' and 'nobody'
         name = self.config('ui','username')
         try:
+            db.usr_prefix_obj().add('nobody')
             if name:
-                lookup = db.get_user(name)
+                lookup = db.usr_prefix_obj()[name]
+                if lookup != name:
+                    # if the current user is not in the db, but
+                    # is the prefix of another user
+                    raise error.UnknownPrefix(name)
+                db.usr_prefix_obj().alias('me',name)
+            else: db.usr_prefix_obj().add('me')
         except:
             # if the current user is not in the userlist, add them
             f = open(db.users,'a')
             f.write('%s\n' % name)
             f.close()
             db.usr_prefix_obj().add(name)
+            db.usr_prefix_obj().alias('me',name)
             lt = name.find('<')
             gt = name.find('>')
             if lt >= 0 and gt >= 0 and gt > lt:

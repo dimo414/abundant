@@ -248,7 +248,7 @@ def help(ui,prefix=None,*args,**opts):
     max_cmd = max([len(i) for i in table.keys()])+3
     out = []
     for cmd in sorted(table):
-        str = table[cmd][0].__doc__.splitlines()[0]
+        str = table[cmd][0].__doc__.splitlines()[0] if table[cmd][0].__doc__ else "No documentation available"
         out.append(' '+cmd.ljust(max_cmd)+str)
         if ui.is_verbose():
             out.append('   '+table[cmd][3])

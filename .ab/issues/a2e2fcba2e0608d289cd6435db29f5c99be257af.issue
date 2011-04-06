@@ -3,5 +3,7 @@
  "creation_date": 1302085542.567, 
  "creator": "Michael Diamond <dimo414@gmail.com>", 
  "id": "a2e2fcba2e0608d289cd6435db29f5c99be257af", 
+ "resolution": "Resolved", 
+ "status": "Resolved", 
  "title": "Implement 'me', 'nobody' psudo-users"
 }
