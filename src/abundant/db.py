@@ -53,15 +53,18 @@ class DB(object):
         if self._usr_prefix is None:
             self._usr_prefix = prefix.Prefix()
             try:
+                count = 0
                 for line in open(self.users, 'r'):
                     line = line.strip()
                     if line == '' or line[0] == '#':
                         continue
+                    count += 1
                     self._usr_prefix.add(line)
                     lt = line.find('<')
                     gt = line.find('>')
                     if lt >= 0 and gt >= 0 and gt > lt:
                         self._usr_prefix.alias(line[lt+1:gt], line)
+                self._single_user = count <= 1
             except IOError:
                 pass # file doesn't exist, nbd
             except: raise
@@ -81,6 +84,10 @@ class DB(object):
             raise error.Abort("User prefix %s is ambiguous\n  Suggestions: %s" % (err.prefix,err.choices))
         except error.UnknownPrefix as err:
             raise error.Abort("User prefix %s does not correspond to any known user" % err.prefix)
+    
+    def single_user(self):
+        '''Indicates that the database does not have multiple users'''
+        return self._single_user
     
     def iss_prefix_obj(self):
         if self._iss_prefix is None:

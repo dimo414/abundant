@@ -1,4 +1,5 @@
 {
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
  "creation_date": 1302049671.951, 
  "creator": "Michael Diamond <dimo414@gmail.com>", 
  "description": "Grep implies the user can use regex. Either allow (Python?) regex, or don't call it grep.", 

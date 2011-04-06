@@ -351,6 +351,8 @@ def new(ui, db, *args, **opts):
     '''
     if not opts['user']:
         opts['user'] = ui.config('ui','username')
+    if db.single_user() and not opts['assign_to']:
+        opts['assign_to'] = opts['user']
         
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,

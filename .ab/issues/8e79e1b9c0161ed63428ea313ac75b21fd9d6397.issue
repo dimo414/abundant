@@ -1,4 +1,5 @@
 {
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
  "creation_date": 1302043974.374, 
  "creator": "Michael Diamond <dimo414@gmail.com>", 
  "description": "Mercurial's ui.edit() (http://selenic.com/hg/file/e45780ac8292/mercurial/ui.py#l545) uses text mode to save files. Copying this code seems to create too many newline characters on Windows. Changing the temporary file to a binary file seems to resolve the issue, but likely will have some cross platform issues.", 
