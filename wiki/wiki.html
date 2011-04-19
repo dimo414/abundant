@@ -593,7 +593,7 @@ Error: #f88</pre>
 ''&amp;dagger;'' In Progress
 ''&amp;times;'' Broken</pre>
 </div>
-<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" modified="201104190936" changecount="9">
+<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" modified="201104190811" changecount="8">
 <pre>Abundant uses config files to customize and control it's behavior on a per-system, per-install, per-user, and per-database level.
 
 See [[Sample Config File]] for a starter config file that will work for most medium size projects that need more control than just a todo-list.
@@ -639,7 +639,7 @@ The status to assign to issues that are reopened, if not set defaults to &quot;O
 !!!resolution
 CSL of allowable issue resolutions, for instance &quot;Resolved, Won't Fix, Cannot Reproduce&quot; etc.
 !!!resolution.default
-The default resolution if one is not specified, if not set defaults to &quot;Resolved&quot;.
+The default resolution if one is not specified.
 !!!category
 CSL of allowable issue categories, for instance &quot;UI, Database, Backend&quot; etc.
 !!!category.default
@@ -666,7 +666,7 @@ The current user's username.  Ideally, this should be pulled from the current us
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.page.revision="200807230133" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.type="file">
+<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.type="file" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.page.revision="200807230133">
 <pre>/***
 |Name|DisableWikiLinksPlugin|
 |Source|http://www.TiddlyTools.com/#DisableWikiLinksPlugin|
@@ -1034,7 +1034,7 @@ Done</pre>
 |3|Invalid Command|The command was missing parameters or otherwise did not make sense|
 |10|Uncaught Exception|This indicates an exception was thrown which was not properly handled|</pre>
 </div>
-<div title="Sample Config File" creator="Abundant" modifier="Abundant" created="201104190816" modified="201104190817" changecount="2">
+<div title="Sample Config File" creator="Abundant" modifier="Abundant" created="201104190816" modified="201104190946" changecount="3">
 <pre>A sample config file, good for getting started if you want a little more control than the freeform functionality Abundant offers out of the box.
 
 {{{
@@ -1042,9 +1042,9 @@ Done</pre>
 issue=Bug, Feature Request
 issue.default=Bug
 severity=Minor, Normal, Major, Blocking
-severity=Normal
+severity.default=Normal
 status=New, In Progress, On Hold, Testing, Closed
-status=New
+status.default=New
 status.resolved=Closed
 status.opened=In Progress
 resolution=Resolved, Won't Fix, Cannot Reproduce, Duplicate
@@ -1056,7 +1056,7 @@ resolution=Resolved, Won't Fix, Cannot Reproduce, Duplicate
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|

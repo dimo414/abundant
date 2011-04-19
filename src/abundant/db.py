@@ -120,7 +120,7 @@ class DB(object):
         '''constructs a prefix object of issue types if
         specified in the config file'''
         if meta not in self._meta_prefix:
-            choices = self.ui.config('metadata',meta,None)
+            choices = self.ui.config('metadata',meta)
             if choices is not None:
                 self._meta_prefix[meta] = prefix.Prefix(util.split_list(choices))
             else: self._meta_prefix[meta] = None

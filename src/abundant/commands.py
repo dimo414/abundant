@@ -353,7 +353,7 @@ def open_iss(ui, db, prefix, status=None, *args, **opts):
                           "Use resolve to close an open issue." % 
                           db.iss_prefix_obj().pref_str(iss.id))
     
-    iss.status = status or ui.config('metadata','status.opened',None)
+    iss.status = status or ui.config('metadata','status.opened')
     iss.resolution = None
     
     iss.to_JSON(db.issues)
@@ -425,6 +425,15 @@ def resolve(ui, db, prefix, resolution=None, *args, **opts):
     it may be considered resolved nevertheless.  Therefore you can
     specify a custom resolved status.
     '''
+    try:
+        if resolution and db.meta_prefix_obj('resolution'):
+            resolution = db.meta_prefix_obj('resolution')[resolution]
+    except error.UnknownPrefix as err:
+        raise error.Abort("%s is not a valid option for resolution" % err.prefix)
+    except error.AmbiguousPrefix as err:
+        raise error.Abort("%s is an ambiguous option for resolution, choices: %s" % 
+                          (err.prefix,util.list2str(err.choices)))
+        
     iss = db.get_issue(prefix)
     if iss.resolution:
         raise error.Abort("Cannot resolve issue %s, it is already resolved with resolution %s."
@@ -457,8 +466,6 @@ def update(ui, db, prefix, *args, **opts):
                 if opts[meta]:
                     if db.meta_prefix_obj(meta):
                         opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
-                else:
-                    opts[meta] = ui.config('metadata',meta+'.default')
             except Exception as err:
                 err.cause = meta
                 raise err
@@ -492,6 +499,8 @@ def update(ui, db, prefix, *args, **opts):
         iss.target = opts['target']
     if opts['severity']:
         iss.severity = opts['severity']
+    if opts['status']:
+        iss.status = opts['status']
     if opts['category']:
         iss.category = opts['category']
     
@@ -565,8 +574,8 @@ table = {'adduser':
               util.parser_option('-l','--listener',action='append',help="issues being followed by these users"),
               util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
               util.parser_option('-t','--target',help="a target date or milestone for resolution"),
-              util.parser_option('-s','--status',help="the status of the issue"),
-              util.parser_option('-S','--severity',help="the severity of the issue"),
+              util.parser_option('-s','--severity',help="the severity of the issue"),
+              util.parser_option('-S','--status',help="the status of the issue"),
               util.parser_option('-c','--category',help="the category of the issue"),
               util.parser_option('-C','--creator',help="the user filing the bug"),
               util.parser_option('-R','--resolution',help="the issues resolution"),
@@ -574,7 +583,7 @@ table = {'adduser':
               ],
              0,
              "[-a USER] [-r] [-l LISTENER]... [-i ISSUE] [-t TARGET] [-s SEVERITY] "
-             "[-c CATEGORY] [-C USER] [-g SEARCH]"),
+             "[-S STATUS] [-c CATEGORY] [-C USER] [-g SEARCH]"),
          'open':
             (open_iss,[],0,"PREFIX [STATUS]"),
          'new':
@@ -618,11 +627,13 @@ table = {'adduser':
                util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
                util.parser_option('-t','--target',help="a target date or milestone for resolution"),
                util.parser_option('-s','--severity',help="the severity of the issue"),
+               util.parser_option('-S','--status',help="the status of the issue"),
+               util.parser_option('-R','--resolution',help="the resolution of the issue"),
                util.parser_option('-c','--category',help="categorize the issue")
                ],
               1,
               "prefix [-a USER] [-l LISTENER]... [--rl LISTENER]... [-i ISSUE] "
-              "[-t TARGET] [-s SEVERITY] [-c CATEGORY]"),
+              "[-t TARGET] [-s SEVERITY] [-S STATUS] [-c CATEGORY]"),
           'version':(version,[],0,"")
         }
 
