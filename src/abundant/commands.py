@@ -297,6 +297,22 @@ def list(ui, db, *args, **opts):
         user = db.get_user(opts['assigned_to']) if opts['assigned_to'] else None
     if opts['listener']:
         lstset = set([db.get_user(i) for i in opts['listener']])
+    
+    # Metadata
+    def lookup(meta):
+        try:
+            if opts[meta] and db.meta_prefix_obj(meta):
+                    opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]        
+        except error.AmbiguousPrefix as err:
+            raise error.Abort("%s is an ambiguous option for %s, choices: %s" % 
+                              (err.prefix,meta,util.list2str(err.choices)))
+        except Exception as err:
+            pass # do nothing, it's not a valid prefix
+    lookup('issue')
+    lookup('severity')
+    lookup('status')
+    lookup('category')
+    lookup('resolution')
 
     list = (i for i in iss_iter
             if (bool(i.resolution) == bool(opts['resolved'])) and
@@ -305,7 +321,9 @@ def list(ui, db, *args, **opts):
                (not opts['issue'] or i.issue == opts['issue']) and
                (not opts['target'] or i.target == opts['target']) and
                (not opts['severity'] or i.severity == opts['severity']) and 
+               (not opts['status'] or i.status == opts['status']) and 
                (not opts['category'] or i.category == opts['category']) and
+               (not opts['resolution'] or i.resolution == opts['resolution']) and 
                (not opts['creator'] or i.creator == db.get_user(opts['creator'])) and
                (not opts['grep'] or opts['grep'].lower() in i.title.lower())
             )
@@ -324,7 +342,7 @@ def list(ui, db, *args, **opts):
     
     return 0 if count > 0 else 1
 
-def open_iss(ui, db, prefix, status='Open', *args, **opts):
+def open_iss(ui, db, prefix, status=None, *args, **opts):
     '''Opens a previously resolved issue
     
     This command reopens the issue, and optionally sets its
@@ -335,7 +353,7 @@ def open_iss(ui, db, prefix, status='Open', *args, **opts):
                           "Use resolve to close an open issue." % 
                           db.iss_prefix_obj().pref_str(iss.id))
     
-    iss.status = status
+    iss.status = status or ui.config('metadata','status.opened',None)
     iss.resolution = None
     
     iss.to_JSON(db.issues)
@@ -358,8 +376,11 @@ def new(ui, db, *args, **opts):
     try:
         def lookup(meta):
             try:
-                if opts[meta] and db.meta_prefix_obj(meta):
-                    opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+                if opts[meta]:
+                    if db.meta_prefix_obj(meta):
+                        opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+                else:
+                    opts[meta] = ui.config('metadata',meta+'.default')
             except Exception as err:
                 err.cause = meta
                 raise err
@@ -371,7 +392,10 @@ def new(ui, db, *args, **opts):
     except error.AmbiguousPrefix as err:
         raise error.Abort("%s is an ambiguous option for %s, choices: %s" % 
                           (err.prefix,err.cause,util.list2str(err.choices)))
-        
+    
+    opts['status'] = ui.config('metadata','status.default')
+    
+    #construct issue
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
                       listeners=[db.get_user(i) for i in opts['listener']] if opts['listener'] else None,
@@ -393,7 +417,7 @@ def new(ui, db, *args, **opts):
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
     ui.write(iss.descChanges(issue.base,ui))
 
-def resolve(ui, db, prefix, resolution='Resolved', *args, **opts):
+def resolve(ui, db, prefix, resolution=None, *args, **opts):
     '''Marks an issue resolved
     
     If the issue is not simply "resolved", for instance
@@ -407,8 +431,8 @@ def resolve(ui, db, prefix, resolution='Resolved', *args, **opts):
                           "Use open to reopen a resolved issue." % 
                           (db.iss_prefix_obj().pref_str(iss.id),iss.resolution))
     
-    iss.status = 'Resolved'
-    iss.resolution = resolution
+    iss.status = ui.config('metadata','status.resolved')
+    iss.resolution = resolution or ui.config('metadata','resolution.default')
     
     iss.to_JSON(db.issues)
     
@@ -425,6 +449,30 @@ def tasks(ui, db, user='me', *args, **opts):
 
 def update(ui, db, prefix, *args, **opts):
     '''Updates the information associated with an issue'''
+    
+    # metadata
+    try:
+        def lookup(meta):
+            try:
+                if opts[meta]:
+                    if db.meta_prefix_obj(meta):
+                        opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+                else:
+                    opts[meta] = ui.config('metadata',meta+'.default')
+            except Exception as err:
+                err.cause = meta
+                raise err
+        lookup('issue')
+        lookup('severity')
+        lookup('status')
+        lookup('resolution')
+        lookup('category')
+    except error.UnknownPrefix as err:
+        raise error.Abort("%s is not a valid option for %s" % (err.prefix,err.cause))
+    except error.AmbiguousPrefix as err:
+        raise error.Abort("%s is an ambiguous option for %s, choices: %s" % 
+                          (err.prefix,err.cause,util.list2str(err.choices)))
+    
     iss = db.get_issue(prefix)
     origiss = db.get_issue(prefix)
     if len(opts) == 0:
@@ -517,9 +565,11 @@ table = {'adduser':
               util.parser_option('-l','--listener',action='append',help="issues being followed by these users"),
               util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
               util.parser_option('-t','--target',help="a target date or milestone for resolution"),
-              util.parser_option('-s','--severity',help="the severity of the issue"),
+              util.parser_option('-s','--status',help="the status of the issue"),
+              util.parser_option('-S','--severity',help="the severity of the issue"),
               util.parser_option('-c','--category',help="the category of the issue"),
               util.parser_option('-C','--creator',help="the user filing the bug"),
+              util.parser_option('-R','--resolution',help="the issues resolution"),
               util.parser_option('-g','--grep',help="text to match in the title")
               ],
              0,

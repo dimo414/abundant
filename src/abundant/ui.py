@@ -33,6 +33,9 @@ class UI:
         
         #populate config defaults
         self._conf = config.config()
+        self._conf.set('metadata','status.resolved','Closed')
+        self._conf.set('metadata','status.opened','Open')
+        self._conf.set('metadata','resolution.default','Resolved')
         self._conf.set('ui','short_date','%d/%m/%y %I:%M%p','default')
         self._conf.set('ui','long_date','%a, %b. %d %y at %I:%M:%S%p','default')
         

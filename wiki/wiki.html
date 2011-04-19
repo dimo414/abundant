@@ -593,8 +593,10 @@ Error: #f88</pre>
 ''&amp;dagger;'' In Progress
 ''&amp;times;'' Broken</pre>
 </div>
-<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" modified="201104190231" changecount="4">
+<div title="Config Files" creator="Abundant" modifier="Abundant" created="201104051022" modified="201104190936" changecount="9">
 <pre>Abundant uses config files to customize and control it's behavior on a per-system, per-install, per-user, and per-database level.
+
+See [[Sample Config File]] for a starter config file that will work for most medium size projects that need more control than just a todo-list.
 
 !Locations
 Abundant looks in the following locations for files:
@@ -617,8 +619,31 @@ Files later in this list override files earlier in the list.  Note that only {{{
 !Sections
 
 !!metadata
-!!!type
-A comma separated list of allowable issue types.  If omitted, any text is allowed for the issue type field.
+Settings to control acceptable metadata values.  If these are not set, the associated fields can take any text.  Many of these fields expect a comma separated list (CSL).
+!!!issue
+CSL  of allowable issue types.
+!!!issue.default
+The issue type to assign to new issues by default.
+!!!severity
+CSL of allowable severity levels.  Least severe should come first, most severe last.
+!!!severity.default
+The severity level to assign to new issues by default.
+!!!status
+CSL of allowable issue statuses, for instance &quot;New, In Progress, Resolved&quot; might be options.
+!!!status.default
+The status to assign to new issues by default.
+!!!status.resolved
+The status to assign to issues that are resolved, if not set, defaults to &quot;Closed&quot;
+!!!status.opened
+The status to assign to issues that are reopened, if not set defaults to &quot;Open&quot;
+!!!resolution
+CSL of allowable issue resolutions, for instance &quot;Resolved, Won't Fix, Cannot Reproduce&quot; etc.
+!!!resolution.default
+The default resolution if one is not specified, if not set defaults to &quot;Resolved&quot;.
+!!!category
+CSL of allowable issue categories, for instance &quot;UI, Database, Backend&quot; etc.
+!!!category.default
+The category to assign to new issues by default.
 
 !!ui
 !!!editor
@@ -641,7 +666,7 @@ The current user's username.  Ideally, this should be pulled from the current us
 # Install [[PyDev|http://pydev.org/]] and follow the [[setup instructions|http://pydev.org/manual_101_root.html]] through to creating a new project.  Ensure the project is configured with Python 3 if you have more than one version.
 # Clone the repository to the root of the project directory.</pre>
 </div>
-<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.type="file" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.page.revision="200807230133">
+<div title="DisableWikiLinksPlugin" modifier="ELSDesignStudios" created="200512092239" modified="200807230133" tags="systemConfig" server.page.revision="200807230133" server.host="http://www.tiddlytools.com/#DisableWikiLinksPlugin" server.type="file">
 <pre>/***
 |Name|DisableWikiLinksPlugin|
 |Source|http://www.TiddlyTools.com/#DisableWikiLinksPlugin|
@@ -785,7 +810,7 @@ Like Mercurial, we want to be able to launch the user's preferred text editor to
 !Resolved
 Basic reading and writing testing implemented</pre>
 </div>
-<div title="Issue Structure" creator="Abundant" modifier="Abundant" created="201102030933" modified="201104190514" tags="feature" changecount="16">
+<div title="Issue Structure" creator="Abundant" modifier="Abundant" created="201102030933" modified="201102070253" tags="feature" changecount="15">
 <pre>The issue datatype has the following features / data.  Note that throughout this document and others the terms bug and issue are used interchangeably.  However issue is more global than bug, as there are other types of issues such as feature requests.  As such, though bug is used colloquially, issue is the technically correct term, and should be used in code structure and user-facing components.
 
 None of these datapoints are required for a user to submit a &quot;complete&quot; issue.  Even the title is optional.  To quote Joel Spolsky regarding FogBugz: &quot;We'd rather have you submit an incomplete report than decide that it's too hard to fill out some big, complicated form.  If you're in a rush, FogBugz even lets you leave out the title - you can always add one later, and it's better to get something into the system before you forget.&quot;
@@ -801,7 +826,7 @@ None of these datapoints are required for a user to submit a &quot;complete&quot
 |Assigned To|The user or group who the issue is assigned to currently|
 |Listeners|Set of users following updates to this issue|
 |&gt;|!Status|
-|Issue|The type of issue, current choices are Bug or Feature Request|
+|Type|The type of issue, current choices are Bug or Feature Request|
 |Target|A date or milestone (like a version number) by which time the issue should be resolved.  Should be able to parse basic English like &quot;tomorrow&quot;|
 |Severity|The severity of the bug (blocking, major, cosmetic, etc.)|
 |Status|The status of the bug (new, in progress, resolved, closed (Anyone can resolve an issue, but only the creator can close a bug for good), etc.)|
@@ -1009,13 +1034,29 @@ Done</pre>
 |3|Invalid Command|The command was missing parameters or otherwise did not make sense|
 |10|Uncaught Exception|This indicates an exception was thrown which was not properly handled|</pre>
 </div>
+<div title="Sample Config File" creator="Abundant" modifier="Abundant" created="201104190816" modified="201104190817" changecount="2">
+<pre>A sample config file, good for getting started if you want a little more control than the freeform functionality Abundant offers out of the box.
+
+{{{
+[metadata]
+issue=Bug, Feature Request
+issue.default=Bug
+severity=Minor, Normal, Major, Blocking
+severity=Normal
+status=New, In Progress, On Hold, Testing, Closed
+status=New
+status.resolved=Closed
+status.opened=In Progress
+resolution=Resolved, Won't Fix, Cannot Reproduce, Duplicate
+}}}</pre>
+</div>
 <div title="SiteSubtitle" creator="Abundant" modifier="Abundant" created="201102021036" modified="201102021036" changecount="2">
 <pre>Documentation for developers</pre>
 </div>
 <div title="SiteTitle" creator="Abundant" modifier="Abundant" created="201102021035" changecount="1">
 <pre>Abundant Development</pre>
 </div>
-<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" server.type="file" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.page.revision="200801181510" label="TiddlersBar" changecount="1">
+<div title="TiddlersBarPlugin" modifier="Abundant" created="200708071235" modified="201102060300" tags="VisualTW systemConfig Tools" changecount="1" label="TiddlersBar" server.page.revision="200801181510" server.host="http://visualtw.ouvaton.org/VisualTW.html" server.type="file">
 <pre>/***
 |''Name:''|TiddlersBarPlugin|
 |''Description:''|A bar to switch between tiddlers through tabs (like browser tabs bar).|
