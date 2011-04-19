@@ -42,9 +42,10 @@ def list2str(ls,lines=False,pad='  '):
         return ', '.join(ls)
     return ls
 
-_split_list = re.compile(r'\s*,\s*')
+_split_pat = re.compile(r'\s*,\s*')
 def split_list(string):
-    return _split_list.split(string)
+    '''Splits a string of comma separated items into a list'''
+    return _split_pat.split(string.strip())
 
 def expandpath(path):
     '''Expands system variables in paths

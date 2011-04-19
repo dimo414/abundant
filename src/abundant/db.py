@@ -45,7 +45,7 @@ class DB(object):
         
         self._usr_prefix = None
         self._iss_prefix = None
-        self._type_prefix = None
+        self._meta_prefix = {}
         
     def exists(self):
         return os.path.exists(self.db)
@@ -114,13 +114,14 @@ class DB(object):
         except error.UnknownPrefix as err:
             raise error.Abort("Issue prefix %s does not correspond to any issues" % err.prefix)
     
-    # Type Prefix Object
+    # Meta Prefix Object
     
-    def type_prefix_obj(self):
+    def meta_prefix_obj(self,meta):
         '''constructs a prefix object of issue types if
         specified in the config file'''
-        if self._type_prefix is None:
-            types = self.ui.config('metadata','type',None)
-            if types is not None:
-                self._type_prefix = prefix.Prefix(types)
-        return self._type_prefix
+        if meta not in self._meta_prefix:
+            choices = self.ui.config('metadata',meta,None)
+            if choices is not None:
+                self._meta_prefix[meta] = prefix.Prefix(util.split_list(choices))
+            else: self._meta_prefix[meta] = None
+        return self._meta_prefix[meta]

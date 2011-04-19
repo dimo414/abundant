@@ -353,6 +353,24 @@ def new(ui, db, *args, **opts):
         opts['user'] = ui.config('ui','username')
     if db.single_user() and not opts['assign_to']:
         opts['assign_to'] = opts['user']
+       
+    # metadata
+    try:
+        def lookup(meta):
+            try:
+                if opts[meta] and db.meta_prefix_obj(meta):
+                    opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+            except Exception as err:
+                err.cause = meta
+                raise err
+        lookup('issue')
+        lookup('severity')
+        lookup('category')
+    except error.UnknownPrefix as err:
+        raise error.Abort("%s is not a valid option for %s" % (err.prefix,err.cause))
+    except error.AmbiguousPrefix as err:
+        raise error.Abort("%s is an ambiguous option for %s, choices: %s" % 
+                          (err.prefix,err.cause,util.list2str(err.choices)))
         
     iss = issue.Issue(title=(' '.join(args)).strip(),
                       assigned_to=db.get_user(opts['assign_to']) if opts['assign_to'] else None,
@@ -360,6 +378,7 @@ def new(ui, db, *args, **opts):
                       issue=opts['issue'],
                       severity=opts['severity'],
                       category=opts['category'],
+                      target=opts['target'],
                       parent=db.get_issue_id(opts['parent']) if opts['parent'] else None,
                       creator=db.get_user(opts['user']) if opts['user'] else None
                       )

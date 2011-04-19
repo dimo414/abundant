@@ -96,7 +96,6 @@ def exec(cmds,cwd):
         return 2
     except error.CommandError as err:
         ui.alert("Invalid Command:\n",err)
-        ui.alert(cmds)
         try:
             ui.flush() # ensure error displays first
             exec([commands.fallback_cmd,err.task],cwd)
