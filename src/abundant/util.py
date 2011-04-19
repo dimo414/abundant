@@ -42,6 +42,10 @@ def list2str(ls,lines=False,pad='  '):
         return ', '.join(ls)
     return ls
 
+_split_list = re.compile(r'\s*,\s*')
+def split_list(string):
+    return _split_list.split(string)
+
 def expandpath(path):
     '''Expands system variables in paths
     

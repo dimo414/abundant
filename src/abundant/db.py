@@ -45,9 +45,12 @@ class DB(object):
         
         self._usr_prefix = None
         self._iss_prefix = None
+        self._type_prefix = None
         
     def exists(self):
         return os.path.exists(self.db)
+    
+    # User Prefix Object
     
     def usr_prefix_obj(self):
         if self._usr_prefix is None:
@@ -84,7 +87,10 @@ class DB(object):
     
     def single_user(self):
         '''Indicates that the database does not have multiple users'''
+        self.usr_prefix_obj()
         return self._single_user
+    
+    # Issue Prefix Object
     
     def iss_prefix_obj(self):
         if self._iss_prefix is None:
@@ -108,3 +114,13 @@ class DB(object):
         except error.UnknownPrefix as err:
             raise error.Abort("Issue prefix %s does not correspond to any issues" % err.prefix)
     
+    # Type Prefix Object
+    
+    def type_prefix_obj(self):
+        '''constructs a prefix object of issue types if
+        specified in the config file'''
+        if self._type_prefix is None:
+            types = self.ui.config('metadata','type',None)
+            if types is not None:
+                self._type_prefix = prefix.Prefix(types)
+        return self._type_prefix
