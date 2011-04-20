@@ -122,7 +122,7 @@ def comment(ui,db,pref,*args,**opts):
     iss.to_JSON(db.issues)
     
     ui.write("Added Comment to Issue %s:" % db.iss_prefix_obj().prefix(iss.id))
-    ui.write(issue.comment_to_str(comment))
+    ui.write(issue.comment_to_str(comment,ui))
     
     return 0
 
