@@ -51,6 +51,21 @@ def adduser(ui,db,*args,**opts):
     f.close()
     ui.write("Added %s to the list of users" % name)
 
+def assign(ui,db,prefix,user,*args,**opts):
+    '''Assigns an issue to the given user
+    'me' and 'nobody' keywords work as expected.
+    '''
+    iss = db.get_issue(prefix)
+    username = db.get_user(user)
+    iss.assigned_to = username
+    
+    
+    iss.to_JSON(db.issues)
+    
+    ui.write("Assigned issue %s to %s" % (db.iss_prefix_obj().pref_str(iss.id),username))
+    
+    return 0
+
 def child(ui,db,child_pref,parent_pref,*args,**opts):
     '''Mark an issue as a child of another issue
     
@@ -534,6 +549,7 @@ table = {'adduser':
              [util.parser_option('-e','--email')],
              1,
              "NAME [-e EMAIL]"),
+         'assign': (assign,[],2,"PREFIX USER"),
          'child':
             (child,
              [],
