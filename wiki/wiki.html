@@ -544,6 +544,35 @@ Also see [[AdvancedOptions]]</pre>
 
 The central idea behind Abundant is that as many of these data-points as possible / reasonable are hidden from the user until necessary.  For instance, a single user on a small project doesn't need to worry about target versions or issue assignments, and should never see or interact with such details, unless they want to.</pre>
 </div>
+<div title="Build Abundant" creator="Abundant" modifier="Abundant" created="201104200540" modified="201104200542" changecount="3">
+<pre>Abundant has no dependencies outside of Python 3, and so should run quite easily.  Currently, there is no standard install procedure, but these steps should work:
+
+!OSX / Linux
+* Clone the repository to wherever you'd like.
+* Create a symbolic link to {{{src/ab}}} in {{{/usr/bin}}} or another directory in your path.
+{{{
+$ ln -s src/ab /usr/bin/ab
+}}}
+* Run the following command, you should see Abundant's basic help:
+{{{
+$ ab
+}}}
+
+!Windows
+* Clone the repository to wherever you'd like.
+* Launch a text editor (Notepad, or your favorite), and enter the following, notice the trailing newline:
+{{{
+@echo off
+python PATHTOREPO\src\ab %*
+
+}}}
+* Save this file as {{{ab.bat}}} in {{{C:\Windows}}}, or any other directory in your path.
+
+If you don't want to create a .bat file or otherwise modify your system, you can run the following command to temporarily map {{{ab}}} to the correct command.
+{{{
+doskey ab=python PATHTOREPO\src\ab $*
+}}}</pre>
+</div>
 <div title="Build Alternative to fancyopts" creator="Abundant" modifier="Abundant" created="201102151146" modified="201102161105" tags="resolved" changecount="2">
 <pre>Mercurial uses fancyopts to parse it's parameters.  Though the structure for describing commands is decent (commands.py) fancyopts is limited and uses getopt.  Consider building a replacement parser if we cannot make fancyopts work easily.
 
@@ -1004,12 +1033,13 @@ Decided against this plan.  Between the time, title, and username, it seems high
 <div title="New should use current user" creator="Abundant" modifier="Abundant" created="201103290236" modified="201104052209" tags="resolved" changecount="2">
 <pre>New should mark the creator as the current user if set</pre>
 </div>
-<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" modified="201104051011" changecount="4">
-<pre>[[Issue Structure]]
+<div title="Notes" creator="Abundant" modifier="Abundant" created="201102091000" modified="201104200552" changecount="6">
+<pre>Development Notes
+
+[[Issue Structure]]
 [[Command Interface]]
 [[Return Codes]]
 [[IO Standards]]
-[[Config Files]]
 [[Useful Mercurial Code]]</pre>
 </div>
 <div title="Rename Type to Issue" creator="Abundant" modifier="Abundant" created="201103032227" modified="201103041908" tags="resolved" changecount="3">
@@ -1017,11 +1047,12 @@ Decided against this plan.  Between the time, title, and username, it seems high
 
 Done</pre>
 </div>
-<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201102090959" tags="resource" changecount="6">
+<div title="Resources" creator="Abundant" modifier="Abundant" created="201102021051" modified="201104200551" tags="resource" changecount="7">
 <pre>Helpful Reference Documents:
 
 [[Development Environment]]
 [[Build Abundant]]
+[[Config Files]]
 [[Wiki Markup|Markup]]</pre>
 </div>
 <div title="Return Codes" creator="Abundant" modifier="Abundant" created="201102132343" changecount="1">
