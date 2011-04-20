@@ -617,8 +617,10 @@ table = {'adduser':
                util.parser_option('-i','--issue',help="the type of issue, such as Bug or Feature Request"),
                util.parser_option('-t','--target',help="a target date or milestone for resolution"),
                util.parser_option('-s','--severity',help="the severity of the issue"),
+               util.parser_option('-S','--status',help="the status of the issue"),
                util.parser_option('-c','--category',help="the category of the issue"),
                util.parser_option('-C','--creator',help="the user filing the bug"),
+               util.parser_option('-R','--resolution',help="the issues resolution"),
                util.parser_option('-g','--grep',help="text to match in the title")
                ],
               0,
