@@ -66,11 +66,12 @@ class Prefix:
         '''Return the unique prefix of the given item, or None if not found'''
         return self._root.prefix(item.lower())
     
-    def pref_str(self,pref):
+    def pref_str(self,pref,short=False):
         '''returns the item with a colon indicating the shortest unique prefix'''
         id = self[pref]
         pref = self.prefix(id)
-        return id[:len(pref)]+':'+id[len(pref):]
+        tail = id[len(pref):]
+        return id[:len(pref)]+':'+(tail[:4]+('...' if len(tail) > 4 else '') if short else tail)
             
     def add(self,item):
         '''Add an item to the data structure'''

@@ -123,5 +123,10 @@ class DB(object):
             choices = self.ui.config('metadata',meta)
             if choices is not None:
                 self._meta_prefix[meta] = prefix.Prefix(util.split_list(choices))
+                defaults = ['default','resolved','opened']
+                for d in defaults:
+                    choice = self.ui.config('metadata',meta+'.'+d)
+                    if choice:
+                        self._meta_prefix[meta].add(choice)
             else: self._meta_prefix[meta] = None
         return self._meta_prefix[meta]
