@@ -141,8 +141,8 @@ class Issue:
                 
                 if db is not None and key in self._ids:
                     if isinstance(val,list):
-                        val = [db.iss_prefix_obj().pref_str(i) for i in val]
-                    else: val = db.iss_prefix_obj().pref_str(val)
+                        val = [db.iss_prefix_obj().pref_str(i,True) for i in val]
+                    else: val = db.iss_prefix_obj().pref_str(val,key!='id')
                 if key == 'comments':
                     val = [comment_to_str(i,ui) for i in val]
                 if ui is not None and key in self._dates:

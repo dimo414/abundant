@@ -222,7 +222,7 @@ def edit(ui,db,pref,*args,**opts):
         
     iss.to_JSON(db.issues)
     
-    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
+    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id,True))
     ui.write(iss.descChanges(origiss,ui))
     
     return 0
@@ -314,7 +314,8 @@ def list(ui, db, *args, **opts):
         lstset = set([db.get_user(i) for i in opts['listener']])
     
     # Metadata
-    def lookup(meta):
+    metas = ['issue','severity','status','category','resolution']
+    for meta in metas:
         try:
             if opts[meta] and db.meta_prefix_obj(meta):
                     opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]        
@@ -323,11 +324,6 @@ def list(ui, db, *args, **opts):
                               (err.prefix,meta,util.list2str(err.choices)))
         except Exception as err:
             pass # do nothing, it's not a valid prefix
-    lookup('issue')
-    lookup('severity')
-    lookup('status')
-    lookup('category')
-    lookup('resolution')
 
     list = (i for i in iss_iter
             if (bool(i.resolution) == bool(opts['resolved'])) and
@@ -364,16 +360,16 @@ def open_iss(ui, db, prefix, status=None, *args, **opts):
     status to the passed status.'''
     iss = db.get_issue(prefix)
     if not iss.resolution:
-        raise error.Abort("Cannot open issue %s, it is already open."
+        raise error.Abort("Cannot open issue %s, it is already open.\n"
                           "Use resolve to close an open issue." % 
-                          db.iss_prefix_obj().pref_str(iss.id))
+                          db.iss_prefix_obj().pref_str(iss.id,True))
     
     iss.status = status or ui.config('metadata','status.opened')
     iss.resolution = None
     
     iss.to_JSON(db.issues)
     
-    ui.write("Reopened issue %s, set status to %s" % (db.iss_prefix_obj().pref_str(iss.id),iss.status))
+    ui.write("Reopened issue %s, set status to %s" % (db.iss_prefix_obj().pref_str(iss.id,True),iss.status))
     
 def new(ui, db, *args, **opts):
     '''Create a new issue
@@ -389,7 +385,8 @@ def new(ui, db, *args, **opts):
        
     # metadata
     try:
-        def lookup(meta):
+        metas = ['issue','severity','category']
+        for meta in metas:
             try:
                 if opts[meta]:
                     if db.meta_prefix_obj(meta):
@@ -399,9 +396,6 @@ def new(ui, db, *args, **opts):
             except Exception as err:
                 err.cause = meta
                 raise err
-        lookup('issue')
-        lookup('severity')
-        lookup('category')
     except error.UnknownPrefix as err:
         raise error.Abort("%s is not a valid option for %s" % (err.prefix,err.cause))
     except error.AmbiguousPrefix as err:
@@ -429,7 +423,7 @@ def new(ui, db, *args, **opts):
     db.iss_prefix_obj().add(iss.id)
     iss.to_JSON(db.issues)
     
-    ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id))
+    ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id,True))
     ui.write(iss.descChanges(issue.base,ui))
 
 def resolve(ui, db, prefix, resolution=None, *args, **opts):
@@ -453,14 +447,14 @@ def resolve(ui, db, prefix, resolution=None, *args, **opts):
     if iss.resolution:
         raise error.Abort("Cannot resolve issue %s, it is already resolved with resolution %s."
                           "Use open to reopen a resolved issue." % 
-                          (db.iss_prefix_obj().pref_str(iss.id),iss.resolution))
+                          (db.iss_prefix_obj().pref_str(iss.id,True),iss.resolution))
     
     iss.status = ui.config('metadata','status.resolved')
     iss.resolution = resolution or ui.config('metadata','resolution.default')
     
     iss.to_JSON(db.issues)
     
-    ui.write("Resolved issue %s with resolution %s" % (db.iss_prefix_obj().pref_str(iss.id),iss.resolution))
+    ui.write("Resolved issue %s with resolution %s" % (db.iss_prefix_obj().pref_str(iss.id,True),iss.resolution))
 
 def tasks(ui, db, user='me', *args, **opts):
     '''List issues assigned to current user
@@ -476,7 +470,8 @@ def update(ui, db, prefix, *args, **opts):
     
     # metadata
     try:
-        def lookup(meta):
+        metas = ['issue','severity','status','resolution','category']
+        for meta in metas:
             try:
                 if opts[meta]:
                     if db.meta_prefix_obj(meta):
@@ -484,11 +479,6 @@ def update(ui, db, prefix, *args, **opts):
             except Exception as err:
                 err.cause = meta
                 raise err
-        lookup('issue')
-        lookup('severity')
-        lookup('status')
-        lookup('resolution')
-        lookup('category')
     except error.UnknownPrefix as err:
         raise error.Abort("%s is not a valid option for %s" % (err.prefix,err.cause))
     except error.AmbiguousPrefix as err:
@@ -499,7 +489,7 @@ def update(ui, db, prefix, *args, **opts):
     origiss = db.get_issue(prefix)
     if len(opts) == 0:
         raise error.Abort("Did not specify any updates to make to issue %s" % 
-                          db.iss_prefix_obj().pref_str(iss.id))
+                          db.iss_prefix_obj().pref_str(iss.id,True))
         
     if opts['assign_to']:
         iss.assigned_to = db.get_user(opts['assign_to'])
@@ -521,7 +511,7 @@ def update(ui, db, prefix, *args, **opts):
     
     iss.to_JSON(db.issues)
     
-    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id))
+    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id,True))
     ui.write(iss.descChanges(origiss,ui))
 
 def version(ui, *args, **opts):
