@@ -423,7 +423,7 @@ def new(ui, db, *args, **opts):
     db.iss_prefix_obj().add(iss.id)
     iss.to_JSON(db.issues)
     
-    if ui.volume = useri.quiet:
+    if ui.volume == useri.quiet:
         ui.quiet(iss.id)
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id,True))
     ui.write(iss.descChanges(issue.base,ui))
