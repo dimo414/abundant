@@ -1,6 +1,7 @@
 {
  "creation_date": 1303544211.925, 
  "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "When there's only one user in the system, we should not\ndisplay assigned to or created by even if those values are set.\n\nSimilarly, when detailing an issue, those fields can be hidden\n(unless -v is set) while there is only one user in the system.", 
  "id": "bfe7bc777b8f55a2a875bd162df0f021394fff44", 
  "title": "Hide user data when only one user"
 }
