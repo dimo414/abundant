@@ -55,16 +55,9 @@ def assign(ui,db,prefix,user,*args,**opts):
     '''Assigns an issue to the given user
     'me' and 'nobody' keywords work as expected.
     '''
-    iss = db.get_issue(prefix)
-    username = db.get_user(user)
-    iss.assigned_to = username
-    
-    
-    iss.to_JSON(db.issues)
-    
-    ui.write("Assigned issue %s to %s" % (db.iss_prefix_obj().pref_str(iss.id),username))
-    
-    return 0
+    return update(ui, db, prefix, assign_to=user,
+               listener=[],rl=[],issue=None,target=None,severity=None,
+               status=None,resolution=None,category=None)
 
 def child(ui,db,child_pref,parent_pref,*args,**opts):
     '''Mark an issue as a child of another issue
