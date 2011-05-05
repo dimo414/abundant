@@ -122,7 +122,8 @@ def comment(ui,db,pref,*args,**opts):
 def details(ui,db,pref,*args,**opts):
     '''Display all the details and status of the given issue'''
     iss = db.get_issue(pref)
-    ui.write(iss.details(ui,db))
+    skip=['creator','assigned_to'] if db.single_user() and ui.volume < useri.verbose else []
+    ui.write(iss.details(ui,db,skip=skip))
     return 0
 
 def duplicate(ui,db,dup_pref,parent_pref,*args,**opts):
@@ -373,7 +374,7 @@ def new(ui, db, *args, **opts):
     '''
     if not opts['user']:
         opts['user'] = ui.config('ui','username')
-    if db.single_user() and not opts['assign_to']:
+    if not opts['assign_to']:
         opts['assign_to'] = opts['user']
        
     # metadata
@@ -419,7 +420,8 @@ def new(ui, db, *args, **opts):
     if ui.volume == useri.quiet:
         ui.quiet(iss.id)
     ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id,True))
-    ui.write(iss.descChanges(issue.base,ui))
+    skip=['id','creation_date'] + (['creator','assigned_to'] if db.single_user() and ui.volume < useri.verbose else [])
+    ui.write(iss.descChanges(issue.base,ui,skip=skip))
 
 def resolve(ui, db, prefix, resolution=None, *args, **opts):
     '''Marks an issue resolved

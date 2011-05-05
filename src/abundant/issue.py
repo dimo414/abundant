@@ -161,7 +161,7 @@ class Issue:
         of the returned data.'''
         return util.diff_dict(self.__dict__,iss.__dict__)
     
-    def descChanges(self, iss, ui=None, skip=['id','creation_date']):
+    def descChanges(self, iss, ui=None, skip=['id']):
         '''Returns a structured string describing the changes
         between two issues.'''
         diff = self.diff(iss)
