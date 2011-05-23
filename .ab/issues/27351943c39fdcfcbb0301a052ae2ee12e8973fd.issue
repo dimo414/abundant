@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1304623755.213, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Currently anyone calling \"resolve\" simply closes the issue.  This\nis good as the default, but other workflows are necessary, the specifics\nof this functionality and how to implement it still need to be worked out.\n\nSome options:\nOnly the creator can close an issue, others resolving it assigns it back to creator.\n\"resolving\" changes the status and assigns it to someone else (QA) who can then close it.", 
+ "id": "27351943c39fdcfcbb0301a052ae2ee12e8973fd", 
+ "title": "Need to allow for longer resolution paths"
+}

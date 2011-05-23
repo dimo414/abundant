@@ -20,7 +20,7 @@ from abundant import db as database
 
 #Major/Minor release number.
 #Any updates to this should be tagged change sets.
-version = (0,2)
+version = (0,3)
 
 cmdPfx = prefix.Prefix(commands.table.keys())
 

@@ -1,7 +1,16 @@
 {
+ "comments": [
+  [
+   "Michael Diamond <dimo414@gmail.com>", 
+   1304586090.877, 
+   "New and Details command now do not show user information while there\nis only one user in the database.  This should be the expected functionality\nsince other features (like update and list) will only show user information\nwhen prompted by the user's actions."
+  ]
+ ], 
  "creation_date": 1303544211.925, 
  "creator": "Michael Diamond <dimo414@gmail.com>", 
  "description": "When there's only one user in the system, we should not\ndisplay assigned to or created by even if those values are set.\n\nSimilarly, when detailing an issue, those fields can be hidden\n(unless -v is set) while there is only one user in the system.", 
  "id": "bfe7bc777b8f55a2a875bd162df0f021394fff44", 
+ "resolution": "Resolved", 
+ "status": "Closed", 
  "title": "Hide user data when only one user"
 }
