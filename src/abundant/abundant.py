@@ -43,9 +43,9 @@ def exec(cmds,cwd):
         raise
     try:
         
-        if len(cmds) < 1:
+        if len(cmds) < 1 or cmds[0][0] == '-':
             prefix = commands.fallback_cmd
-            args = []
+            args = cmds
         else:
             prefix = cmds[0]
             args = cmds[1:]
