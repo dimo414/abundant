@@ -34,16 +34,19 @@ globalArgs = [util.parser_option('-D','--database',help="the directory to search
               util.parser_option('-h','--help',action="store_true")]
 
 def exec(cmds,cwd):
+    exec_timer = util.Timer("Full command execution")
     try:
+        ui_load_timer = util.Timer("UI load")
         ui = usrint.UI()
+        ui_load_timer.stop() # since we haven't parsed --debug yet, we can't use ui.debug()
     except:
         sys.stderr.write("FAILED TO CREATE UI OBJECT.\n"
               "This should not have been possible.\n"
               "Please report this issue immediately.\n\n")
         raise
     try:
-        
-        if len(cmds) < 1 or cmds[0][0] == '-':
+        parse_timer = util.Timer("Command parsing")
+        if len(cmds) < 1 or (len(cmds[0]) > 0 and cmds[0][0] == '-'):
             prefix = commands.fallback_cmd
             args = cmds
         else:
@@ -70,22 +73,35 @@ def exec(cmds,cwd):
         #set volume
         ui.set_volume(options['volume'])
         
+        ui.debug(ui_load_timer)
+        ui.debug(parse_timer)
+        
         #check for -h,--help
         if options['help']:
             new_args = [task] + args
             task = commands.fallback_cmd
             func, options, args_left = _parse(task,new_args)
         
+        command_timer = None
         if task not in commands.no_db:
+            db_load_timer = util.Timer("Database load")
             path = os.path.join(cwd,options['database']) if options['database'] else cwd
             
             db = database.DB(path,ui=ui)
             if not db.exists():
                 raise error.Abort("No Abundant database found.")
             ui.db_conf(db)
+            ui.debug(db_load_timer)
+            
+            command_timer = util.Timer("Command '%s'" % task)
             ret = func(ui,db,*args_left,**options)
         else:
+            command_timer = util.Timer("Command %s" % task)
             ret = func(ui,*args_left,**options)
+        
+        ui.debug(command_timer)
+        ui.debug(exec_timer)
+        
         if ret is None:
             return 0
         else: return ret

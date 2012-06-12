@@ -13,7 +13,7 @@ A set of utility operations used throughout Abundant.
 Created on Feb 7, 2011
 '''
 
-import hashlib, optparse, os, re, subprocess, sys
+import hashlib, optparse, os, re, subprocess, sys, time
 from abundant import error
 
 def hash(text):
@@ -187,6 +187,15 @@ def option_str(options):
     
     return '\n'.join(out)
 
+def is_windows():
+    '''Indicates we're running on a Windows system.
+    
+    Where possible, it's better to use capability tests a la
+    http://www.alistapart.com/articles/testdriven
+    however where it simply makes sense to differentiate between
+    Windows and other OSs, this method is acceptable.'''
+    return os.name == 'nt'
+
 def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
     '''enhanced shell command execution.
     run with environment maybe modified, maybe in different dir.
@@ -229,6 +238,47 @@ def system(cmd, environ={}, cwd=None, onerr=None, errprefix=None, out=None):
             errmsg = '%s: %s' % (errprefix, errmsg)
         raise onerr(errmsg)
     return rc
+
+class Timer:
+    '''A simple runtime-timer to track how long given processes take.
+    
+    Note that attempting to repr() or str() this class without calling stop()
+    will stop the Timer, and that a stopped timer cannot be restarted.
+    If you want to time how long an operation takes, start your Timer, ignore it,
+    then print the Timer.  If you need more granular measurements, use multiple
+    Timers, or implement something else, Timer isn't what you're looking for.'''
+    def __init__(self,desc,pattern="Timer: %s took %f",use_clock=False):
+        self.pattern = pattern
+        self.desc = desc
+        self.use_clock = use_clock or is_windows()
+        self.stopped = False
+        
+        self.time = time.time()
+        self.clock = time.clock()
+    
+    def stop(self):
+        times = (time.time(),time.clock())
+        
+        # We check stopped after making time calls to minimize time taken by Timer class
+        if self.stopped:
+            raise error.SeriousAbort("Called Timer.stop() more than once.")
+        else:
+            self.stopped = True
+        
+        self.time = times[0] - self.time
+        self.clock = times[1] - self.clock
+        
+        return self.clock if self.use_clock else self.time
+    
+    def __repr__(self):
+        if not self.stopped:
+            self.stop()
+        return '(%f, %f)' % (self.time, self.clock)
+    
+    def __str__(self):
+        if not self.stopped:
+            self.stop()
+        return self.pattern % (self.desc, self.clock if self.use_clock else self.time)
 
 _ab_pat = re.compile(r'\s*AB:.*')
 def ab_strip(lines):
