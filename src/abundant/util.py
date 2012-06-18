@@ -35,12 +35,15 @@ def find_db(p):
 
 def list2str(ls,lines=False,pad='  '):
     '''Returns a list as a pretty string'''
-    if isinstance(ls,list):
-        ls = [str(i) for i in ls]
+    try:
+        if isinstance(ls,str):
+            raise TypeError("Don't iter on strings")
+        ls = (str(i) for i in ls)
         if lines:
             return ('\n'+pad).join(ls)
         return ', '.join(ls)
-    return ls
+    except:
+        return str(ls)
 
 _split_pat = re.compile(r'\s*,\s*')
 def split_list(string):
