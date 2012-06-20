@@ -22,7 +22,7 @@ from abundant import db as database
 #Any updates to this should be tagged change sets.
 version = (0,3)
 
-cmdPfx = prefix.BinaryPrefix(commands.table.keys())
+cmdPfx = prefix.Prefix(commands.table.keys())
 
 globalArgs = [util.parser_option('-D','--database',help="the directory to search for the Abundant database"),
               util.parser_option('-q','--quiet',action='store_const',const=usrint.quiet,dest='volume',default=usrint.normal,

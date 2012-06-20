@@ -48,11 +48,12 @@ class DB(object):
     
     # User Prefix Object
     
+    #FIXME - O(n) add calls is O(n^2) behavior
     @cache.lazy_property
     def usr_prefix(self):
         try:
             usr_timer = util.Timer("User Prefix load")
-            ret = prefix.BinaryPrefix()
+            ret = prefix.Prefix()
             try:
                 count = 0
                 for line in open(self.users, 'r'):
@@ -96,7 +97,7 @@ class DB(object):
     def iss_prefix(self):
         try:
             iss_timer = util.Timer("Issue Prefix load")
-            return prefix.BinaryPrefix((i.replace(issue.ext,'') for i in os.listdir(self.issues)))
+            return prefix.Prefix((i.replace(issue.ext,'') for i in os.listdir(self.issues)))
         finally:
             self.ui.debug(iss_timer)
             
@@ -127,7 +128,7 @@ class DB(object):
             meta_timer = util.Timer("Meta prefix '%s' load" % meta)
             choices = self.ui.config('metadata',meta)
             if choices is not None:
-                ret = prefix.BinaryPrefix(util.split_list(choices))
+                ret = prefix.Prefix(util.split_list(choices))
                 defaults = ['default','resolved','opened']
                 for d in defaults:
                     choice = self.ui.config('metadata',meta+'.'+d)
