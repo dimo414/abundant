@@ -271,16 +271,27 @@ class Timer:
         self.time = times[0] - self.time
         self.clock = times[1] - self.clock
         
-        return self.clock if self.use_clock else self.time
+        return self.duration()
+    
+    def duration(self):
+        if self.stopped:
+            return self.clock if self.use_clock else self.time
+        else:
+            if self.use_clock:
+                return time.clock() - self.clock
+            else:
+                return time.time() - self.time
     
     def __repr__(self):
-        if not self.stopped:
+        try:
             self.stop()
+        except: pass
         return '(%f, %f)' % (self.time, self.clock)
     
     def __str__(self):
-        if not self.stopped:
+        try:
             self.stop()
+        except: pass
         return self.pattern % (self.desc, self.clock if self.use_clock else self.time)
 
 _ab_pat = re.compile(r'\s*AB:.*')
