@@ -48,9 +48,9 @@ class UI:
         conf = config.config()
         for f in files:
             try:
-                fp = open(f)
                 tconf = config.config()
-                tconf.read(f,fp)
+                with open(f) as fp:
+                    tconf.read(f,fp)
                 self.debug("Loaded config file at %s" % f)
                 conf.update(tconf)
             except IOError:
@@ -78,9 +78,8 @@ class UI:
             else: db.usr_prefix.add('me')
         except:
             # if the current user is not in the userlist, add them
-            f = open(db.users,'a')
-            f.write('%s\n' % name)
-            f.close()
+            with open(db.users,'a') as f:
+                f.write('%s\n' % name)
             db.usr_prefix.add(name)
             db.usr_prefix.alias('me',name)
             lt = name.find('<')
@@ -187,19 +186,18 @@ class UI:
         (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt",
                                       text=False)
         try:
-            f = os.fdopen(fd, "w")
-            f.write(text)
-            f.close()
+            # this closes fd too when it's done
+            with os.fdopen(fd, "w") as f:
+                f.write(text)
 
             editor = self.geteditor()
 
             util.system("%s \"%s\"" % (editor, name),
                         onerr=error.Abort, errprefix="Edit failed")
 
-            f = open(name)
-            for line in f:
-                yield line
-            f.close()
+            with open(name) as f:
+                for line in f:
+                    yield line
         finally:
             os.unlink(name)
     

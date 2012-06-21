@@ -46,9 +46,8 @@ def adduser(ui,db,*args,**opts):
     name = (' '.join(args)).strip()
     if opts['email']:
         name = "%s <%s>" % (name,opts['email'].strip())
-    f = open(db.users,'a')
-    f.write('%s\n' % name)
-    f.close()
+    with open(db.users,'a') as f:
+        f.write('%s\n' % name)
     ui.write("Added %s to the list of users" % name)
 
 def assign(ui,db,prefix,user,*args,**opts):
@@ -278,14 +277,14 @@ def init(ui, dir='.',*args,**opts):
     # don't need to make db.db because makedirs handles that
     os.makedirs(db.issues)
     os.mkdir(db.cache)
-    conf = open(db.conf,'w')
-    # write any initial configuration to config file
-    conf.close()
-    lconf = open(db.local_conf,'w')
-    # write any initial configuration to local config file
-    lconf.close()
-    usr = open(db.users,'w')
-    usr.close()
+    with open(db.conf,'w'):# as conf:
+        # write any initial configuration to config file
+        pass
+    with open(db.local_conf,'w'):# as lconf:
+        # write any initial configuration to local config file
+        pass
+    with open(db.users,'w'):# as usr
+        pass
     
     ui.write("Created Abundant issue database in %s" % db.path)
 

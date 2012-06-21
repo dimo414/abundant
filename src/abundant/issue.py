@@ -128,8 +128,8 @@ class Issue:
         for k, v in self.__dict__.items():
             if(v != None and v != []):
                 dict[k] = v
-        json.dump(dict,open(os.path.join(path,file),'w'),
-                  indent=1,sort_keys=True)
+        with open(os.path.join(path,file),'w') as issue_file:
+            json.dump(dict,issue_file,indent=1,sort_keys=True)
         
     def details(self, ui=None, db=None, skip=[]):
         out = []
@@ -216,7 +216,8 @@ def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
     specified file '''
     try:
-        return Issue(**json.load(open(file)))
+        with open(file) as issue_file:
+            return Issue(**json.load(issue_file))
     except IOError:
         raise error.NoSuchIssue("No issue could be found at: \n  %s" % file)
     except ValueError:

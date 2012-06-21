@@ -56,16 +56,17 @@ class DB(object):
             ret = prefix.Prefix()
             try:
                 count = 0
-                for line in open(self.users, 'r'):
-                    line = line.strip()
-                    if line == '' or line[0] == '#':
-                        continue
-                    count += 1
-                    ret.add(line)
-                    lt = line.find('<')
-                    gt = line.find('>')
-                    if lt >= 0 and gt >= 0 and gt > lt:
-                        ret.alias(line[lt+1:gt], line)
+                with open(self.users, 'r') as usr_file:
+                    for line in usr_file:
+                        line = line.strip()
+                        if line == '' or line[0] == '#':
+                            continue
+                        count += 1
+                        ret.add(line)
+                        lt = line.find('<')
+                        gt = line.find('>')
+                        if lt >= 0 and gt >= 0 and gt > lt:
+                            ret.alias(line[lt+1:gt], line)
                 self._single_user = count <= 1
             except IOError:
                 pass # file doesn't exist, nbd
