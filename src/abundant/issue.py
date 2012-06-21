@@ -219,6 +219,8 @@ def JSON_to_Issue(file):
         return Issue(**json.load(open(file)))
     except IOError:
         raise error.NoSuchIssue("No issue could be found at: \n  %s" % file)
+    except ValueError:
+        raise error.InvalidIssue("Invalid issue file at: \n  %s" % file)
 
 
 ext = ".issue"

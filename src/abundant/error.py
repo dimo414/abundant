@@ -20,6 +20,9 @@ class Abort(Exception):
 
 class NoSuchIssue(Abort):
     '''Raised if a requested issue does not exist.'''
+    
+class InvalidIssue(Abort):
+    '''Raised if a requested issue does not parse or is otherwise invalid.'''
 
 class SeriousAbort(Abort):
     '''Raised when the issue should have been previously prevented
