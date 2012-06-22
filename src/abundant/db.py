@@ -46,7 +46,7 @@ class DB(object):
     def exists(self):
         return os.path.exists(self.db)
     
-    # User Prefix Object
+    # User Operations
     
     #FIXME - O(n) add calls is O(n^2) behavior
     @cache.lazy_property
@@ -92,7 +92,7 @@ class DB(object):
         self.usr_prefix # ensures users have been loaded
         return self._single_user
     
-    # Issue Prefix Object
+    # Issue Operations
     
     @cache.lazy_property
     def iss_prefix(self):
@@ -119,7 +119,23 @@ class DB(object):
         except error.UnknownPrefix as err:
             raise error.Abort("Issue prefix %s does not correspond to any issues" % err.prefix)
     
-    # Meta Prefix Object
+    def get_issues(self,opened=None,cur_user=False,use_cache=True):
+        '''Returns a generator of all Issue objects in the database.
+        
+        TODO:
+        Simple filters can be specified and this method will do its best
+        to optimize the returned generator.
+          opened    True: only opened issues; False only closed issues
+          cur_user  True: only issues assigned to the current user
+        
+        When possible (and use_cache is True) this generator will
+        attempt to access cached data, rather than reading each file
+        in turn.
+        '''
+        return (issue.JSON_to_Issue(os.path.join(self.issues,i))
+                  for i in os.listdir(self.issues))
+    
+    # Meta Operations
     
     @cache.lazy_dict
     def meta_prefix(self,meta):

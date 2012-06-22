@@ -183,10 +183,10 @@ class UI:
         input, notably editing an issue.
         
         From Mercurial's ui.py'''
-        (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt",
-                                      text=False)
         try:
+            (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt", text=False)
             # this closes fd too when it's done
+            # http://stackoverflow.com/questions/7114059
             with os.fdopen(fd, "w") as f:
                 f.write(text)
 

@@ -298,9 +298,6 @@ def list(ui, db, *args, **opts):
     the issues you wish to see.
     '''
     
-    # use a generator to avoid loading all issues into memory
-    iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
-    
     if opts['assigned_to'] != '*':
         user = db.get_user(opts['assigned_to']) if opts['assigned_to'] else None
     if opts['listener']:
@@ -318,7 +315,7 @@ def list(ui, db, *args, **opts):
         except Exception as err:
             pass # do nothing, it's not a valid prefix
 
-    list = (i for i in iss_iter
+    iss_iter = (i for i in db.get_issues()
             if (bool(i.resolution) == bool(opts['resolved'])) and
                (opts['assigned_to'] == '*' or i.assigned_to == user) and
                (not opts['listener'] or not set(i.listeners).isdisjoint(lstset)) and
@@ -336,7 +333,7 @@ def list(ui, db, *args, **opts):
     
     # for now, if the user wants to slow down output, they must pipe output through less/more
     # we ought to be able to do this for them in certain cases
-    for i in list:
+    for i in iss_iter:
         ui.quiet(db.iss_prefix.prefix(i.id),ln=False)
         ui.write(":\t%s" % i.title,ln=False)
         ui.quiet()
