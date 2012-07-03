@@ -304,7 +304,7 @@ def ab_strip(lines):
         if not _ab_pat.match(line):
             yield line
 
-_bracket_pat = re.compile(r'\s*\[.+\]\s*')
+_bracket_pat = re.compile(r'^\s*\[.+\]\s*$')
 def bracket_strip(lines):
     '''Used to process files containing input from the user.
     
