@@ -72,7 +72,7 @@ class Prefix:
         ret = self._list[self._getindex(pre):self._getnextindex(pre)]
         if ret:
             if len(ret) == 1 or ret[0].lower() == pre:
-                return ret[0]
+                return self._aliases[ret[0]] if ret[0] in self._aliases else ret[0]
             raise error.AmbiguousPrefix(prefix,ret)
         raise error.UnknownPrefix(prefix)
     
