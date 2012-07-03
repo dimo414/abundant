@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341294176.154, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Python unit tests and CLI functional tests using cram need\nto be implemented.  Doctests also seem promising.\n\nhttp://mercurial.selenic.com/wiki/WritingTests\nhttp://mercurial.selenic.com/wiki/WindowsTestingPlan\nhttp://pypi.python.org/pypi/cram\nhttp://docs.python.org/library/doctest.html", 
+ "id": "d0a49f0e934500791f7cba02557206c08e046978", 
+ "title": "Build unit and functional test suite"
+}

@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341291459.547, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Per [this question][1], we may see some nice speed improvments with\na compiled trie implementation.  [The BioPython project][2] has a\nnice looking version, and a [generous open source license][3].\n\nThis will involve understanding, and documenting, reasonably simple\nmethodology for compiling Python extensions from source, and ultimately\nour own setup.py script.\n\nAbundant should fall back gracefully to our own trie implementation when\nwe don't have the extension loaded.\n\n[1]: http://codereview.stackexchange.com/questions/12841/implementations-of-prefix-lookup-tables-in-python\n[2]: http://biopython.org/\n[3]: http://www.biopython.org/DIST/LICENSE", 
+ "id": "8943d01a51ce043ea14734e9e7627bce8bc2be6b", 
+ "title": "Incorporate BioPython's trie structure"
+}
