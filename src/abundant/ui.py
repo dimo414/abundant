@@ -48,9 +48,9 @@ class UI:
         conf = config.config()
         for f in files:
             try:
-                fp = open(f)
                 tconf = config.config()
-                tconf.read(f,fp)
+                with open(f) as fp:
+                    tconf.read(f,fp)
                 self.debug("Loaded config file at %s" % f)
                 conf.update(tconf)
             except IOError:
@@ -67,26 +67,25 @@ class UI:
         # populate psudo-usernames 'me' and 'nobody'
         name = self.config('ui','username')
         try:
-            db.usr_prefix_obj().add('nobody')
+            db.usr_prefix.add('nobody')
             if name:
-                lookup = db.usr_prefix_obj()[name]
+                lookup = db.usr_prefix[name]
                 if lookup != name:
                     # if the current user is not in the db, but
                     # is the prefix of another user
                     raise error.UnknownPrefix(name)
-                db.usr_prefix_obj().alias('me',name)
-            else: db.usr_prefix_obj().add('me')
+                db.usr_prefix.alias('me',name)
+            else: db.usr_prefix.add('me')
         except:
             # if the current user is not in the userlist, add them
-            f = open(db.users,'a')
-            f.write('%s\n' % name)
-            f.close()
-            db.usr_prefix_obj().add(name)
-            db.usr_prefix_obj().alias('me',name)
+            with open(db.users,'a') as f:
+                f.write('%s\n' % name)
+            db.usr_prefix.add(name)
+            db.usr_prefix.alias('me',name)
             lt = name.find('<')
             gt = name.find('>')
             if lt >= 0 and gt >= 0 and gt > lt:
-                db.usr_prefix_obj().alias(name[lt+1:gt], name)
+                db.usr_prefix.alias(name[lt+1:gt], name)
     
     def config(self, section, name, default=None):
         return self._conf.get(section,name,default)
@@ -184,22 +183,21 @@ class UI:
         input, notably editing an issue.
         
         From Mercurial's ui.py'''
-        (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt",
-                                      text=False)
         try:
-            f = os.fdopen(fd, "w")
-            f.write(text)
-            f.close()
+            (fd, name) = tempfile.mkstemp(prefix="ab-editor-", suffix=".txt", text=False)
+            # this closes fd too when it's done
+            # http://stackoverflow.com/questions/7114059
+            with os.fdopen(fd, "w") as f:
+                f.write(text)
 
             editor = self.geteditor()
 
             util.system("%s \"%s\"" % (editor, name),
                         onerr=error.Abort, errprefix="Edit failed")
 
-            f = open(name)
-            for line in f:
-                yield line
-            f.close()
+            with open(name) as f:
+                for line in f:
+                    yield line
         finally:
             os.unlink(name)
     

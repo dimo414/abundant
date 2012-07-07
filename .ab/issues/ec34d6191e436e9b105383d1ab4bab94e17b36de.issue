@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341291253.024, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Displaying issue text directly in the command line is\nhighly unlikely to work across platform, and in web\nbrowsers.  Likely the best way around this will be\nto parse details with markdown, or something similar,\nwhich will separate formatting from data nicely.", 
+ "id": "ec34d6191e436e9b105383d1ab4bab94e17b36de", 
+ "title": "Accept markdown in issue details"
+}

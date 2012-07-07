@@ -128,8 +128,8 @@ class Issue:
         for k, v in self.__dict__.items():
             if(v != None and v != []):
                 dict[k] = v
-        json.dump(dict,open(os.path.join(path,file),'w'),
-                  indent=1,sort_keys=True)
+        with open(os.path.join(path,file),'w') as issue_file:
+            json.dump(dict,issue_file,indent=1,sort_keys=True)
         
     def details(self, ui=None, db=None, skip=[]):
         out = []
@@ -141,8 +141,8 @@ class Issue:
                 
                 if db is not None and key in self._ids:
                     if isinstance(val,list):
-                        val = [db.iss_prefix_obj().pref_str(i,True) for i in val]
-                    else: val = db.iss_prefix_obj().pref_str(val,key!='id')
+                        val = [db.iss_prefix.pref_str(i,True) for i in val]
+                    else: val = db.iss_prefix.pref_str(val,key!='id')
                 if key == 'comments':
                     val = [comment_to_str(i,ui) for i in val]
                 if ui is not None and key in self._dates:
@@ -216,9 +216,12 @@ def JSON_to_Issue(file):
     ''' Constructs a new issue from JSON data in the
     specified file '''
     try:
-        return Issue(**json.load(open(file)))
+        with open(file) as issue_file:
+            return Issue(**json.load(issue_file))
     except IOError:
         raise error.NoSuchIssue("No issue could be found at: \n  %s" % file)
+    except ValueError:
+        raise error.InvalidIssue("Invalid issue file at: \n  %s" % file)
 
 
 ext = ".issue"

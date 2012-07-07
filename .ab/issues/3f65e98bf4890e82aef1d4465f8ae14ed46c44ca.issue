@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341290546.956, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Should be able to tag issues, also with prefix lookup, with multiple tags,\nto allow for filtering and categorizing of issues.  Should be able to associate\ntags with email address(es) which are automatically added as listeners and, with\na -a flag, assigned to the bug.\n\nSome of this functionality may exist already with the meta data structures built\nup last year, but tagging should not require any configuration.", 
+ "id": "3f65e98bf4890e82aef1d4465f8ae14ed46c44ca", 
+ "title": "Issue tagging"
+}

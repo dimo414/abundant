@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341292418.071, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Testing (and common sense) indicates that simply concatenating\nissues together into one file dramatically improves load time for\ncommands like list.\n\nIn order to implement this, we need:\n* Fast and cross-platform file concatenation\n* Atomic file renaming / file locking\n    http://www.evanfosmark.com/2009/01/cross-platform-file-locking-support-in-python/\n    http://selenic.com/hg/file/cb520d961d6a/mercurial/util.py#l410\n    http://selenic.com/hg/file/2255950e1f76/mercurial/windows.py#l284\n* Detect issue directory updates to rebuild file\n    http://stackoverflow.com/questions/182197/how-do-i-watch-a-file-for-changes-using-python\n    http://timgolden.me.uk/python/win32_how_do_i/watch_directory_for_changes.html", 
+ "id": "93e699977dc1d785df67f742817c7c29d0862bb9", 
+ "title": "Investigate fast issue concatenation"
+}

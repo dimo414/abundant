@@ -35,12 +35,15 @@ def find_db(p):
 
 def list2str(ls,lines=False,pad='  '):
     '''Returns a list as a pretty string'''
-    if isinstance(ls,list):
-        ls = [str(i) for i in ls]
+    try:
+        if isinstance(ls,str):
+            raise TypeError("Don't iter on strings")
+        ls = (str(i) for i in ls)
         if lines:
             return ('\n'+pad).join(ls)
         return ', '.join(ls)
-    return ls
+    except:
+        return str(ls)
 
 _split_pat = re.compile(r'\s*,\s*')
 def split_list(string):
@@ -268,16 +271,27 @@ class Timer:
         self.time = times[0] - self.time
         self.clock = times[1] - self.clock
         
-        return self.clock if self.use_clock else self.time
+        return self.duration()
+    
+    def duration(self):
+        if self.stopped:
+            return self.clock if self.use_clock else self.time
+        else:
+            if self.use_clock:
+                return time.clock() - self.clock
+            else:
+                return time.time() - self.time
     
     def __repr__(self):
-        if not self.stopped:
+        try:
             self.stop()
+        except: pass
         return '(%f, %f)' % (self.time, self.clock)
     
     def __str__(self):
-        if not self.stopped:
+        try:
             self.stop()
+        except: pass
         return self.pattern % (self.desc, self.clock if self.use_clock else self.time)
 
 _ab_pat = re.compile(r'\s*AB:.*')
@@ -290,7 +304,7 @@ def ab_strip(lines):
         if not _ab_pat.match(line):
             yield line
 
-_bracket_pat = re.compile(r'\s*\[.+\]\s*')
+_bracket_pat = re.compile(r'^\s*\[.+\]\s*$')
 def bracket_strip(lines):
     '''Used to process files containing input from the user.
     

@@ -14,6 +14,9 @@ minimize program execution time.
 Created on June 14, 2012
 '''
 
+import functools
+from abundant import util
+
 class lazy_property(object):
     '''Decorator: Enables the value of a property to be lazy-loaded.
     From Mercurial's util.propertycache
@@ -42,3 +45,52 @@ class lazy_property(object):
         result = self.func(obj)
         setattr(obj, self.name, result)
         return result
+
+class lazy_dict(object):
+    '''Decorator: Enables a dictionary property to be lazy-loaded,
+    in a similar fashion to lazy_property.
+    
+    Apply this decorator to a method which takes hashable arguments,
+    and use the name as a dictionary in external code.  Repeated
+    calls to the same index will not be recomputed.
+    
+    Exceptions raised by the decorated function will be wrapped as
+    KeyErrors and raised.
+    '''
+    def __init__(self,func):
+        self.orig_func = func
+        self.func = func
+        self.cache = {}
+    
+    def __get__(self, obj, objtype):
+        '''Necessary to pass 'self' down to methods - not called for functions'''
+        self.func = functools.partial(self.orig_func,obj)
+        return self
+    
+    def __getitem__(self,*key):
+        try:
+            return self.cache[key]
+        except KeyError: # Value not loaded yet
+            try:
+                value = self.func(*key)
+            except Exception as e:
+                raise KeyError("Invalid arguments '%s' for %s" % (util.list2str(key),self.orig_func.__name__)) from e
+            self.cache[key] = value
+            return value
+        # a TypeError will be raised if passed a non-hashable argument
+    
+    def __setitem__(self,*key,value):
+        '''Set is provided for convenience, it should be avoided - this
+        dict is backed by a function, breaking that contract isn't advisable.
+        '''
+        self.cache[key] = value
+    
+    def __delitem__(self,*key):
+        '''Clears the given value, re-accessing it recalls the function'''
+        del self.cache[key]
+    
+    def __iter__(self):
+        raise NotImplementedError("Unable to iter over lazy-loaded dictionary")
+    
+    def __contains__(self):
+        raise NotImplementedError("Unable to do contains checks on lazy-loaded dictionary")

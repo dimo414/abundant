@@ -46,9 +46,8 @@ def adduser(ui,db,*args,**opts):
     name = (' '.join(args)).strip()
     if opts['email']:
         name = "%s <%s>" % (name,opts['email'].strip())
-    f = open(db.users,'a')
-    f.write('%s\n' % name)
-    f.close()
+    with open(db.users,'a') as f:
+        f.write('%s\n' % name)
     ui.write("Added %s to the list of users" % name)
 
 def assign(ui,db,prefix,user,*args,**opts):
@@ -71,7 +70,7 @@ def child(ui,db,child_pref,parent_pref,*args,**opts):
     
     if child.parent:
         if not ui.confirm("Issue %s is already a child of issue %s, do you really want to change it's parent to issue %s?"
-                   % (child_pref,db.iss_prefix_obj().prefix(child.parent),parent_pref), True):
+                   % (child_pref,db.iss_prefix.prefix(child.parent),parent_pref), True):
             raise error.Abort("Did not change issue %s's parent." % child_pref)
         orig = db.get_issue(child.parent)
         orig.children.remove(child.id)
@@ -103,7 +102,7 @@ def comment(ui,db,pref,*args,**opts):
     else:
         lines = util.ab_strip(ui.edit("AB: Commenting on Issue %s:  %s\n"
                                       "AB: Lines starting with 'AB:' are ignored.\n\n" %
-                                      (db.iss_prefix_obj().prefix(iss.id),iss.title)))
+                                      (db.iss_prefix.prefix(iss.id),iss.title)))
         message = ''.join(lines).strip()
         
     if message == '':
@@ -114,7 +113,7 @@ def comment(ui,db,pref,*args,**opts):
     
     iss.to_JSON(db.issues)
     
-    ui.write("Added Comment to Issue %s:" % db.iss_prefix_obj().prefix(iss.id))
+    ui.write("Added Comment to Issue %s:" % db.iss_prefix.prefix(iss.id))
     ui.write(issue.comment_to_str(comment,ui))
     
     return 0
@@ -179,7 +178,7 @@ def edit(ui,db,pref,*args,**opts):
                        "[Reproduction Steps]\n%s\n\n"
                        "[Expected Result]\n%s\n\n"
                        "[Stack Trace]\n%s") % 
-                       (db.iss_prefix_obj().prefix(iss.id),iss.title,
+                       (db.iss_prefix.prefix(iss.id),iss.title,
                         util.list2str(iss.paths,True,''),
                         iss.description if iss.description else '',
                         iss.reproduction if iss.reproduction else '',
@@ -216,7 +215,7 @@ def edit(ui,db,pref,*args,**opts):
         
     iss.to_JSON(db.issues)
     
-    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id,True))
+    ui.write("Updated issue %s" % db.iss_prefix.pref_str(iss.id,True))
     ui.write(iss.descChanges(origiss,ui))
     
     return 0
@@ -278,14 +277,14 @@ def init(ui, dir='.',*args,**opts):
     # don't need to make db.db because makedirs handles that
     os.makedirs(db.issues)
     os.mkdir(db.cache)
-    conf = open(db.conf,'w')
-    # write any initial configuration to config file
-    conf.close()
-    lconf = open(db.local_conf,'w')
-    # write any initial configuration to local config file
-    lconf.close()
-    usr = open(db.users,'w')
-    usr.close()
+    with open(db.conf,'w'):# as conf:
+        # write any initial configuration to config file
+        pass
+    with open(db.local_conf,'w'):# as lconf:
+        # write any initial configuration to local config file
+        pass
+    with open(db.users,'w'):# as usr
+        pass
     
     ui.write("Created Abundant issue database in %s" % db.path)
 
@@ -299,9 +298,6 @@ def list(ui, db, *args, **opts):
     the issues you wish to see.
     '''
     
-    # use a generator to avoid loading all issues into memory
-    iss_iter = (issue.JSON_to_Issue(os.path.join(db.issues,i)) for i in os.listdir(db.issues))
-    
     if opts['assigned_to'] != '*':
         user = db.get_user(opts['assigned_to']) if opts['assigned_to'] else None
     if opts['listener']:
@@ -311,15 +307,15 @@ def list(ui, db, *args, **opts):
     metas = ['issue','severity','status','category','resolution']
     for meta in metas:
         try:
-            if opts[meta] and db.meta_prefix_obj(meta):
-                    opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]        
+            if opts[meta] and db.meta_prefix[meta]:
+                    opts[meta] = db.meta_prefix[meta][opts[meta]]        
         except error.AmbiguousPrefix as err:
             raise error.Abort("%s is an ambiguous option for %s, choices: %s" % 
                               (err.prefix,meta,util.list2str(err.choices)))
         except Exception as err:
             pass # do nothing, it's not a valid prefix
 
-    list = (i for i in iss_iter
+    iss_iter = (i for i in db.get_issues()
             if (bool(i.resolution) == bool(opts['resolved'])) and
                (opts['assigned_to'] == '*' or i.assigned_to == user) and
                (not opts['listener'] or not set(i.listeners).isdisjoint(lstset)) and
@@ -337,8 +333,8 @@ def list(ui, db, *args, **opts):
     
     # for now, if the user wants to slow down output, they must pipe output through less/more
     # we ought to be able to do this for them in certain cases
-    for i in list:
-        ui.quiet(db.iss_prefix_obj().prefix(i.id),ln=False)
+    for i in iss_iter:
+        ui.quiet(db.iss_prefix.prefix(i.id),ln=False)
         ui.write(":\t%s" % i.title,ln=False)
         ui.quiet()
         count += 1
@@ -356,14 +352,14 @@ def open_iss(ui, db, prefix, status=None, *args, **opts):
     if not iss.resolution:
         raise error.Abort("Cannot open issue %s, it is already open.\n"
                           "Use resolve to close an open issue." % 
-                          db.iss_prefix_obj().pref_str(iss.id,True))
+                          db.iss_prefix.pref_str(iss.id,True))
     
     iss.status = status or ui.config('metadata','status.opened')
     iss.resolution = None
     
     iss.to_JSON(db.issues)
     
-    ui.write("Reopened issue %s, set status to %s" % (db.iss_prefix_obj().pref_str(iss.id,True),iss.status))
+    ui.write("Reopened issue %s, set status to %s" % (db.iss_prefix.pref_str(iss.id,True),iss.status))
     
 def new(ui, db, *args, **opts):
     '''Create a new issue
@@ -383,8 +379,8 @@ def new(ui, db, *args, **opts):
         for meta in metas:
             try:
                 if opts[meta]:
-                    if db.meta_prefix_obj(meta):
-                        opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+                    if db.meta_prefix[meta]:
+                        opts[meta] = db.meta_prefix[meta][opts[meta]]
                 else:
                     opts[meta] = ui.config('metadata',meta+'.default')
             except Exception as err:
@@ -414,12 +410,12 @@ def new(ui, db, *args, **opts):
         parent.children.append(iss.id)
         parent.to_JSON(db.issues)
     
-    db.iss_prefix_obj().add(iss.id)
+    db.iss_prefix.add(iss.id)
     iss.to_JSON(db.issues)
     
     if ui.volume == useri.quiet:
         ui.quiet(iss.id)
-    ui.write("Created new issue with ID %s" % db.iss_prefix_obj().pref_str(iss.id,True))
+    ui.write("Created new issue with ID %s" % db.iss_prefix.pref_str(iss.id,True))
     skip=['id','creation_date'] + (['creator','assigned_to'] if db.single_user() and ui.volume < useri.verbose else [])
     ui.write(iss.descChanges(issue.base,ui,skip=skip))
 
@@ -432,8 +428,8 @@ def resolve(ui, db, prefix, resolution=None, *args, **opts):
     specify a custom resolved status.
     '''
     try:
-        if resolution and db.meta_prefix_obj('resolution'):
-            resolution = db.meta_prefix_obj('resolution')[resolution]
+        if resolution and db.meta_prefix['resolution']:
+            resolution = db.meta_prefix['resolution'][resolution]
     except error.UnknownPrefix as err:
         raise error.Abort("%s is not a valid option for resolution" % err.prefix)
     except error.AmbiguousPrefix as err:
@@ -444,14 +440,14 @@ def resolve(ui, db, prefix, resolution=None, *args, **opts):
     if iss.resolution:
         raise error.Abort("Cannot resolve issue %s, it is already resolved with resolution %s."
                           "Use open to reopen a resolved issue." % 
-                          (db.iss_prefix_obj().pref_str(iss.id,True),iss.resolution))
+                          (db.iss_prefix.pref_str(iss.id,True),iss.resolution))
     
     iss.status = ui.config('metadata','status.resolved')
     iss.resolution = resolution or ui.config('metadata','resolution.default')
     
     iss.to_JSON(db.issues)
     
-    ui.write("Resolved issue %s with resolution %s" % (db.iss_prefix_obj().pref_str(iss.id,True),iss.resolution))
+    ui.write("Resolved issue %s with resolution %s" % (db.iss_prefix.pref_str(iss.id,True),iss.resolution))
 
 def tasks(ui, db, user='me', *args, **opts):
     '''List issues assigned to current user
@@ -471,8 +467,8 @@ def update(ui, db, prefix, *args, **opts):
         for meta in metas:
             try:
                 if opts[meta]:
-                    if db.meta_prefix_obj(meta):
-                        opts[meta] = db.meta_prefix_obj(meta)[opts[meta]]
+                    if db.meta_prefix[meta]:
+                        opts[meta] = db.meta_prefix[meta][opts[meta]]
             except Exception as err:
                 err.cause = meta
                 raise err
@@ -486,7 +482,7 @@ def update(ui, db, prefix, *args, **opts):
     origiss = db.get_issue(prefix)
     if len(opts) == 0:
         raise error.Abort("Did not specify any updates to make to issue %s" % 
-                          db.iss_prefix_obj().pref_str(iss.id,True))
+                          db.iss_prefix.pref_str(iss.id,True))
         
     if opts['assign_to']:
         iss.assigned_to = db.get_user(opts['assign_to'])
@@ -508,7 +504,7 @@ def update(ui, db, prefix, *args, **opts):
     
     iss.to_JSON(db.issues)
     
-    ui.write("Updated issue %s" % db.iss_prefix_obj().pref_str(iss.id,True))
+    ui.write("Updated issue %s" % db.iss_prefix.pref_str(iss.id,True))
     ui.write(iss.descChanges(origiss,ui))
 
 def version(ui, *args, **opts):

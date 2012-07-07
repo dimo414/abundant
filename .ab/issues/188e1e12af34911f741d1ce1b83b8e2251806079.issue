@@ -1,0 +1,8 @@
+{
+ "assigned_to": "Michael Diamond <dimo414@gmail.com>", 
+ "creation_date": 1341293408.12, 
+ "creator": "Michael Diamond <dimo414@gmail.com>", 
+ "description": "Complex queries on list, tasks, and similar O(n) commands can be\ndramatically improved by using indexes to minimize the number of\nfiles to load.  The complexity, of course, is in how to best implement\nthat cache, and how to detect when it is out of sync.\n\nMercurial's [@filecache][1] decorator is quite nice, but it's limited\n(doesn't work on Windows) and of course doesn't address how we should\nstore / parse our cache.  SQLite seems like a reasonable solution,\nbut would be a fair bit of work to enable.  A custom, binary solution\nmight be cleaner, but of course sacrifices the benefits of SQLite.\n\nMercurial's caching mechanisms and notes are worth looking at:\n\nhttp://mercurial.markmail.org/thread/5d2gommrhagtkch5\nhttp://mercurial.selenic.com/wiki/Presentations?action=AttachFile&do=view&target=ols-mercurial-paper.pdf\nhttp://mercurial.selenic.com/wiki/Revlog\nhttp://mercurial.selenic.com/wiki/RevlogNG\nhttp://mercurial.selenic.com/wiki/Manifest\nhttp://mercurial.selenic.com/wiki/FileFormats\nhttp://mercurial.selenic.com/wiki/fncacheRepoFormat\nhttp://mercurial.selenic.com/wiki/DirState\nhttp://mercurial.selenic.com/wiki/LockingDesign\nhttp://idankgsochg.blogspot.com/2011/07/sub-second-precision-is-not-enough.html\n\n[1]: http://selenic.com/hg/file/f7a2849ef8cd/mercurial/scmutil.py#l824", 
+ "id": "188e1e12af34911f741d1ce1b83b8e2251806079", 
+ "title": "Implement basic caching utility for fast querying against structured data"
+}
