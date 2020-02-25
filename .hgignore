@@ -1,6 +1,0 @@
-glob:.pydevproject
-glob:.project
-glob:*.pyc
-
-glob:.ab/ab.local.conf
-glob:.ab/.cache
